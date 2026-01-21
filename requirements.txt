@@ -1,0 +1,7 @@
+fastapi==0.128.0
+langchain_huggingface==1.2.0
+langchain_qdrant==1.1.0
+langchain_text_splitters==1.1.0
+python-dotenv==1.2.1
+qdrant_client==1.16.2
+uvicorn==0.40.0
