@@ -10,6 +10,7 @@ services:
       - .env
     depends_on:
       - qdrant
+      - redis
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -19,3 +20,9 @@ services:
       - "6334:6334"
     volumes:
       - ./qdrant_storage:/qdrant/storage
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"

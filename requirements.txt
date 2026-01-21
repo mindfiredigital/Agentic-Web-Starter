@@ -1,7 +1,14 @@
 fastapi==0.128.0
+langchain==0.2.16
+langchain-community==0.2.16
+langchain-openai==0.1.21
 langchain_huggingface==1.2.0
 langchain_qdrant==1.1.0
 langchain_text_splitters==1.1.0
+pymupdf==1.25.2
+pypdf==5.1.0
 python-dotenv==1.2.1
+python-multipart==0.0.9
 qdrant_client==1.16.2
+redis==5.0.8
 uvicorn==0.40.0
