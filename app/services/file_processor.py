@@ -1,6 +1,6 @@
 import os 
 from app.constants.app_constants import Environment, ALLOWED_FILES
-from app.config.logger import logger
+from app.config.log_config import logger
 import shutil
 from fastapi import UploadFile, HTTPException
 

@@ -34,6 +34,7 @@ class VECTOR_DB(Enum):
     PAGES_DELIMITER = "\n\n"
     
     EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+    PERSIST_DIR = "static/vector_db_stores/qdrant_store"
 
 
 

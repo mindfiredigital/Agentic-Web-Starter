@@ -1,12 +1,11 @@
 import os 
 from typing import List, Optional
 
-from fastapi import HTTPException
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from app.constants.app_constants import VECTOR_DB
-from app.config.logger import logger
+from app.constants.app_constants import VECTOR_DB, ALLOWED_FILES
+from app.config.log_config import logger
 
 
 class TextProcessor:
@@ -27,23 +26,27 @@ class TextProcessor:
         self.chunk_overlap = chunk_overlap
         self.mode = mode
         self.pages_delimiter = pages_delimiter
-
+        
     def load_documents(self):
         """
         Load the documents from the file path.
         """
+        
+        file_extension = os.path.splitext(self.file_path)[1].lower()
+        
         try:
-            if self.file_extension == ALLOWED_FILES.PDF.value:
+            if file_extension == ALLOWED_FILES.PDF.value:
                 loader = PyPDFLoader(self.file_path, mode=self.mode, pages_delimiter=self.pages_delimiter)
             else:
-                raise HTTPException(status_code=400, detail="Invalid file extension")
+                raise ValueError("Invalid file extension")
             return loader.load() 
+        except Exception as e:
+            logger.exception("Failed to load documents from %s", self.file_path)
+            raise
+    
 
     def split_documents(self, docs) -> List:
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self.chunk_size,
-            chunk_overlap=self.chunk_overlap,
-        )
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
         return text_splitter.split_documents(docs)
 
     def process(self) -> List:
