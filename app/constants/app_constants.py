@@ -11,22 +11,30 @@ class Environment(Enum):
     PROD = "prod"
     
     LOG_DIR = "logs"
+    UPLOAD_DIR = "app/static/uploads"
 
-class LLM(Enum):
-    CHAT_MODEL = "gpt-4o-mini"
+class ALLOWED_FILES(Enum):
+    PDF = ".pdf"
+    DOCX = ".docx"
+    ALL_FILES = (".pdf", ".docx")
+
+class CHAT_MODEL(Enum):
+    MODEL_NAME = "gpt-4o-mini"
     TEMPERATURE = 0.0
 
-class VectorDB(Enum):
+class VECTOR_DB(Enum):
     NAME = "agentic_rag_template"
     COLLECTION_NAME = "agentic_rag_template"
 
-
-class IngestionConstants(Enum):
+    TOP_K = 5
     CHUNK_SIZE = 100
     CHUNK_OVERLAP = 0
-
+    
+    LOAD_MODE = "page"
+    PAGES_DELIMITER = "\n\n"
+    
     EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
-class RetrievalConstants(Enum):
-    TOP_K = 5
+
+
 

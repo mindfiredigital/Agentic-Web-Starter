@@ -1,10 +1,8 @@
-from datetime import datetime
 import logging
-import os
 import sys
 
-from src.config.settings import settings
-from src.constants.app_constants import Environment
+from app.constants.app_constants import Environment
+from app.config.env_config import settings
 
 ENV = settings.ENV
 LOG_DIR = Environment.LOG_DIR.value

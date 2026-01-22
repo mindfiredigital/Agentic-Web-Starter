@@ -1,10 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
-from src.config.logger import logger
-from src.routes.health import router as health_router
-from src.routes.chat import router as chat_router
-from src.routes.ingest import router as ingest_router
-from src.config.settings import settings
+from app.config.logger import logger
+from app.routes.health import router as health_router
+from app.routes.chat import router as chat_router
+from app.routes.ingest import router as ingest_router
+from app.config.env_config import settings
+from app.constants.app_constants import Environment
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter
 
@@ -30,6 +31,11 @@ def start_application():
     api_v1.include_router(chat_router)
     api_v1.include_router(ingest_router)
     app.include_router(api_v1)
+
+
+    # PATH HANDLING 
+    os.makedirs(Environment.UPLOAD_DIR.value, exist_ok=True)
+    os.makedirs(Environment.LOG_DIR.value, exist_ok=True)
 
     logger.info("Application started successfully")
 
