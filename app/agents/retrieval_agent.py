@@ -19,9 +19,7 @@ class RetrievalAgent:
         tools: Optional[List[BaseTool]] = None,
     ) -> None:
         self.llm = llm or ChatOpenAI(model="gpt-4o-mini", temperature=0)
-        self.tools = tools or [
-            RetrieveDocumentTool(collection_name=VECTOR_DB.COLLECTION_NAME.value)
-        ]
+        self.tools = tools or [RetrieveDocumentTool(collection_name=VECTOR_DB.COLLECTION_NAME.value)]
         self.prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", RETRIEVING_PROMPT),

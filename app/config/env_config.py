@@ -21,5 +21,6 @@ class Settings:
         
         self.REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
         self.REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+        self.REDIS_DB = os.getenv("REDIS_DB", "0")
         
 settings = Settings()
