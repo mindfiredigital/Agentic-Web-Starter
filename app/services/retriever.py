@@ -11,17 +11,12 @@ from app.config.log_config import logger
 class Retriever:
     """Qdrant-backed retriever for existing collections."""
 
-    def __init__(
-        self,
-        collection_name: str = VECTOR_DB.COLLECTION_NAME.value,
-        embeddings=None,
-        qdrant_config: Optional[QdrantConfig] = None,
-    ):
-        self.embedder_name = VECTOR_DB.EMBEDDING_MODEL.value
-        safe_embedder_name = self.embedder_name.replace("/", "_")
-        self.collection_name = f"{VECTOR_DB.COLLECTION_NAME.value}__{safe_embedder_name}"
-        self.embeddings = embeddings or Embedder().get_embeddings()
-        self.qdrant_config = qdrant_config or QdrantConfig()
+    def __init__(self):
+        # self.embedder_name = VECTOR_DB.EMBEDDING_MODEL.value
+        # safe_embedder_name = self.embedder_name.replace("/", "_")
+        self.collection_name = VECTOR_DB.COLLECTION_NAME.value
+        self.embeddings = Embedder().get_embeddings()
+        self.qdrant_config = QdrantConfig()
         self.vectordb: Optional[QdrantVectorStore] = None
         self.top_k = VECTOR_DB.TOP_K.value
 

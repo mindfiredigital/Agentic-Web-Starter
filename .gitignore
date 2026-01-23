@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 app/static/*
 test_doc.pdf
+uploads/*   

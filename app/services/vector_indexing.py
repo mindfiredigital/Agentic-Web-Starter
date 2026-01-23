@@ -12,17 +12,12 @@ from app.config.log_config import logger
 class Indexer:
     """Qdrant-backed indexer for embedding chunks."""
 
-    def __init__(
-        self,
-        collection_name: str = VECTOR_DB.COLLECTION_NAME.value,
-        embeddings=None,
-        qdrant_config: Optional[QdrantConfig] = None,
-    ):
-        self.embedder_name = VECTOR_DB.EMBEDDING_MODEL.value
-        safe_embedder_name = self.embedder_name.replace("/", "_")
-        self.collection_name = f"{VECTOR_DB.COLLECTION_NAME.value}__{safe_embedder_name}"
-        self.embeddings = Embedder(embedding_model_name=self.embedder_name).get_embeddings()
-        self.qdrant_config = qdrant_config or QdrantConfig()
+    def __init__(self):
+        # self.embedder_name = VECTOR_DB.EMBEDDING_MODEL.value
+        # safe_embedder_name = self.embedder_name.replace("/", "_")
+        self.collection_name = VECTOR_DB.COLLECTION_NAME.value
+        self.embeddings = Embedder().get_embeddings()
+        self.qdrant_config = QdrantConfig()
         self.vectordb: Optional[QdrantVectorStore] = None
 
     def _get_embedding_size(self) -> int:
@@ -72,7 +67,7 @@ class Indexer:
             self.vectordb.add_documents(chunks)
             logger.info("Documents added to qdrant vectordb successfully")
 
-            vectordb_info = {"collection_name": self.collection_name}
+            vectordb_info = {"success": True, "collection_name": self.collection_name}
 
             return vectordb_info
 
@@ -92,7 +87,7 @@ class Indexer:
         try:
             client.delete_collection(collection_name=self.collection_name)
             logger.info("Vector database deleted successfully")
-            return {"collection_name": self.collection_name}
+            return {"success": True, "collection_name": self.collection_name}
         except Exception as e:
             logger.error("Error deleting vector database: %s", e)
             raise ValueError(f"Error deleting vector database: {str(e)}") from e
