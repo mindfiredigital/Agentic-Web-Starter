@@ -18,8 +18,10 @@ class Indexer:
         embeddings=None,
         qdrant_config: Optional[QdrantConfig] = None,
     ):
-        self.collection_name = collection_name
-        self.embeddings = embeddings or Embedder().get_embeddings()
+        self.embedder_name = VECTOR_DB.EMBEDDING_MODEL.value
+        safe_embedder_name = self.embedder_name.replace("/", "_")
+        self.collection_name = f"{VECTOR_DB.COLLECTION_NAME.value}__{safe_embedder_name}"
+        self.embeddings = Embedder(embedding_model_name=self.embedder_name).get_embeddings()
         self.qdrant_config = qdrant_config or QdrantConfig()
         self.vectordb: Optional[QdrantVectorStore] = None
 
@@ -73,9 +75,24 @@ class Indexer:
             vectordb_info = {"collection_name": self.collection_name}
 
             return vectordb_info
-            
+
         except Exception as e:
             logger.error("Error adding documents to qdrant vectordb: %s", e)
             raise ValueError(
                 f"Error adding documents to qdrant vectordb: {str(e)}"
             ) from e
+
+    def delete_database(self):
+        """Delete the vector database."""
+        client = self.qdrant_config.get_qdrant_client()
+        if self.collection_name not in [col.name for col in client.get_collections().collections]:
+            logger.warning("Collection %s not found; skipping deletion", self.collection_name)
+            return
+
+        try:
+            client.delete_collection(collection_name=self.collection_name)
+            logger.info("Vector database deleted successfully")
+            return {"collection_name": self.collection_name}
+        except Exception as e:
+            logger.error("Error deleting vector database: %s", e)
+            raise ValueError(f"Error deleting vector database: {str(e)}") from e

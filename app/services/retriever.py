@@ -17,7 +17,9 @@ class Retriever:
         embeddings=None,
         qdrant_config: Optional[QdrantConfig] = None,
     ):
-        self.collection_name = collection_name
+        self.embedder_name = VECTOR_DB.EMBEDDING_MODEL.value
+        safe_embedder_name = self.embedder_name.replace("/", "_")
+        self.collection_name = f"{VECTOR_DB.COLLECTION_NAME.value}__{safe_embedder_name}"
         self.embeddings = embeddings or Embedder().get_embeddings()
         self.qdrant_config = qdrant_config or QdrantConfig()
         self.vectordb: Optional[QdrantVectorStore] = None
@@ -64,13 +66,4 @@ class Retriever:
             logger.error("Error querying qdrant vectordb: %s", e)
             raise ValueError(f"Error querying qdrant vectordb: {str(e)}") from e
 
-    def as_retriever(self, search_kwargs: Optional[dict] = None):
-        """Return a LangChain retriever instance for the collection."""
-        if self.vectordb is None:
-            self.initialize_vectordb()
-
-        try:
-            return self.vectordb.as_retriever(search_kwargs=search_kwargs or {})
-        except Exception as e:
-            logger.error("Error creating qdrant retriever: %s", e)
-            raise ValueError(f"Error creating qdrant retriever: {str(e)}") from e
+    

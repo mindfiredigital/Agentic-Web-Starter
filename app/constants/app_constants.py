@@ -27,13 +27,15 @@ class VECTOR_DB(Enum):
     COLLECTION_NAME = "agentic_rag_template"
 
     TOP_K = 5
-    CHUNK_SIZE = 100
-    CHUNK_OVERLAP = 0
+    CHUNK_SIZE = 500
+    CHUNK_OVERLAP = 50 
     
     LOAD_MODE = "page"
     PAGES_DELIMITER = "\n\n"
     
-    EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+    # EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+    # EMBEDDING_MODEL = "mixedbread-ai/mxbai-embed-large-v1"
+    EMBEDDING_MODEL = "BAAI/bge-m3"
     PERSIST_DIR = "static/vector_db_stores/qdrant_store"
 
 
