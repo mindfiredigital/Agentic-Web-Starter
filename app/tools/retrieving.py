@@ -17,10 +17,10 @@ class RetrieveDocumentTool(BaseTool):
     return_direct: bool = False
 
     def _run(self, query: str):
-        retriever = Retriever(self.collection_name)
+        retriever = Retriever()
         retriever.initialize_vectordb()
         contexts = retriever.similarity_search(query)
-        contexts = json.dumps([context.page_content for context in contexts])
+        # contexts = json.dumps([context.page_content for context in contexts])
         return {
             "status": "success",
             "contexts": contexts,
