@@ -1,5 +1,5 @@
-from src.config.settings import settings
-import redis 
+from app.config.env_config import settings
+from redis import Redis
 
 class RedisConfig:
     def __init__(self):
@@ -8,7 +8,7 @@ class RedisConfig:
         self.db = settings.REDIS_DB
     
     def get_redis_client(self):
-        return redis.Redis(
+        return Redis(
             host=self.host,
             port=self.port,
             db=0,

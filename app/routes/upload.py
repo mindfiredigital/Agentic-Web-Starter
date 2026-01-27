@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File, status, HTTPException
 
 from app.config.logger import logger
 from app.services.file_processor import FileProcessor
+from app.tools.indexing import IndexDocumentTool
 
 router = APIRouter()
 
@@ -17,27 +18,26 @@ async def upload_file(file: UploadFile = File(...)):
         dict: Message and the file path of the saved file.
     """
     try:
-        # Initialize file processor with the uploaded file
-        file_processor = FileProcessor(file)
-
-        # Get file path
-        file_path = file_processor.get_file_path()
-
         # Save file
-        file_path = file_processor.save_file(file_path)
+        ingestion_service = IngestionService(file=file)
+        saved_path = ingestion_service.save_file()
 
-        logger.info(f"File uploaded successfully saved at: {file_path}")
+        # Index the file
+        index_result = ingestion_service.ingest(saved_path=saved_path)
 
+        logger.info(f"Index result: {index_result}")
+        
         response_dict = {
             "message": "File uploaded successfully",
-            "file_path": file_path,
+            "file_path": saved_path,
             "filename": file.filename,
         }
-        logger.info(f"Response dictionary: {response_dict}")
 
         return response_dict
+
     except HTTPException:
         raise
+
     except Exception as exc:
         logger.exception(f"Unhandled error while uploading file: {exc}")
         raise HTTPException(

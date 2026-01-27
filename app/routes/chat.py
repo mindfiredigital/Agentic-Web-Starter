@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from src.agents.supervisor import SupervisorAgent
+from app.agents.supervisor import SupervisorAgent
 
 
 router = APIRouter()

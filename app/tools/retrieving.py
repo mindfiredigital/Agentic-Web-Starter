@@ -1,8 +1,8 @@
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from typing import Type
 from pydantic import BaseModel, Field
 from app.constants.app_constants import VECTOR_DB
-from app.services.retriever import Retriever
+from app.services.retrieval.retriever import Retriever
 import json 
 
 class RetrieveDocumentInput(BaseModel):

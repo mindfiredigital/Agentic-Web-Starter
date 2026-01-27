@@ -4,7 +4,7 @@ from langchain_qdrant import QdrantVectorStore
 
 from app.constants.app_constants import VECTOR_DB
 from app.config.qdrant_config import QdrantConfig
-from app.services.embedder import Embedder
+from app.services.llm.embedding_client import Embedder
 from app.config.log_config import logger
 
 
