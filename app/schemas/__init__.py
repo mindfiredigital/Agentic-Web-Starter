@@ -1,11 +1,11 @@
 from app.schemas.chat import ChatRequest, ChatResponse
 from app.schemas.health import HealthResponse
-from app.schemas.upload import UploadRequest, UploadResponse
+from app.schemas.ingestion import IngestionRequest, IngestionResponse
 
 __all__ = [
     "ChatRequest",
     "ChatResponse",
     "HealthResponse",
-    "UploadRequest",
-    "UploadResponse",
+    "IngestionRequest",
+    "IngestionResponse",
 ]

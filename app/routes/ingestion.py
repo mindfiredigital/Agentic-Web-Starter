@@ -1,17 +1,18 @@
 from fastapi import APIRouter, UploadFile, File, status, HTTPException, Depends
 
 from app.config.logger import logger
-from app.services.file_processor import FileProcessor
-from app.tools.indexing import IndexDocumentTool
-from app.schemas.upload import UploadResponse, UploadRequest
+from app.services.ingestion.ingestion_service import IngestionService
+from app.schemas.ingestion import IngestionResponse, IngestionRequest
 
 router = APIRouter()
 
-def get_upload_request(file: UploadFile = File(...)) -> UploadRequest:
-    return UploadRequest(file=file)
 
-@router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=UploadResponse)
-async def upload_file(request: UploadRequest = Depends(get_upload_request)):
+def get_ingestion_request(file: UploadFile = File(...)) -> IngestionRequest:
+    return IngestionRequest(file=file)
+
+
+@router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=IngestionResponse)
+async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)):
     """
     Upload a file, save it to the upload directory.
 
@@ -24,18 +25,14 @@ async def upload_file(request: UploadRequest = Depends(get_upload_request)):
     try:
         file = request.file
 
-        # Save file
         ingestion_service = IngestionService(file=file)
-        saved_path = ingestion_service.save_file()
+        ingest_result = ingestion_service.ingest_file()
 
-        # Index the file
-        index_result = ingestion_service.ingest(saved_path=saved_path)
-
-        logger.info(f"Index result: {index_result}")
+        logger.info("Index result: %s", ingest_result["index_result"])
         
         response_dict = {
             "message": "File uploaded successfully",
-            "file_path": saved_path,
+            "file_path": ingest_result["saved_path"],
             "filename": file.filename,
         }
 

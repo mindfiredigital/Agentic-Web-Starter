@@ -7,15 +7,15 @@ from langchain.tools import BaseTool
 from app.agents.retrieval_agent import RetrievalAgent
 from app.prompts.supervisor_prompt import SUPERVISOR_PROMPT
 from app.services.agent.base_agent import BaseAgent
-from app.services.llm.chat_completion_client import ChatModel
+from app.services.llm.chat_client import ChatClient
 
-class RetrieverAgentToolInput(BaseModel):
+class RetrievalAgentToolInput(BaseModel):
     query: str = Field(description="The query to retrieve documents from the vector database")
 
-class RetrieverAgentTool(BaseTool):
+class RetrievalAgentTool(BaseTool):
     name : str = "retriever_agent_tool"
     description: str = "Retrieves an answer for a user question"
-    args_schema: Type[BaseModel] = RetrieverAgentToolInput
+    args_schema: Type[BaseModel] = RetrievalAgentToolInput
     retrieval_agent: Any = Field(exclude=True)
     thread_id: str = Field(exclude=True)
 
@@ -26,9 +26,9 @@ class RetrieverAgentTool(BaseTool):
 class SupervisorAgent(BaseAgent):
     def __init__(self) -> None:
         self.retrieval_agent = RetrievalAgent()
-        self.retrieve_tool = RetrieverAgentTool(retrieval_agent=self.retrieval_agent,thread_id="",)
+        self.retrieve_tool = RetrievalAgentTool(retrieval_agent=self.retrieval_agent, thread_id="")
         tools = [self.retrieve_tool]
-        llm = ChatModel().get_chat_model()
+        llm = ChatClient().create_client()
         super().__init__(llm=llm, tools=tools, system_prompt=SUPERVISOR_PROMPT)
 
     def handle(self, thread_id: str, query: Optional[str] = None) -> str:

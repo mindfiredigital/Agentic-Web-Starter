@@ -1,60 +1,29 @@
 from typing import List, Optional
 
 from langchain_qdrant import QdrantVectorStore
-from qdrant_client import models
 
 from app.constants.app_constants import VECTOR_DB
-from app.config.qdrant_config import QdrantConfig
-from app.services.llm.embedding_client import Embedder
 from app.config.log_config import logger
+from app.services.vector_store.qdrant_store import build_vectordb
 
 
 class Indexer:
     """Qdrant-backed indexer for embedding chunks."""
 
     def __init__(self):
-        # self.embedder_name = VECTOR_DB.EMBEDDING_MODEL.value
-        # safe_embedder_name = self.embedder_name.replace("/", "_")
         self.collection_name = VECTOR_DB.COLLECTION_NAME.value
-        self.embeddings = Embedder().get_embeddings()
-        self.qdrant_config = QdrantConfig()
         self.vectordb: Optional[QdrantVectorStore] = None
-
-    def _get_embedding_size(self) -> int:
-        """Return the size of the embedding vectors."""
-        return len(self.embeddings.embed_query("hello world"))
 
     def initialize_vectordb(self) -> QdrantVectorStore:
         """Initialize Qdrant collection and return vector store."""
-        client = self.qdrant_config.get_qdrant_client()
-        existing_collections = client.get_collections().collections
-
-        try:
-            if self.collection_name not in [col.name for col in existing_collections]:
-                logger.info("Creating collection %s", self.collection_name)
-                client.create_collection(
-                    collection_name=self.collection_name,
-                    vectors_config=models.VectorParams(
-                        size=self._get_embedding_size(),
-                        distance=models.Distance.COSINE,
-                    ),
-                )
-
-            self.vectordb = QdrantVectorStore(
-                client=client,
-                collection_name=self.collection_name,
-                embedding=self.embeddings,
-            )
-        except Exception as e:
-            logger.error("Error initializing qdrant vectordb: %s", e)
-            raise ValueError(
-                "Please make sure qdrant db is running on port 6333: "
-                f"{str(e)}"
-            ) from e
+        self.vectordb = build_vectordb(
+            collection_name=self.collection_name,
+            ensure_collection=True,
+        )
 
         return self.vectordb
 
-    def create_database(self, chunks: List):
+    def index_documents(self, chunks: List):
         """Add chunks to Qdrant (initialize if needed)."""
         if not chunks:
             logger.warning("No chunks provided; skipping indexing")

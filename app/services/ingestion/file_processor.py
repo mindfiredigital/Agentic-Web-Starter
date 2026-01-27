@@ -35,16 +35,12 @@ class FileProcessor:
             logger.error(f"Invalid file extension: {file_extension}")
             raise HTTPException(status_code=400, detail="Invalid file extension")
     
-        try:
-            if not os.path.exists(Environment.UPLOAD_DIR.value):
-                os.makedirs(Environment.UPLOAD_DIR.value)
+        if not os.path.exists(Environment.UPLOAD_DIR.value):
+            logger.error("Upload directory not found: %s", Environment.UPLOAD_DIR.value)
+            raise HTTPException(status_code=500, detail="Upload directory is missing")
 
-            file_path = os.path.join(Environment.UPLOAD_DIR.value, file_name)
-            logger.info(f"File path: {file_path}")
-
-        except Exception as e:
-            logger.error(f"Error creating upload directory: {e}")
-            raise HTTPException(status_code=500, detail="Error creating upload directory")
+        file_path = os.path.join(Environment.UPLOAD_DIR.value, file_name)
+        logger.info(f"File path: {file_path}")
 
         return file_path
 
