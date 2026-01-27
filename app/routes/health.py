@@ -6,6 +6,14 @@ router = APIRouter()
 
 @router.get("/health", response_model=HealthResponse)
 async def health_check(request: Request):
+    """Return application health status.
+
+    Args:
+        request: Incoming request.
+
+    Returns:
+        HealthResponse payload.
+    """
     try:
         logger.info(f"Health check: {request.url}")
         return {"message": "Up and running"}

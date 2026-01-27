@@ -6,10 +6,16 @@ from app.schemas.ingestion import IngestionResponse, IngestionRequest
 
 router = APIRouter()
 
-
 def get_ingestion_request(file: UploadFile = File(...)) -> IngestionRequest:
-    return IngestionRequest(file=file)
+    """Create an ingestion request from an uploaded file.
 
+    Args:
+        file: Uploaded file.
+
+    Returns:
+        IngestionRequest instance.
+    """
+    return IngestionRequest(file=file)
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=IngestionResponse)
 async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)):
@@ -17,10 +23,10 @@ async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)
     Upload a file, save it to the upload directory.
 
     Args:
-        file (UploadFile): The uploaded file.
+        request: Ingestion request payload.
 
     Returns:
-        dict: Message and the file path of the saved file.
+        Ingestion response payload.
     """
     try:
         file = request.file

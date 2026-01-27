@@ -10,12 +10,23 @@ from app.services.llm.chat_client import ChatClient
 from app.tools.retrieve_documents import RetrieveDocumentsTool
 
 class RetrievalAgent(BaseAgent):
+    """Agent that retrieves documents before answering."""
+
     def __init__(self) -> None:
         llm = ChatClient().create_client()
         tools = [RetrieveDocumentsTool(collection_name=VECTOR_DB.COLLECTION_NAME.value)]
         super().__init__(llm=llm, tools=tools, system_prompt=RETRIEVAL_PROMPT)
 
     def invoke(self, query: str, session_id: str):
+        """Run the agent for a query and session.
+
+        Args:
+            query: User query.
+            session_id: Conversation session identifier.
+
+        Returns:
+            Agent response output.
+        """
         return self.agent_with_memory.invoke(
             {"input": query},
             config={"configurable": {"session_id": session_id}},

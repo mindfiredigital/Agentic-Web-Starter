@@ -16,7 +16,11 @@ class VectorRetriever:
         self.top_k = VECTOR_DB.TOP_K.value
 
     def initialize_vectordb(self) -> QdrantVectorStore:
-        """Connect to an existing Qdrant collection."""
+        """Connect to an existing Qdrant collection.
+
+        Returns:
+            Initialized Qdrant vector store.
+        """
         self.vectordb = build_vectordb(
             collection_name=self.collection_name,
             ensure_collection=False,
@@ -25,7 +29,14 @@ class VectorRetriever:
         return self.vectordb
 
     def search(self, query: str):
-        """Return top-k documents matching the query."""
+        """Return top-k documents matching the query.
+
+        Args:
+            query: Search query string.
+
+        Returns:
+            List of matching documents.
+        """
         if not query:
             logger.warning("Empty query provided; returning no results")
             return []

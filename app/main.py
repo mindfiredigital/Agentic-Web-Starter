@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter
 
 def start_application():
+    """Create and configure the FastAPI application."""
     logger.info("Starting application...")
     app = FastAPI(
         title = settings.PROJECT_NAME,

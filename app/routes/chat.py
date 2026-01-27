@@ -10,6 +10,14 @@ supervisor = SupervisorAgent()
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    """Handle chat requests using the supervisor agent.
+
+    Args:
+        request: Chat request payload.
+
+    Returns:
+        ChatResponse payload.
+    """
     try:
         answer = supervisor.handle(thread_id=request.thread_id, query=request.query)
         return {"thread_id": request.thread_id, "answer": answer}

@@ -7,12 +7,16 @@ from app.services.ingestion.file_processor import FileProcessor
 from app.tools.index_document import IndexDocumentTool
 
 class IngestionService:
+    """Coordinate file storage and indexing."""
+
     def __init__(self, file: UploadFile) -> None:
         self.file = file
 
     def save_file(self) -> str:
-        """
-        Save the file to the upload directory.
+        """Save the file to the upload directory.
+
+        Returns:
+            Saved file path.
         """
         # Initialize file processor with the uploaded file
         file_processor = FileProcessor(file=self.file)
@@ -28,8 +32,13 @@ class IngestionService:
         return saved_path
 
     def ingest_file(self, saved_path: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Index the file into the vector database.
+        """Index the file into the vector database.
+
+        Args:
+            saved_path: Optional pre-saved file path.
+
+        Returns:
+            Ingestion result with saved path and index metadata.
         """
         if saved_path is None:
             saved_path = self.save_file()

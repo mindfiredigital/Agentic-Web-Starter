@@ -10,7 +10,11 @@ from app.services.llm.embeddings import get_embeddings_client
 
 
 def _get_embedding_size() -> int:
-    """Return the size of the embedding vectors."""
+    """Return the size of the embedding vectors.
+
+    Returns:
+        Embedding vector size.
+    """
     embeddings = get_embeddings_client()
     return len(embeddings.embed_query("hello world"))
 
@@ -19,11 +23,17 @@ def build_vectordb(
     collection_name: Optional[str] = None,
     ensure_collection: bool = False,
 ) -> QdrantVectorStore:
-    """
-    Create and return a Qdrant-backed vector store.
+    """Create and return a Qdrant-backed vector store.
 
-    If ensure_collection is True, create the collection when missing.
-    Otherwise, raise if the collection does not exist.
+    Args:
+        collection_name: Optional collection name override.
+        ensure_collection: Whether to create collection if missing.
+
+    Returns:
+        Initialized Qdrant vector store.
+
+    Raises:
+        ValueError: If collection is missing or Qdrant is unavailable.
     """
     qdrant_config = QdrantConfig()
     client = qdrant_config.get_qdrant_client()

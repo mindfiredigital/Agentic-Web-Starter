@@ -13,6 +13,7 @@ class RetrievalAgentToolInput(BaseModel):
     query: str = Field(description="The query to retrieve documents from the vector database")
 
 class RetrievalAgentTool(BaseTool):
+    """Tool wrapper around the retrieval agent."""
     name : str = "retriever_agent_tool"
     description: str = "Retrieves an answer for a user question"
     args_schema: Type[BaseModel] = RetrievalAgentToolInput
@@ -20,10 +21,20 @@ class RetrievalAgentTool(BaseTool):
     thread_id: str = Field(exclude=True)
 
     def _run(self, query: str):
+        """Invoke the retrieval agent tool.
+
+        Args:
+            query: User query.
+
+        Returns:
+            Agent response output.
+        """
         return self.retrieval_agent.invoke(query=query, session_id=self.thread_id)
 
 
 class SupervisorAgent(BaseAgent):
+    """Supervisor agent that routes requests to tools."""
+
     def __init__(self) -> None:
         self.retrieval_agent = RetrievalAgent()
         self.retrieve_tool = RetrievalAgentTool(retrieval_agent=self.retrieval_agent, thread_id="")
@@ -32,6 +43,15 @@ class SupervisorAgent(BaseAgent):
         super().__init__(llm=llm, tools=tools, system_prompt=SUPERVISOR_PROMPT)
 
     def handle(self, thread_id: str, query: Optional[str] = None) -> str:
+        """Handle a user query with tool execution.
+
+        Args:
+            thread_id: Conversation thread identifier.
+            query: User query string.
+
+        Returns:
+            Agent response output.
+        """
 
         if not query:
             raise ValueError("Provide a query.")

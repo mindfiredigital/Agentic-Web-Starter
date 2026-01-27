@@ -6,6 +6,8 @@ import json
 load_dotenv()
 
 class Settings:
+    """Load and expose environment settings for the application."""
+
     def __init__(self):
         #  LOAD ENVIRONMENT VARIABLES
         self.ENV: str = os.getenv("ENV")

@@ -10,7 +10,16 @@ from app.services.memory.redis_history import RedisHistory
 
 
 class BaseAgent:
+    """Base class for tool-calling agents with memory."""
+
     def __init__(self, llm=None, tools: Optional[List[BaseTool]] = None, system_prompt: str = ""):
+        """Initialize the base agent.
+
+        Args:
+            llm: LLM client to use.
+            tools: Tools available to the agent.
+            system_prompt: System prompt string.
+        """
         self.llm = llm or ChatClient().create_client()
         self.tools = tools or []
         self.system_prompt = system_prompt
@@ -21,6 +30,7 @@ class BaseAgent:
         self.agent_with_memory = self.get_agent_with_memory()
 
     def get_prompt(self):
+        """Build the agent prompt template."""
         return ChatPromptTemplate.from_messages(
             [
                 ("system", self.system_prompt),
@@ -31,6 +41,7 @@ class BaseAgent:
         )
     
     def get_agent(self):
+        """Create the tool-calling agent."""
         return create_tool_calling_agent(
             llm=self.llm,
             tools=self.tools,
@@ -38,6 +49,7 @@ class BaseAgent:
         )
     
     def get_agent_executor(self):
+        """Create the agent executor."""
         return AgentExecutor(
             agent=self.agent,
             tools=self.tools,
@@ -45,6 +57,7 @@ class BaseAgent:
         )
     
     def get_agent_with_memory(self):
+        """Create the agent runnable with Redis-backed memory."""
         return RunnableWithMessageHistory(
             self.agent_executor,
             self.redis_history.get_redis_history,

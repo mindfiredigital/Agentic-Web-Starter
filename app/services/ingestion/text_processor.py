@@ -9,6 +9,8 @@ from app.config.log_config import logger
 
 
 class TextProcessor:
+    """Load and split documents into chunks."""
+
     def __init__(
         self,
         file_path: str,
@@ -28,8 +30,13 @@ class TextProcessor:
         self.pages_delimiter = pages_delimiter
         
     def load_documents(self):
-        """
-        Load the documents from the file path.
+        """Load documents from the file path.
+
+        Returns:
+            Loaded document list.
+
+        Raises:
+            ValueError: If file extension is invalid.
         """
         
         file_extension = os.path.splitext(self.file_path)[1].lower()
@@ -46,12 +53,22 @@ class TextProcessor:
     
 
     def split_documents(self, docs) -> List:
+        """Split documents into chunks.
+
+        Args:
+            docs: Loaded document list.
+
+        Returns:
+            List of split documents.
+        """
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
         return text_splitter.split_documents(docs)
 
     def process(self) -> List:
-        """
-        Process the documents.
+        """Load and split documents.
+
+        Returns:
+            List of processed document chunks.
         """
         docs = self.load_documents()
         return self.split_documents(docs)

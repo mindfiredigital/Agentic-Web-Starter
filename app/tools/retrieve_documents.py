@@ -10,6 +10,8 @@ class RetrieveDocumentsInput(BaseModel):
 
 
 class RetrieveDocumentsTool(BaseTool):
+    """Tool that retrieves documents from the vector database."""
+
     name: str = "retrieve_documents"
     description: str = "Retrieves documents from the vector database"
     args_schema: Type[BaseModel] = RetrieveDocumentsInput
@@ -17,6 +19,14 @@ class RetrieveDocumentsTool(BaseTool):
     return_direct: bool = False
 
     def _run(self, query: str):
+        """Execute the retrieval tool.
+
+        Args:
+            query: Search query string.
+
+        Returns:
+            Retrieval result payload.
+        """
         retriever = VectorRetriever()
         retriever.initialize_vectordb()
         contexts = retriever.search(query)

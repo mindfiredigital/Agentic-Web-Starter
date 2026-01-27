@@ -15,7 +15,11 @@ class Indexer:
         self.vectordb: Optional[QdrantVectorStore] = None
 
     def initialize_vectordb(self) -> QdrantVectorStore:
-        """Initialize Qdrant collection and return vector store."""
+        """Initialize Qdrant collection and return vector store.
+
+        Returns:
+            Initialized Qdrant vector store.
+        """
         self.vectordb = build_vectordb(
             collection_name=self.collection_name,
             ensure_collection=True,
@@ -24,7 +28,14 @@ class Indexer:
         return self.vectordb
 
     def index_documents(self, chunks: List):
-        """Add chunks to Qdrant (initialize if needed)."""
+        """Add chunks to Qdrant (initialize if needed).
+
+        Args:
+            chunks: List of document chunks.
+
+        Returns:
+            Metadata about the indexing operation.
+        """
         if not chunks:
             logger.warning("No chunks provided; skipping indexing")
             return
@@ -47,7 +58,11 @@ class Indexer:
             ) from e
 
     def delete_database(self):
-        """Delete the vector database."""
+        """Delete the vector database.
+
+        Returns:
+            Metadata about the deletion.
+        """
         client = self.qdrant_config.get_qdrant_client()
         if self.collection_name not in [col.name for col in client.get_collections().collections]:
             logger.warning("Collection %s not found; skipping deletion", self.collection_name)
