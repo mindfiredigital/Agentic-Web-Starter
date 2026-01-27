@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
+from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import BaseTool
 
 from app.services.llm.chat_client import ChatClient

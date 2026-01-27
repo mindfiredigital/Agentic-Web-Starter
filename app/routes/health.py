@@ -1,5 +1,5 @@
 from fastapi import Request, APIRouter, HTTPException, status
-from app.config.logger import logger
+from app.config.log_config import logger
 from app.schemas.health import HealthResponse
 
 router = APIRouter()

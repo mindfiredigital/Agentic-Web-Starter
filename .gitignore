@@ -1,8 +1,14 @@
 qdrant_storage/
 simple_rag.ipynb
+
 .env
+.venv/
+
 __pycache__/
 *.pyc
+
 app/static/*
 test_doc.pdf
-uploads/*   
+uploads/* 
+
+logs/*

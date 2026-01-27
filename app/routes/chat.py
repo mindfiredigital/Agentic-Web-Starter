@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from app.agents.supervisor import SupervisorAgent
-from app.config.logger import logger
+from app.config.log_config import logger
 from app.schemas.chat import ChatRequest, ChatResponse
 
 
@@ -19,7 +19,11 @@ async def chat(request: ChatRequest):
         ChatResponse payload.
     """
     try:
-        answer = supervisor.handle(thread_id=request.thread_id, query=request.query)
+        result = supervisor.handle(thread_id=request.thread_id, query=request.query)
+        if isinstance(result, dict) and "output" in result:
+            answer = result["output"]
+        else:
+            answer = result
         return {"thread_id": request.thread_id, "answer": answer}
     except HTTPException:
         raise

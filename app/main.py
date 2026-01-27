@@ -1,7 +1,7 @@
 import os
 import uvicorn
 from fastapi import FastAPI
-from app.config.logger import logger
+from app.config.log_config import logger
 from app.routes.health import router as health_router
 from app.routes.chat import router as chat_router
 from app.routes.ingestion import router as ingestion_router
@@ -18,7 +18,7 @@ def start_application():
         version = settings.PROJECT_VERSION,
         description = settings.PROJECT_DESCRIPTION,
         root_path = settings.BASE_PATH,
-        contact = {"name":"Mindfire Solutions", "url":"https://www.mindfire.com", "email":"support@mindfire.com"},
+        # contact = {"name":"Mindfire Solutions", "url":"https://www.mindfire.com", "email":"support@mindfire.com"},
     )
     
     app.add_middleware(
