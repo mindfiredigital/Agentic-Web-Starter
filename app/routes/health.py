@@ -1,10 +1,19 @@
-from fastapi import Request, APIRouter
-from fastapi.responses import JSONResponse
+from fastapi import Request, APIRouter, HTTPException, status
 from app.config.logger import logger
+from app.schemas.health import HealthResponse
 
 router = APIRouter()
 
-@router.get("/health")
+@router.get("/health", response_model=HealthResponse)
 async def health_check(request: Request):
-    logger.info(f"Health check: {request.url}")
-    return JSONResponse(status_code=200, content={"message": "Up and running"})
+    try:
+        logger.info(f"Health check: {request.url}")
+        return {"message": "Up and running"}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Unhandled error while checking health: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Health check failed",
+        )

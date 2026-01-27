@@ -5,7 +5,7 @@ from langchain.tools import BaseTool
 
 from app.constants.app_constants import VECTOR_DB
 from app.prompts.retrieving_prompt import RETRIEVING_PROMPT
-from app.services.agent.agent_service import BaseAgent
+from app.services.agent.base_agent import BaseAgent
 from app.services.llm.chat_completion_client import ChatModel
 from app.tools.retrieving import RetrieveDocumentTool
 

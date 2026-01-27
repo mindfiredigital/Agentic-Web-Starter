@@ -1,13 +1,17 @@
-from fastapi import APIRouter, UploadFile, File, status, HTTPException
+from fastapi import APIRouter, UploadFile, File, status, HTTPException, Depends
 
 from app.config.logger import logger
 from app.services.file_processor import FileProcessor
 from app.tools.indexing import IndexDocumentTool
+from app.schemas.upload import UploadResponse, UploadRequest
 
 router = APIRouter()
 
-@router.post("/upload", status_code=status.HTTP_201_CREATED)
-async def upload_file(file: UploadFile = File(...)):
+def get_upload_request(file: UploadFile = File(...)) -> UploadRequest:
+    return UploadRequest(file=file)
+
+@router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=UploadResponse)
+async def upload_file(request: UploadRequest = Depends(get_upload_request)):
     """
     Upload a file, save it to the upload directory.
 
@@ -18,6 +22,8 @@ async def upload_file(file: UploadFile = File(...)):
         dict: Message and the file path of the saved file.
     """
     try:
+        file = request.file
+
         # Save file
         ingestion_service = IngestionService(file=file)
         saved_path = ingestion_service.save_file()
