@@ -6,7 +6,7 @@ from qdrant_client import models
 from app.config.log_config import logger
 from app.config.qdrant_config import QdrantConfig
 from app.constants.app_constants import VECTOR_DB
-from app.services.llm.embeddings import get_embeddings_client
+from app.services.llm.embeddings import embeddings_client
 
 
 def _get_embedding_size() -> int:
@@ -15,8 +15,8 @@ def _get_embedding_size() -> int:
     Returns:
         Embedding vector size.
     """
-    embeddings = get_embeddings_client()
-    return len(embeddings.embed_query("hello world"))
+    embeddings = embeddings_client.embed_query("hello world")
+    return len(embeddings)
 
 
 def _normalize_model_name(model_name: str) -> str:
@@ -64,7 +64,7 @@ def build_vectordb(
         vectordb = QdrantVectorStore(
             client=client,
             collection_name=collection,
-            embedding=get_embeddings_client(),
+            embedding=embeddings_client,
         )
     except Exception as exc:
         logger.error("Error initializing qdrant vectordb: %s", exc)

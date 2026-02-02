@@ -2,9 +2,6 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from app.constants.app_constants import VECTOR_DB
 
-_EMBEDDINGS_CLIENT = None
-
-
 class EmbeddingClient:
     """Factory for embeddings clients."""
 
@@ -27,14 +24,4 @@ class EmbeddingClient:
             encode_kwargs=encode_kwargs,
         )
 
-
-def get_embeddings_client():
-    """Return a cached embeddings client instance.
-
-    Returns:
-        HuggingFace embeddings instance.
-    """
-    global _EMBEDDINGS_CLIENT
-    if _EMBEDDINGS_CLIENT is None:
-        _EMBEDDINGS_CLIENT = EmbeddingClient().create_embeddings()
-    return _EMBEDDINGS_CLIENT
+embeddings_client = EmbeddingClient().create_embeddings()  # type: ignore
