@@ -17,3 +17,5 @@ class ChatClient:
             ChatOpenAI instance.
         """
         return ChatOpenAI(model=self.model_name, temperature=self.temperature)
+
+ChatClient = ChatClient().create_client() 

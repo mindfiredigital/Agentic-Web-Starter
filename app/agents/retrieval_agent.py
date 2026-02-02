@@ -13,9 +13,10 @@ class RetrievalAgent(BaseAgent):
     """Agent that retrieves documents before answering."""
 
     def __init__(self) -> None:
-        llm = ChatClient().create_client()
+        
         tools = [RetrieveDocumentsTool(collection_name=VECTOR_DB.COLLECTION_NAME.value)]
-        super().__init__(llm=llm, tools=tools, system_prompt=RETRIEVAL_PROMPT)
+        
+        super().__init__(llm=ChatClient, tools=tools, system_prompt=RETRIEVAL_PROMPT)
 
     def invoke(self, query: str, session_id: str):
         """Run the agent for a query and session.

@@ -37,10 +37,12 @@ class SupervisorAgent(BaseAgent):
 
     def __init__(self) -> None:
         self.retrieval_agent = RetrievalAgent()
+        
         self.retrieve_tool = RetrievalAgentTool(retrieval_agent=self.retrieval_agent, thread_id="")
+        
         tools = [self.retrieve_tool]
-        llm = ChatClient().create_client()
-        super().__init__(llm=llm, tools=tools, system_prompt=SUPERVISOR_PROMPT)
+
+        super().__init__(llm=ChatClient, tools=tools, system_prompt=SUPERVISOR_PROMPT)
 
     def handle(self, thread_id: str, query: Optional[str] = None) -> str:
         """Handle a user query with tool execution.

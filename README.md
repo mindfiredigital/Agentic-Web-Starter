@@ -10,8 +10,8 @@ plus Qdrant vector search and Redis-backed chat history.
 - Health check endpoint
 
 ## Requirements
-- Python 3.10+
-- Docker (optional, for Qdrant/Redis via compose)
+- Python 3.10+ for local runs
+- Docker + Docker Compose for containerized runs
 
 ## Project Structure
 ```
@@ -35,31 +35,48 @@ agentic_rag_template/
 ```
 
 ## Setup
-1. Create a virtual environment and install dependencies:
+1. Create an environment file:
+   ```
+   cp env.example .env
+   ```
+2. Update values in `.env` as needed:
+   - `OPENAI_API_KEY` (required for chat/embeddings)
+   - `QDRANT_HOST`, `QDRANT_PORT` (default: `qdrant:6333` for Docker)
+   - `REDIS_HOST`, `REDIS_PORT` (default: `redis:6379` for Docker)
+
+## Run With Docker (Recommended)
+This starts the API, Qdrant, and Redis in containers:
+```
+docker compose up --build
+```
+
+The API will be available at `http://localhost:8000`.
+
+To run in detached mode:
+```
+docker compose up -d --build
+```
+
+To stop:
+```
+docker compose down
+```
+
+## Run Locally (API) + Docker (Dependencies)
+1. Start Qdrant and Redis:
+   ```
+   docker compose up -d qdrant redis
+   ```
+2. Create a virtual environment and install dependencies:
    ```
    python -m venv .venv
    source .venv/bin/activate
    pip install -r requirements.txt
    ```
-2. Configure environment variables:
+3. Start the API:
    ```
-   cp env.example .env
+   uvicorn app.main:app --reload
    ```
-   Update values in `.env` as needed:
-   - `OPENAI_API_KEY`
-   - `QDRANT_HOST`, `QDRANT_PORT`
-   - `REDIS_HOST`, `REDIS_PORT`
-
-## Running Locally
-Run Qdrant/Redis (optional):
-```
-docker compose up -d
-```
-
-Start the API:
-```
-uvicorn app.main:app --reload
-```
 
 ## API Endpoints
 - `GET /api/v1/health` - health check
@@ -68,4 +85,4 @@ uvicorn app.main:app --reload
 
 ## Notes
 - Uploads are saved to `app/static/uploads` (created at startup).
-- Qdrant must be reachable at the configured host/port.
+- The app requires Qdrant and Redis to be reachable at the configured host/port.
