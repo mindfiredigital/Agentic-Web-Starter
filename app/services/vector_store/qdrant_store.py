@@ -19,29 +19,38 @@ def _get_embedding_size() -> int:
     return len(embeddings.embed_query("hello world"))
 
 
+def _normalize_model_name(model_name: str) -> str:
+    """Normalize embedding model name for use in collection names."""
+    return model_name.strip().lower().replace("/", "_").replace(" ", "_")
+
+
+def get_collection_name_with_model() -> str:
+    base = VECTOR_DB.COLLECTION_NAME.value
+    model = VECTOR_DB.EMBEDDING_MODEL.value
+    return f"{base}_{_normalize_model_name(model)}"
+
+
 def build_vectordb(
     collection_name: Optional[str] = None,
-    ensure_collection: bool = False,
 ) -> QdrantVectorStore:
     """Create and return a Qdrant-backed vector store.
 
     Args:
         collection_name: Optional collection name override.
-        ensure_collection: Whether to create collection if missing.
 
     Returns:
         Initialized Qdrant vector store.
 
     Raises:
-        ValueError: If collection is missing or Qdrant is unavailable.
+        ValueError: If Qdrant is unavailable.
     """
     qdrant_config = QdrantConfig()
     client = qdrant_config.get_qdrant_client()
-    collection = collection_name or VECTOR_DB.COLLECTION_NAME.value
+    collection = collection_name or get_collection_name_with_model()
     existing_collections = client.get_collections().collections
     collection_exists = collection in [col.name for col in existing_collections]
 
-    if ensure_collection and not collection_exists:
+    if not collection_exists:
         logger.info("Creating collection %s", collection)
         client.create_collection(
             collection_name=collection,
@@ -49,10 +58,6 @@ def build_vectordb(
                 size=_get_embedding_size(),
                 distance=models.Distance.COSINE,
             ),
-        )
-    elif not ensure_collection and not collection_exists:
-        raise ValueError(
-            f"Collection '{collection}' not found. Run indexing first to create it."
         )
 
     try:

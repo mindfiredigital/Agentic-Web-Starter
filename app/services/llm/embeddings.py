@@ -17,9 +17,14 @@ class EmbeddingClient:
         Returns:
             HuggingFace embeddings instance.
         """
+        # model_name = "sentence-transformers/all-mpnet-base-v2"
+        # model_kwargs = {"device": "cpu"}
+        encode_kwargs = {"normalize_embeddings": True}
+        
         return HuggingFaceEmbeddings(
             model_name=self.embedding_model_name,
-            model_kwargs={"trust_remote_code": True},
+            # model_kwargs=model_kwargs,
+            encode_kwargs=encode_kwargs,
         )
 
 

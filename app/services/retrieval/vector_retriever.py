@@ -4,14 +4,14 @@ from langchain_qdrant import QdrantVectorStore
 
 from app.constants.app_constants import VECTOR_DB
 from app.config.log_config import logger
-from app.services.vector_store.qdrant_store import build_vectordb
+from app.services.vector_store.qdrant_store import build_vectordb, get_collection_name_with_model
 
 
 class VectorRetriever:
     """Qdrant-backed retriever for existing collections."""
 
     def __init__(self, collection_name: Optional[str] = None):
-        self.collection_name = collection_name or VECTOR_DB.COLLECTION_NAME.value
+        self.collection_name = collection_name or get_collection_name_with_model()
         self.vectordb: Optional[QdrantVectorStore] = None
         self.top_k = VECTOR_DB.TOP_K.value
 
@@ -21,10 +21,7 @@ class VectorRetriever:
         Returns:
             Initialized Qdrant vector store.
         """
-        self.vectordb = build_vectordb(
-            collection_name=self.collection_name,
-            ensure_collection=False,
-        )
+        self.vectordb = build_vectordb(collection_name=self.collection_name)
 
         return self.vectordb
 

@@ -16,8 +16,8 @@ class TextProcessor:
         file_path: str,
         chunk_size: int = VECTOR_DB.CHUNK_SIZE.value,
         chunk_overlap: int = VECTOR_DB.CHUNK_OVERLAP.value,
-        mode: str = VECTOR_DB.LOAD_MODE.value,
-        pages_delimiter: str = VECTOR_DB.PAGES_DELIMITER.value,
+        # mode: str = VECTOR_DB.LOAD_MODE.value,
+        # pages_delimiter: str = VECTOR_DB.PAGES_DELIMITER.value,
     ) -> None:
         """
         Initialize the TextProcessor.
@@ -26,8 +26,8 @@ class TextProcessor:
         self.file_path = file_path
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
-        self.mode = mode
-        self.pages_delimiter = pages_delimiter
+        # self.mode = mode
+        # self.pages_delimiter = pages_delimiter
         
     def load_documents(self):
         """Load documents from the file path.
@@ -43,7 +43,8 @@ class TextProcessor:
         
         try:
             if file_extension == ALLOWED_FILES.PDF.value:
-                loader = PyPDFLoader(self.file_path, mode=self.mode, pages_delimiter=self.pages_delimiter)
+                loader = PyPDFLoader(self.file_path)
+                # loader = PyPDFLoader(self.file_path, mode=self.mode, pages_delimiter=self.pages_delimiter)
             else:
                 raise ValueError("Invalid file extension")
             return loader.load() 

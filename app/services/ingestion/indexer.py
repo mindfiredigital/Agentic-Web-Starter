@@ -2,16 +2,15 @@ from typing import List, Optional
 
 from langchain_qdrant import QdrantVectorStore
 
-from app.constants.app_constants import VECTOR_DB
 from app.config.log_config import logger
-from app.services.vector_store.qdrant_store import build_vectordb
+from app.services.vector_store.qdrant_store import build_vectordb, get_collection_name_with_model
 
 
 class Indexer:
     """Qdrant-backed indexer for embedding chunks."""
 
     def __init__(self):
-        self.collection_name = VECTOR_DB.COLLECTION_NAME.value
+        self.collection_name = get_collection_name_with_model()
         self.vectordb: Optional[QdrantVectorStore] = None
 
     def initialize_vectordb(self) -> QdrantVectorStore:
@@ -20,10 +19,7 @@ class Indexer:
         Returns:
             Initialized Qdrant vector store.
         """
-        self.vectordb = build_vectordb(
-            collection_name=self.collection_name,
-            ensure_collection=True,
-        )
+        self.vectordb = build_vectordb(collection_name=self.collection_name)
 
         return self.vectordb
 
