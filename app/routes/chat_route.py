@@ -6,7 +6,6 @@ from app.schemas.chat import ChatRequest, ChatResponse
 
 
 router = APIRouter()
-supervisor = SupervisorAgent()
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):

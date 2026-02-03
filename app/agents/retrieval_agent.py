@@ -32,3 +32,25 @@ class RetrievalAgent(BaseAgent):
             {"input": query},
             config={"configurable": {"session_id": session_id}},
         )
+
+class RetrievalAgentToolInput(BaseModel):
+    query: str = Field(description="The query to retrieve documents from the vector database")
+
+class RetrievalAgentTool(BaseTool):
+    """Tool wrapper around the retrieval agent."""
+    name : str = "retriever_agent_tool"
+    description: str = "Retrieves an answer for a user question"
+    args_schema: Type[BaseModel] = RetrievalAgentToolInput
+    thread_id: str = Field(exclude=True)
+
+    def _run(self, query: str):
+        """Invoke the retrieval agent tool.
+
+        Args:
+            query: User query.
+
+        Returns:
+            Agent response output.
+        """
+        retrieval_agent = RetrievalAgent()
+        return retrieval_agent.invoke(query=query, session_id=self.thread_id)

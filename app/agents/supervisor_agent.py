@@ -4,41 +4,18 @@ from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 from langchain.tools import BaseTool
 
-from app.agents.retrieval_agent import RetrievalAgent
+from app.agents.retrieval_agent import RetrievalAgent, RetrievalAgentTool 
 from app.prompts.supervisor_prompt import SUPERVISOR_PROMPT
 from app.services.agent.base_agent import BaseAgent
 from app.services.llm.chat_client import ChatClient
 
-class RetrievalAgentToolInput(BaseModel):
-    query: str = Field(description="The query to retrieve documents from the vector database")
-
-class RetrievalAgentTool(BaseTool):
-    """Tool wrapper around the retrieval agent."""
-    name : str = "retriever_agent_tool"
-    description: str = "Retrieves an answer for a user question"
-    args_schema: Type[BaseModel] = RetrievalAgentToolInput
-    retrieval_agent: Any = Field(exclude=True)
-    thread_id: str = Field(exclude=True)
-
-    def _run(self, query: str):
-        """Invoke the retrieval agent tool.
-
-        Args:
-            query: User query.
-
-        Returns:
-            Agent response output.
-        """
-        return self.retrieval_agent.invoke(query=query, session_id=self.thread_id)
 
 
 class SupervisorAgent(BaseAgent):
     """Supervisor agent that routes requests to tools."""
 
     def __init__(self) -> None:
-        self.retrieval_agent = RetrievalAgent()
-        
-        self.retrieve_tool = RetrievalAgentTool(retrieval_agent=self.retrieval_agent, thread_id="")
+        self.retrieve_tool = RetrievalAgentTool(thread_id="")
         
         tools = [self.retrieve_tool]
 
@@ -64,3 +41,5 @@ class SupervisorAgent(BaseAgent):
             {"input": query},
             config={"configurable": {"session_id": thread_id}},
         )
+
+supervisor = SupervisorAgent()

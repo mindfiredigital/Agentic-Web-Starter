@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from app.config.log_config import logger
 from app.routes.health import router as health_router
-from app.routes.chat import router as chat_router
+from app.routes.chat_route import router as chat_router
 from app.routes.ingestion import router as ingestion_router
 from app.config.env_config import settings
 from app.constants.app_constants import Environment
@@ -29,7 +29,7 @@ def start_application():
         allow_headers=["*"],
     )
     api_v1 = APIRouter(prefix="/api/v1")
-    api_v1.include_router(health_router)
+    # api_v1.include_router(health_router) remove from here
     api_v1.include_router(chat_router)
     api_v1.include_router(ingestion_router)
     app.include_router(api_v1)

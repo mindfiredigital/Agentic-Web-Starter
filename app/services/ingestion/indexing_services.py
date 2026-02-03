@@ -5,7 +5,7 @@ from langchain_qdrant import QdrantVectorStore
 from app.config.log_config import logger
 from app.services.vector_store.qdrant_store import build_vectordb, get_collection_name_with_model
 
-
+# call qdrant repository which repositories folder
 class Indexer:
     """Qdrant-backed indexer for embedding chunks."""
 

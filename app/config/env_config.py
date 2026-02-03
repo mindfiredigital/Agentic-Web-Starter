@@ -20,10 +20,11 @@ class Settings:
 
         self.QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
         self.QDRANT_PORT = os.getenv("QDRANT_PORT", "6333")
+        self.QDRANT_PROTOCOL = os.getenv("QDRANT_PROTOCOL", "http")
         
         self.REDIS_HOST = os.getenv("REDIS_HOST", "redis")
         self.REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+        self.REDIS_PROTOCOL = os.getenv("REDIS_PROTOCOL", "http")
         self.REDIS_DB = os.getenv("REDIS_DB", "0")
-
         
 settings = Settings()

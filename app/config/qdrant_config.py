@@ -11,11 +11,12 @@ class QdrantConfig:
         self.host = settings.QDRANT_HOST
         self.port = settings.QDRANT_PORT
         self.collection_name = VECTOR_DB.COLLECTION_NAME.value
-
+        self.protocol = settings.QDRANT_PROTOCOL
+        
     def get_qdrant_client(self):
         """Create and return a Qdrant client."""
         return QdrantClient(host=self.host, port=self.port)
 
     def get_qdrant_url(self):
         """Return Qdrant URL string."""
-        return f"http://{self.host}:{self.port}"
+        return f"{settings.QDRANT_PROTOCOL}://{self.host}:{self.port}"

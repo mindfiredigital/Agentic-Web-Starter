@@ -1,8 +1,11 @@
 from fastapi import Request, APIRouter, HTTPException, status
 from app.config.log_config import logger
-from app.schemas.health import HealthResponse
+from pydantic import BaseModel, Field
 
 router = APIRouter()
+
+class HealthResponse(BaseModel):
+    message: str = Field(..., description="Health status message")
 
 @router.get("/health", response_model=HealthResponse)
 async def health_check(request: Request):
@@ -16,7 +19,7 @@ async def health_check(request: Request):
     """
     try:
         logger.info(f"Health check: {request.url}")
-        return {"message": "Up and running"}
+        return HealthResponse(message="Up and running")
     except HTTPException:
         raise
     except Exception as exc:
