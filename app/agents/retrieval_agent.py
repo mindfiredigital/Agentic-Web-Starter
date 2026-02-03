@@ -1,11 +1,12 @@
-from typing import List, Optional
+from typing import List, Optional, Type
 
 from langchain_openai import ChatOpenAI
 from langchain.tools import BaseTool
+from pydantic import BaseModel, Field
 
 from app.constants.app_constants import VECTOR_DB
 from app.prompts.retrieval_prompt import RETRIEVAL_PROMPT
-from app.services.agent.base_agent import BaseAgent
+from app.agents.base_agent import BaseAgent
 from app.services.llm.chat_client import ChatClient
 from app.tools.retrieve_documents import RetrieveDocumentsTool
 

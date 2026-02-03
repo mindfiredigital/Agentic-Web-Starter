@@ -1,14 +1,10 @@
 from typing import Optional, Any, Type
 
-from pydantic import BaseModel, Field
-from langchain_openai import ChatOpenAI
-from langchain.tools import BaseTool
-
-from app.agents.retrieval_agent import RetrievalAgent, RetrievalAgentTool 
+from app.agents.base_agent import BaseAgent
+from app.agents.retrieval_agent import RetrievalAgentTool 
 from app.prompts.supervisor_prompt import SUPERVISOR_PROMPT
-from app.services.agent.base_agent import BaseAgent
 from app.services.llm.chat_client import ChatClient
-
+from app.services.memory.redis_history import RedisHistory
 
 
 class SupervisorAgent(BaseAgent):

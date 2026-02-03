@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
 
-from app.agents.supervisor import SupervisorAgent
+from app.agents.supervisor_agent import supervisor
 from app.config.log_config import logger
 from app.schemas.chat import ChatRequest, ChatResponse
 
