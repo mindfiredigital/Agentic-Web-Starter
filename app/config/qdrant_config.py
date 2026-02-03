@@ -15,7 +15,8 @@ class QdrantConfig:
         
     def get_qdrant_client(self):
         """Create and return a Qdrant client."""
-        return QdrantClient(host=self.host, port=self.port)
+        https = self.protocol == "https"
+        return QdrantClient(host=self.host, port=self.port, https=https)
 
     def get_qdrant_url(self):
         """Return Qdrant URL string."""
