@@ -40,7 +40,7 @@ agentic_rag_template/
    cp env.example .env
    ```
 2. Update values in `.env` as needed:
-   - `OPENAI_API_KEY` (required for chat/embeddings)
+   - `OPENAI_API_KEY` or `GEMINI_API_KEY` (at least one required for chat)
    - `QDRANT_HOST`, `QDRANT_PORT` (default: `qdrant:6333` for Docker)
    - `REDIS_HOST`, `REDIS_PORT` (default: `redis:6379` for Docker)
 

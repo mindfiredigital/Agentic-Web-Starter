@@ -5,8 +5,8 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import BaseTool
 
-from app.services.llm.chat_client import ChatClient
-from app.services.memory.redis_history import RedisHistory
+from app.llms.llm_factory import get_default_chat_client
+from app.utils.redis_utils import redis_history
 
 
 class BaseAgent:
@@ -20,10 +20,10 @@ class BaseAgent:
             tools: Tools available to the agent.
             system_prompt: System prompt string.
         """
-        self.llm = llm or ChatClient().create_client()
+        self.llm = llm or get_default_chat_client()
         self.tools = tools or []
         self.system_prompt = system_prompt
-        self.redis_history = RedisHistory()
+        self.redis_history = redis_history
         self.prompt = self.get_prompt()
         self.agent = self.get_agent()
         self.agent_executor = self.get_agent_executor()

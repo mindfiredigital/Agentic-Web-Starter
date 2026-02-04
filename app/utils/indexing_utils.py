@@ -3,8 +3,9 @@ from typing import List, Optional
 from langchain_qdrant import QdrantVectorStore
 
 from app.config.log_config import logger
-from app.services.vector_store.qdrant_store import build_vectordb, get_collection_name_with_model
 from app.config.qdrant_config import qdrant_config
+
+from app.repository.qdrant_repository import build_vectordb, get_collection_name_with_model
 
 # call qdrant repository which repositories folder
 class Indexer:

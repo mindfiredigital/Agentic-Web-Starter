@@ -3,8 +3,8 @@ from typing import Dict, Any, Optional
 from fastapi import UploadFile
 
 from app.config.log_config import logger
-from app.services.ingestion.file_processor import FileProcessor
-from app.tools.index_document import IndexDocumentTool
+from app.utils.file_utils import FileProcessor
+from app.tools.indexer_tool import IndexerTool
 
 class IngestionService:
     """Coordinate file storage and indexing."""
@@ -43,7 +43,7 @@ class IngestionService:
         if saved_path is None:
             saved_path = self.save_file()
 
-        index_tool = IndexDocumentTool(filepath=saved_path)
+        index_tool = IndexerTool(filepath=saved_path)
         index_result = index_tool._run()
 
         return {"saved_path": saved_path, "index_result": index_result}

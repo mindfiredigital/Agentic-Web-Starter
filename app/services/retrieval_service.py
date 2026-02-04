@@ -4,7 +4,7 @@ from langchain_qdrant import QdrantVectorStore
 
 from app.constants.app_constants import VECTOR_DB
 from app.config.log_config import logger
-from app.services.vector_store.qdrant_store import build_vectordb, get_collection_name_with_model
+from app.repository.qdrant_repository import build_vectordb, get_collection_name_with_model
 
 
 class VectorRetriever:

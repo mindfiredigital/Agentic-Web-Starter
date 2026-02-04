@@ -21,10 +21,16 @@ class ALLOWED_FILES(Enum):
     DOCX = ".docx"
     ALL_FILES = (".pdf", ".docx")
 
-class CHAT_MODEL(Enum):
+class OPENAI_CHAT_MODEL(Enum):
     """Chat model configuration."""
 
     MODEL_NAME = "gpt-4o-mini"
+    TEMPERATURE = 0.0
+
+class GEMINI_CHAT_MODEL(Enum):
+    """Gemini chat model configuration."""
+
+    MODEL_NAME = "gemini-2.5-flash"
     TEMPERATURE = 0.0
 
 class VECTOR_DB(Enum):

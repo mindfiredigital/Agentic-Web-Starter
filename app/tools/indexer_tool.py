@@ -2,10 +2,10 @@ from langchain.tools import BaseTool
 from typing import Type
 from pydantic import BaseModel, Field
 from app.constants.app_constants import VECTOR_DB
-from app.services.ingestion.text_processor import TextProcessor
-from app.services.ingestion.indexing_services import Indexer
+from app.utils.text_processing_utils import TextProcessor
+from app.utils.indexing_utils import Indexer
 
-class IndexDocumentTool(BaseTool):
+class IndexerTool(BaseTool):
     """Tool that indexes a document into the vector database."""
 
     name: str = "index_document"
