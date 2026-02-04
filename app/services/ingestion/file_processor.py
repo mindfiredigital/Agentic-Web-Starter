@@ -18,7 +18,7 @@ class FileProcessor:
         Returns:
             Filename string.
         """
-        return self.file.filename
+        return os.path.basename(self.file.filename)
 
     def get_file_extension(self)->str:
         """Return the uploaded file extension.
@@ -26,15 +26,7 @@ class FileProcessor:
         Returns:
             File extension string.
         """
-        return os.path.splitext(self.file.filename)[1].lower()
-
-    def get_file_size(self)->int:
-        """Return the uploaded file size.
-
-        Returns:
-            File size in bytes.
-        """
-        return os.path.getsize(self.file.filename)
+        return os.path.splitext(self.get_file_name())[1].lower()
 
     def get_file_path(self)->str:
         """Build a validated destination path for the upload.

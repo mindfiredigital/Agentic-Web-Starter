@@ -85,4 +85,5 @@ docker compose down
 
 ## Notes
 - Uploads/logs/vector data are stored under `WORKING_DIR` (default: current directory).
+- Hugging Face cache defaults to `WORKING_DIR/hf` unless `HF_HOME` is set.
 - The app requires Qdrant and Redis to be reachable at the configured host/port.

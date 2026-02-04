@@ -18,11 +18,7 @@ async def chat(request: ChatRequest):
         ChatResponse payload.
     """
     try:
-        result = supervisor.handle(thread_id=request.thread_id, query=request.query)
-        if isinstance(result, dict) and "output" in result:
-            answer = result["output"]
-        else:
-            answer = result
+        answer = supervisor.handle(thread_id=request.thread_id, query=request.query)
         return {"thread_id": request.thread_id, "answer": answer}
     except HTTPException:
         raise

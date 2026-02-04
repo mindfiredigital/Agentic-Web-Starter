@@ -1,10 +1,9 @@
-from typing import Optional, Any, Type
+from typing import Optional
 
 from app.agents.base_agent import BaseAgent
 from app.agents.retrieval_agent import RetrievalAgentTool 
 from app.prompts.supervisor_prompt import SUPERVISOR_PROMPT
-from app.services.llm.chat_client import ChatClient
-from app.services.memory.redis_history import RedisHistory
+from app.services.llm.chat_client import default_chat_client
 
 
 class SupervisorAgent(BaseAgent):
@@ -15,7 +14,7 @@ class SupervisorAgent(BaseAgent):
         
         tools = [self.retrieve_tool]
 
-        super().__init__(llm=ChatClient, tools=tools, system_prompt=SUPERVISOR_PROMPT)
+        super().__init__(llm=default_chat_client, tools=tools, system_prompt=SUPERVISOR_PROMPT)
 
     def handle(self, thread_id: str, query: Optional[str] = None) -> str:
         """Handle a user query with tool execution.
@@ -33,9 +32,12 @@ class SupervisorAgent(BaseAgent):
 
         self.retrieve_tool.thread_id = thread_id
 
-        return self.agent_with_memory.invoke(
+        result = self.agent_with_memory.invoke(
             {"input": query},
             config={"configurable": {"session_id": thread_id}},
         )
+        if isinstance(result, dict) and "output" in result:
+            return result["output"]
+        return result
 
 supervisor = SupervisorAgent()

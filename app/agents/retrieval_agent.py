@@ -1,13 +1,12 @@
 from typing import List, Optional, Type
 
-from langchain_openai import ChatOpenAI
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 
 from app.config.env_config import settings
 from app.prompts.retrieval_prompt import RETRIEVAL_PROMPT
 from app.agents.base_agent import BaseAgent
-from app.services.llm.chat_client import ChatClient
+from app.services.llm.chat_client import default_chat_client
 from app.tools.retrieve_documents import RetrieveDocumentsTool
 
 class RetrievalAgent(BaseAgent):
@@ -17,7 +16,7 @@ class RetrievalAgent(BaseAgent):
         
         tools = [RetrieveDocumentsTool(collection_name=settings.COLLECTION_NAME)]
         
-        super().__init__(llm=ChatClient, tools=tools, system_prompt=RETRIEVAL_PROMPT)
+        super().__init__(llm=default_chat_client, tools=tools, system_prompt=RETRIEVAL_PROMPT)
 
     def invoke(self, query: str, session_id: str):
         """Run the agent for a query and session.

@@ -1,5 +1,4 @@
 import os
-import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -16,19 +15,19 @@ class Settings:
         self.PROJECT_NAME: str = os.getenv("PROJECT_NAME")
         self.PROJECT_VERSION: str = os.getenv("PROJECT_VERSION")
         self.PROJECT_DESCRIPTION: str = os.getenv("PROJECT_DESCRIPTION")
+
         self.ALLOWED_ORIGINS: list[str] = os.getenv("ALLOWED_ORIGINS", "").split(",")
         self.BASE_PATH: str = os.getenv("BASE_PATH", "")
         self.OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
-        self.WORKING_DIR: str = working_dir
-        self.LOG_DIR: str = os.path.join(working_dir, "logs")
-        self.UPLOAD_DIR: str = os.path.join(working_dir, "app", "static", "uploads")
-        self.PERSIST_DIR: str = os.path.join(
-            working_dir,
-            "static",
-            "vector_db_stores",
-            "qdrant_store",
-        )
-        self.COLLECTION_NAME: str = os.getenv("COLLECTION_NAME", "agentic_rag_template")
+        
+        self.WORKING_PROJECT_DIR: str = os.path.join(working_dir,self.PROJECT_NAME)
+        self.LOG_DIR: str = os.path.join(self.WORKING_PROJECT_DIR, "logs")
+        self.UPLOAD_DIR: str = os.path.join(self.WORKING_PROJECT_DIR, "static", "uploads")
+        # self.PERSIST_DIR: str = os.path.join(self.WORKING_PROJECT_DIR, "static", "vector_db", "qdrant")
+        self.HF_HOME: str = os.getenv("HF_HOME", os.path.join(self.WORKING_PROJECT_DIR, "hf"))
+
+        self.COLLECTION_NAME: str = os.getenv("COLLECTION_NAME", "agentic_web_starter")
+        os.environ.setdefault("HF_HOME", self.HF_HOME)
 
         self.QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
         self.QDRANT_PORT = os.getenv("QDRANT_PORT", "6333")

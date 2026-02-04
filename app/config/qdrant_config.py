@@ -6,7 +6,7 @@ class QdrantConfig:
 
     def __init__(self):
         self.host = settings.QDRANT_HOST
-        self.port = settings.QDRANT_PORT
+        self.port = int(settings.QDRANT_PORT)
         self.collection_name = settings.COLLECTION_NAME
         self.protocol = settings.QDRANT_PROTOCOL
         
@@ -18,3 +18,5 @@ class QdrantConfig:
     def get_qdrant_url(self):
         """Return Qdrant URL string."""
         return f"{settings.QDRANT_PROTOCOL}://{self.host}:{self.port}"
+
+qdrant_config = QdrantConfig()

@@ -4,7 +4,7 @@ from langchain_qdrant import QdrantVectorStore
 from qdrant_client import models
 
 from app.config.log_config import logger
-from app.config.qdrant_config import QdrantConfig
+from app.config.qdrant_config import qdrant_config
 from app.constants.app_constants import VECTOR_DB
 from app.config.env_config import settings
 from app.services.llm.embeddings import embeddings_client
@@ -45,7 +45,6 @@ def build_vectordb(
     Raises:
         ValueError: If Qdrant is unavailable.
     """
-    qdrant_config = QdrantConfig()
     client = qdrant_config.get_qdrant_client()
     collection = collection_name or get_collection_name_with_model()
     existing_collections = client.get_collections().collections

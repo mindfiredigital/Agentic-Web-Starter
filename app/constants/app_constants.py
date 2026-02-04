@@ -14,9 +14,6 @@ class Environment(Enum):
     DEV = "dev"
     PROD = "prod"
     
-    LOG_DIR = "logs"
-    UPLOAD_DIR = "app/static/uploads"
-
 class ALLOWED_FILES(Enum):
     """Supported file extensions for ingestion."""
 
@@ -45,8 +42,11 @@ class VECTOR_DB(Enum):
     
     # EMBEDDING_MODEL = "all-MiniLM-L6-v2"
     # EMBEDDING_MODEL = "mixedbread-ai/mxbai-embed-large-v1"
-    EMBEDDING_MODEL = "BAAI/bge-m3"
-    PERSIST_DIR = "static/vector_db_stores/qdrant_store"
+    # EMBEDDING_MODEL = "BAAI/bge-m3"
+    EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+
+    
+    # PERSIST_DIR = "static/vector_db_stores/qdrant_store"
 
 
 
