@@ -6,7 +6,6 @@ from app.health import router as health_router
 from app.routes.chat_route import router as chat_router
 from app.routes.ingestion_route import router as ingestion_router
 from app.config.env_config import settings
-from app.constants.app_constants import Environment
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter
 
@@ -36,8 +35,8 @@ def start_application():
 
 
     # PATH HANDLING 
-    os.makedirs(Environment.UPLOAD_DIR.value, exist_ok=True)
-    os.makedirs(Environment.LOG_DIR.value, exist_ok=True)
+    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+    os.makedirs(settings.LOG_DIR, exist_ok=True)
 
     logger.info("Application started successfully")
 

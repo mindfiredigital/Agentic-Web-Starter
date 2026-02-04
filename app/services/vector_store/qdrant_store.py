@@ -6,6 +6,7 @@ from qdrant_client import models
 from app.config.log_config import logger
 from app.config.qdrant_config import QdrantConfig
 from app.constants.app_constants import VECTOR_DB
+from app.config.env_config import settings
 from app.services.llm.embeddings import embeddings_client
 
 
@@ -25,7 +26,7 @@ def _normalize_model_name(model_name: str) -> str:
 
 
 def get_collection_name_with_model() -> str:
-    base = VECTOR_DB.COLLECTION_NAME.value
+    base = settings.COLLECTION_NAME
     model = VECTOR_DB.EMBEDDING_MODEL.value
     return f"{base}_{_normalize_model_name(model)}"
 

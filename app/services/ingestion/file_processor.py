@@ -1,5 +1,6 @@
-import os 
-from app.constants.app_constants import Environment, ALLOWED_FILES
+import os
+from app.constants.app_constants import ALLOWED_FILES
+from app.config.env_config import settings
 from app.config.log_config import logger
 import shutil
 from fastapi import UploadFile, HTTPException
@@ -51,11 +52,11 @@ class FileProcessor:
             logger.error(f"Invalid file extension: {file_extension}")
             raise HTTPException(status_code=400, detail="Invalid file extension")
     
-        if not os.path.exists(Environment.UPLOAD_DIR.value):
-            logger.error("Upload directory not found: %s", Environment.UPLOAD_DIR.value)
+        if not os.path.exists(settings.UPLOAD_DIR):
+            logger.error("Upload directory not found: %s", settings.UPLOAD_DIR)
             raise HTTPException(status_code=500, detail="Upload directory is missing")
 
-        file_path = os.path.join(Environment.UPLOAD_DIR.value, file_name)
+        file_path = os.path.join(settings.UPLOAD_DIR, file_name)
         logger.info(f"File path: {file_path}")
 
         return file_path

@@ -84,5 +84,5 @@ docker compose down
 - `POST /api/v1/chat` - chat with retrieval augmentation
 
 ## Notes
-- Uploads are saved to `app/static/uploads` (created at startup).
+- Uploads/logs/vector data are stored under `WORKING_DIR` (default: current directory).
 - The app requires Qdrant and Redis to be reachable at the configured host/port.
