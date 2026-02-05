@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.agents.base_agent import BaseAgent
-from app.agents.retrieval_agent import RetrievalAgentTool 
+from app.agents.retriever_agent import RetrieverAgentTool 
 from app.prompts.supervisor_prompt import SUPERVISOR_PROMPT
 from app.llms.llm_factory import get_default_chat_client
 
@@ -10,7 +10,7 @@ class SupervisorAgent(BaseAgent):
     """Supervisor agent that routes requests to tools."""
 
     def __init__(self) -> None:
-        self.retrieve_tool = RetrievalAgentTool(thread_id="")
+        self.retrieve_tool = RetrieverAgentTool(thread_id="")
         
         tools = [self.retrieve_tool]
 
