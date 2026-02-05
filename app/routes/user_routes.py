@@ -1,0 +1,76 @@
+from typing import List
+
+from fastapi import APIRouter, Depends, status
+import sqlite3
+
+from app.repository.sqlite_repository import get_db
+from app.schemas.user import UserCreate, UserResponse, UserUpdate
+from app.services.user_service import UserService
+from app.utils.auth_deps import TokenPayload, get_current_user_payload
+
+
+router = APIRouter(prefix="/users", tags=["users"])
+
+
+@router.get("", response_model=List[UserResponse])
+def list_users(
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> List[UserResponse]:
+    service = UserService(db)
+    return service.list_users(role_ids=payload.role_ids)
+
+
+@router.get("/{user_id}", response_model=UserResponse)
+def get_user(
+    user_id: str,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> UserResponse:
+    service = UserService(db)
+    return service.get_user(user_id=user_id, role_ids=payload.role_ids)
+
+
+@router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+def create_user(
+    request: UserCreate,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> UserResponse:
+    service = UserService(db)
+    return service.create_user(
+        username=request.username,
+        email=request.email,
+        password=request.password,
+        current_user_id=payload.sub,
+        role_ids=payload.role_ids,
+    )
+
+
+@router.put("/{user_id}", response_model=UserResponse)
+def update_user(
+    user_id: str,
+    request: UserUpdate,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> UserResponse:
+    service = UserService(db)
+    return service.update_user(
+        user_id=user_id,
+        username=request.username,
+        email=request.email,
+        password=request.password,
+        current_user_id=payload.sub,
+        role_ids=payload.role_ids,
+    )
+
+
+@router.delete("/{user_id}", status_code=status.HTTP_200_OK)
+def delete_user(
+    user_id: str,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> dict:
+    service = UserService(db)
+    service.delete_user(user_id=user_id, role_ids=payload.role_ids)
+    return {"detail": "User deleted"}

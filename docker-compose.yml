@@ -6,6 +6,10 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      - DB_PATH=/app/data/app.db
+    volumes:
+      - ./sqlite_data:/app/data
     depends_on:
       - qdrant
       - redis

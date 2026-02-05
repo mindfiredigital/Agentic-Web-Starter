@@ -20,6 +20,12 @@ class Settings:
         self.BASE_PATH: str = os.getenv("BASE_PATH", "")
         self.OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
         self.GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY")
+
+        self.DB_PATH: str = os.getenv("DB_PATH", "./app.db")
+        
+        self.JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "change-me")
+        self.JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
+        self.JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
         
         self.WORKING_PROJECT_DIR: str = os.path.join(working_dir,self.PROJECT_NAME)
         self.LOG_DIR: str = os.path.join(self.WORKING_PROJECT_DIR, "logs")
