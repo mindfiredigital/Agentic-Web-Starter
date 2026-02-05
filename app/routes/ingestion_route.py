@@ -2,7 +2,7 @@ from fastapi import APIRouter, UploadFile, File, status, HTTPException, Depends
 
 from app.config.log_config import logger
 from app.services.ingestion_service import IngestionService
-from app.schemas.ingestion import IngestionResponse, IngestionRequest
+from app.schemas.ingestion_schema import IngestionResponse, IngestionRequest
 
 router = APIRouter()
 

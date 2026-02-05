@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
-from app.utils.jwt_utils import JWTError, decode_access_token
+from app.utils.jwt_utils import JWT_utils, JWTError
 
 
 security = HTTPBearer(auto_error=False)
@@ -24,7 +24,7 @@ def get_current_user_payload(
             detail="Not authenticated",
         )
     try:
-        payload = decode_access_token(credentials.credentials)
+        payload = JWT_utils.decode_access_token(credentials.credentials)
     except JWTError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

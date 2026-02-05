@@ -19,7 +19,8 @@ from app.exceptions import (
     NotFoundError,
     PermissionDeniedError,
 )
-from app.repository.sqlite_repository import init_db
+from app.repository.sqlite_repository import init_db, _connect
+from app.services.auth_service import AuthService
 
 def start_application():
     """Create and configure the FastAPI application."""
@@ -32,7 +33,9 @@ def start_application():
         # contact = {"name":"Mindfire Solutions", "url":"https://www.mindfire.com", "email":"support@mindfire.com"},
     )
 
+    os.makedirs(os.path.dirname(settings.DB_PATH), exist_ok=True)
     init_db()
+    _bootstrap_admin_user()
 
     @app.exception_handler(AuthenticationError)
     async def authentication_error_handler(request: Request, exc: AuthenticationError):
@@ -74,3 +77,24 @@ def start_application():
     logger.info("Application started successfully")
 
     return app
+
+def _bootstrap_admin_user() -> None:
+    """Create the initial admin user from environment variables."""
+    if not settings.ADMIN_USERNAME or not settings.ADMIN_PASSWORD:
+        logger.info("Admin bootstrap skipped: ADMIN_USERNAME/PASSWORD not set")
+        return
+
+    db = _connect()
+    try:
+        service = AuthService(db)
+        created = service.bootstrap_admin(
+            username=settings.ADMIN_USERNAME,
+            email=settings.ADMIN_EMAIL,
+            password=settings.ADMIN_PASSWORD,
+        )
+        if created:
+            logger.info("Admin bootstrap completed")
+        else:
+            logger.info("Admin bootstrap skipped: users already exist")
+    finally:
+        db.close()

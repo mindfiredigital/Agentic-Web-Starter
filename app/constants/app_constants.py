@@ -51,9 +51,6 @@ class VECTOR_DB(Enum):
     # EMBEDDING_MODEL = "BAAI/bge-m3"
     EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
-    
-    # PERSIST_DIR = "static/vector_db_stores/qdrant_store"
-
 
 
 

@@ -5,8 +5,9 @@ import sqlite3
 from app.exceptions import DomainValidationError, NotFoundError, PermissionDeniedError
 from app.repository.acl_repository import ACLRepository
 from app.repository.component_repository import ComponentRepository
+from app.repository.role_repository import RoleRepository
 from app.repository.user_repository import UserRepository
-from app.services.security import hash_password
+from app.utils.auth_utils import auth_utils
 
 
 USER_COMPONENT_URI = "/api/v1/users"
@@ -18,6 +19,7 @@ class UserService:
     def __init__(self, db: sqlite3.Connection) -> None:
         self.db = db
         self.user_repo = UserRepository(db)
+        self.role_repo = RoleRepository(db)
         self.acl_repo = ACLRepository(db)
         self.component_repo = ComponentRepository(db)
 
@@ -42,13 +44,22 @@ class UserService:
         existing_user = self.user_repo.get_user_by_username(username)
         if existing_user:
             raise DomainValidationError("Username already exists")
-        hashed_password = hash_password(password)
-        return self.user_repo.create_user(
+        hashed_password = auth_utils.hash_password(password)
+        user = self.user_repo.create_user(
             username=username,
             email=email,
             hashed_password=hashed_password,
             created_by=current_user_id,
         )
+        default_role = self.role_repo.get_role_by_name("member")
+        if not default_role:
+            default_role = self.role_repo.create_role(
+                name="member",
+                description="Default member role",
+                created_by=current_user_id,
+            )
+        self.user_repo.add_role_to_user(user.id, default_role.id)
+        return user
 
     def get_user(self, user_id: str, role_ids: List[str]):
         self._ensure_access(role_ids)
@@ -75,7 +86,7 @@ class UserService:
             existing_user = self.user_repo.get_user_by_username(username)
             if existing_user and existing_user.id != user_id:
                 raise DomainValidationError("Username already exists")
-        hashed_password = hash_password(password) if password else None
+        hashed_password = auth_utils.hash_password(password) if password else None
         user = self.user_repo.update_user(
             user_id=user_id,
             username=username,

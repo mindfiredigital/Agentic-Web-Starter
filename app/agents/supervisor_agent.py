@@ -16,7 +16,7 @@ class SupervisorAgent(BaseAgent):
 
         super().__init__(llm=get_default_chat_client(), tools=tools, system_prompt=SUPERVISOR_PROMPT)
 
-    def handle(self, thread_id: str, query: Optional[str] = None) -> str:
+    def invoke(self, thread_id: str, query: Optional[str] = None) -> str:
         """Handle a user query with tool execution.
 
         Args:

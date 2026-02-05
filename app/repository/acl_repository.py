@@ -30,3 +30,14 @@ class ACLRepository:
 
         # Return the component IDs for the given roles.
         return [row[0] for row in rows]
+
+    def add_component_to_role(self, role_id: str, component_id: str) -> None:
+        """Map a role to a component."""
+        self.db.execute(
+            """
+            INSERT OR IGNORE INTO role_component_mapping (role_id, component_id)
+            VALUES (?, ?)
+            """,
+            (role_id, component_id),
+        )
+        self.db.commit()

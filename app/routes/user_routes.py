@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, status
 import sqlite3
 
 from app.repository.sqlite_repository import get_db
-from app.schemas.user import UserCreate, UserResponse, UserUpdate
+from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from app.services.user_service import UserService
 from app.utils.auth_deps import TokenPayload, get_current_user_payload
 
@@ -12,7 +12,7 @@ from app.utils.auth_deps import TokenPayload, get_current_user_payload
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("", response_model=List[UserResponse])
+@router.get("/list_users", response_model=List[UserResponse])
 def list_users(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
@@ -21,7 +21,7 @@ def list_users(
     return service.list_users(role_ids=payload.role_ids)
 
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/get_user/{user_id}", response_model=UserResponse)
 def get_user(
     user_id: str,
     payload: TokenPayload = Depends(get_current_user_payload),
@@ -31,7 +31,7 @@ def get_user(
     return service.get_user(user_id=user_id, role_ids=payload.role_ids)
 
 
-@router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/create_user", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(
     request: UserCreate,
     payload: TokenPayload = Depends(get_current_user_payload),
@@ -47,7 +47,7 @@ def create_user(
     )
 
 
-@router.put("/{user_id}", response_model=UserResponse)
+@router.put("/update_user/{user_id}", response_model=UserResponse)
 def update_user(
     user_id: str,
     request: UserUpdate,
@@ -65,7 +65,7 @@ def update_user(
     )
 
 
-@router.delete("/{user_id}", status_code=status.HTTP_200_OK)
+@router.delete("/delete_user/{user_id}", status_code=status.HTTP_200_OK)
 def delete_user(
     user_id: str,
     payload: TokenPayload = Depends(get_current_user_payload),

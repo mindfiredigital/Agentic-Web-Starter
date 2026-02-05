@@ -1,6 +1,5 @@
 from app.config.env_config import settings
 
-
 def get_default_chat_client():
     """Return the default chat client based on available keys.
 

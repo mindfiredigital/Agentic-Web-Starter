@@ -11,6 +11,9 @@ app/static/*
 test_doc.pdf
 uploads/* 
 
+sqlite_data/
+
 logs/*
 PROJECT_INFO.md
 TODO_TABLE.md
+JWT_AUTH_AND_SQL_SETUP.md

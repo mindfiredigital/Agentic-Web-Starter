@@ -1,7 +1,5 @@
 import importlib
-
 from app.constants.app_constants import GEMINI_CHAT_MODEL
-
 
 class ChatClient:
     """Factory for Gemini chat model clients."""

@@ -2,12 +2,11 @@ from fastapi import APIRouter, Depends, status
 import sqlite3
 
 from app.repository.sqlite_repository import get_db
-from app.schemas.auth import LoginRequest, TokenResponse
+from app.schemas.auth_schema import LoginRequest, TokenResponse
 from app.services.auth_service import AuthService
 
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-
 
 @router.post("/login", response_model=TokenResponse, status_code=status.HTTP_200_OK)
 def login(request: LoginRequest, db: sqlite3.Connection = Depends(get_db)) -> TokenResponse:

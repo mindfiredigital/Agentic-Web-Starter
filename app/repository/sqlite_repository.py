@@ -17,7 +17,6 @@ def _connect() -> sqlite3.Connection:
     conn.execute("PRAGMA foreign_keys=ON;")
     return conn
 
-
 def get_db() -> Generator[sqlite3.Connection, None, None]:
     """Get a database connection."""
     db = _connect()
@@ -32,6 +31,7 @@ def init_db() -> None:
     db = _connect()
     try:
         cursor = db.cursor()
+
         # Create the users table.
         cursor.execute(
             """
@@ -47,6 +47,7 @@ def init_db() -> None:
             )
             """
         )
+
         # Create the roles table.
         cursor.execute(
             """
@@ -61,6 +62,8 @@ def init_db() -> None:
             )
             """
         )
+
+        # Create the components table.
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS components (
@@ -74,7 +77,8 @@ def init_db() -> None:
             )
             """
         )
-        # Create the role_component_mapping table.
+        
+        # Create the user_role_mapping table.
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS user_role_mapping (
@@ -86,7 +90,7 @@ def init_db() -> None:
             )
             """
         )
-        # Commit the changes.
+        # Create the role_component_mapping table.
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS role_component_mapping (

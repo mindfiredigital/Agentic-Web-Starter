@@ -87,6 +87,17 @@ class UserRepository:
         # Convert the database rows to a list of users.
         return self._rows_to_users(rows)
 
+    def add_role_to_user(self, user_id: str, role_id: str) -> None:
+        """Assign a role to a user."""
+        self.db.execute(
+            """
+            INSERT OR IGNORE INTO user_role_mapping (user_id, role_id)
+            VALUES (?, ?)
+            """,
+            (user_id, role_id),
+        )
+        self.db.commit()
+
     def update_user(
         self,
         user_id: str,
