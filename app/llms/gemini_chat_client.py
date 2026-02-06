@@ -1,7 +1,8 @@
 import importlib
 from app.constants.app_constants import GEMINI_CHAT_MODEL
-
-class ChatClient:
+from langchain_google_genai import ChatGoogleGenerativeAI
+from app.config.env_config import settings
+class GeminiChatClient:
     """Factory for Gemini chat model clients."""
 
     def __init__(self):
@@ -14,21 +15,12 @@ class ChatClient:
         Returns:
             ChatGoogleGenerativeAI instance.
         """
-        try:
-            module = importlib.import_module("langchain_google_genai")
-        except ImportError as exc:
-            raise ImportError(
-                "langchain-google-genai is required for Gemini chat client. "
-                "Install with `pip install langchain-google-genai`."
-            ) from exc
+        chat_client = ChatGoogleGenerativeAI(
+            model=self.model_name, 
+            temperature=self.temperature,
+            include_thoughts=True, 
+            google_api_key=settings.GEMINI_API_KEY
+        )
+        return chat_client
 
-        chat_client = getattr(module, "ChatGoogleGenerativeAI", None)
-        if chat_client is None:
-            raise ImportError(
-                "ChatGoogleGenerativeAI not found in langchain_google_genai."
-            )
-
-        return chat_client(model=self.model_name, temperature=self.temperature)
-
-
-default_chat_client = ChatClient().create_client()
+default_chat_client = GeminiChatClient().create_client()

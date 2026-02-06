@@ -7,7 +7,6 @@ from app.config.env_config import settings
 ENV = settings.ENV
 LOG_LEVEL = logging.DEBUG if ENV == "dev" else logging.INFO
 
-
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         log_entry = {

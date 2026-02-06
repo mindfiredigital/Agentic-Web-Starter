@@ -14,3 +14,4 @@ redis==5.0.8
 uvicorn==0.40.0
 PyJWT
 passlib[argon2]
+langchain-google-genai==1.0.8
