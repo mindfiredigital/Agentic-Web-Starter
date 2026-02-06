@@ -14,6 +14,21 @@ services:
       - qdrant
       - redis
 
+  tests:
+    build: .
+    container_name: agentic_rag_tests
+    command: >
+      sh -c "pytest -q app/tests"
+    env_file:
+      - .env
+    environment:
+      - WORKING_DIR=/app
+    volumes:
+      - ./sqlite_data:/app/sqlite_data
+    depends_on:
+      - qdrant
+      - redis
+
   qdrant:
     image: qdrant/qdrant:latest
     container_name: qdrant
