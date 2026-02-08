@@ -1,17 +1,63 @@
+# Virtual environments
 .venv/
+venv/
+env/
+
+# Python bytecode and caches
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 .Python
+*.egg
 *.egg-info/
+.eggs/
 dist/
 build/
+
+# Testing and linting
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-.git/
-.DS_Store
-node_modules/
-logs/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+app/tests/
 
+# Version control and OS
+.git/
+.gitignore
+.gitattributes
+.DS_Store
+Thumbs.db
+
+# IDE and editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local data and storage
+qdrant_storage/
+sqlite_data/
+uploads/
+logs/
+*.db
+*.sqlite
+
+# Documentation and notes (optional; remove if you want them in image)
+*.md
+PROJECT_INFO.md
+TODO_TABLE.md
+JWT_AUTH_AND_SQL_SETUP.md
+
+# Docker and compose (not needed inside image)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Misc
+*.ipynb
+*.pdf
+app/static/*

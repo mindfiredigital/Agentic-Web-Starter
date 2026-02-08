@@ -32,6 +32,7 @@ class RetrieverAgent(BaseAgent):
             config={"configurable": {"session_id": session_id}},
         )
 
+# TO USE AGENT AS A TOOL
 class RetrieverAgentToolInput(BaseModel):
     query: str = Field(description="The query to retrieve documents from the vector database")
 
