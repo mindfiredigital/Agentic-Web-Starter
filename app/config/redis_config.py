@@ -24,3 +24,5 @@ class RedisConfig:
         if scheme in {"http", "https"}:
             scheme = "redis"
         return f"{scheme}://{self.host}:{self.port}/{self.db}"
+
+redis_config = RedisConfig()

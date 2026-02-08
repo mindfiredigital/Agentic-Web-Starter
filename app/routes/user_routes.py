@@ -1,13 +1,12 @@
+import sqlite3
 from typing import List
 
 from fastapi import APIRouter, Depends, status
-import sqlite3
 
 from app.repository.sqlite_repository import get_db
 from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from app.services.user_service import UserService
 from app.utils.auth_deps import TokenPayload, get_current_user_payload
-
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -17,6 +16,7 @@ def list_users(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> List[UserResponse]:
+    """List users. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.list_users(role_ids=payload.role_ids)
 
@@ -27,6 +27,7 @@ def get_user(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> UserResponse:
+    """Get user by id. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.get_user(user_id=user_id, role_ids=payload.role_ids)
 
@@ -37,6 +38,7 @@ def create_user(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> UserResponse:
+    """Create user. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.create_user(
         username=request.username,
@@ -54,6 +56,7 @@ def update_user(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> UserResponse:
+    """Update user. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.update_user(
         user_id=user_id,
@@ -71,6 +74,7 @@ def delete_user(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> dict:
+    """Delete user. Exceptions handled by global handlers."""
     service = UserService(db)
     service.delete_user(user_id=user_id, role_ids=payload.role_ids)
     return {"detail": "User deleted"}

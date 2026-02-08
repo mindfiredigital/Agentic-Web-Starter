@@ -1,93 +1,151 @@
-## Agentic RAG Template
+# Agentic RAG Template
 
-FastAPI-based agentic RAG service with ingestion, retrieval, and chat routes,
-plus Qdrant vector search and Redis-backed chat history.
+FastAPI-based agentic RAG service with document ingestion, retrieval-augmented chat, JWT authentication, and user/role management. Uses Qdrant for vector search, Redis for chat history, and SQLite for users, roles, and ACLs.
 
 ## Features
-- File upload and ingestion into Qdrant
-- Retrieval for RAG workflows
-- Chat endpoint with prompt orchestration
-- Health check endpoint
+
+- **Document ingestion** — File upload and indexing into Qdrant with configurable embedding
+- **RAG chat** — Chat endpoint with retrieval augmentation and prompt orchestration
+- **Authentication** — JWT-based auth with optional admin user bootstrap
+- **User & role management** — CRUD for users and roles with SQLite persistence
+- **Global exception handling** — Consistent error responses (401, 403, 404, 422)
+- **Health check** — `/health` endpoint for liveness
+- **Tests** — Pytest suite runnable via Docker Compose
 
 ## Requirements
-- Python 3.10+ for local runs
-- Docker + Docker Compose for containerized runs
 
-## Project Structure
+- **Python 3.10+** for local runs
+- **Docker & Docker Compose** for containerized runs
+- **Qdrant** and **Redis** (included in Compose)
+
+## Project structure
+
 ```
 agentic_rag_template/
-├─ app/
-│  ├─ agents/                 # agent orchestration
-│  ├─ config/                 # env, logging, qdrant, redis configs
-│  ├─ constants/              # app constants
-│  ├─ prompts/                # prompt templates
-│  ├─ routes/                 # FastAPI routes
-│  ├─ schemas/                # Pydantic schemas
-│  ├─ services/               # ingestion, retrieval, llm, memory
-│  ├─ tools/                  # indexing and retrieving tools
-│  ├─ main.py                 # FastAPI app entry
-│  └─ starter.py              # app bootstrap
-├─ docker-compose.yml
-├─ Dockerfile
-├─ env.example
-├─ requirements.txt
-└─ README.md
+├── app/
+│   ├── agents/           # Retriever and supervisor agents
+│   ├── config/           # Env, logging, Qdrant, Redis config
+│   ├── constants/        # App constants
+│   ├── llms/             # OpenAI and Gemini chat clients
+│   ├── models/           # SQLAlchemy/SQLite models
+│   ├── prompts/         # Prompt templates
+│   ├── repository/      # Qdrant, SQLite, user, role, ACL repos
+│   ├── routes/           # Auth, chat, ingestion, users, roles
+│   ├── schemas/          # Pydantic request/response schemas
+│   ├── services/         # Auth, ingestion, retrieval, user, role
+│   ├── tools/            # Indexer and retriever tools
+│   ├── utils/            # Auth, JWT, embeddings, Redis, file utils
+│   ├── tests/            # Pytest tests
+│   ├── main.py           # FastAPI app entry (uses starter)
+│   └── starter.py        # App bootstrap, routers, exception handlers
+├── docker-compose.yml    # app, tests, qdrant, redis
+├── Dockerfile
+├── env.example
+├── requirements.txt
+└── README.md
 ```
 
 ## Setup
-1. Create an environment file:
-   ```
+
+1. **Copy environment file and set variables:**
+
+   ```bash
    cp env.example .env
    ```
-2. Update values in `.env` as needed:
-   - `OPENAI_API_KEY` or `GEMINI_API_KEY` (at least one required for chat)
-   - `QDRANT_HOST`, `QDRANT_PORT` (default: `qdrant:6333` for Docker)
-   - `REDIS_HOST`, `REDIS_PORT` (default: `redis:6379` for Docker)
 
-## Run With Docker (Recommended)
-This starts the API, Qdrant, and Redis in containers:
-```
+2. **Edit `.env` as needed:**
+
+   | Variable | Description |
+   |----------|-------------|
+   | `OPENAI_API_KEY` / `GEMINI_API_KEY` | At least one required for chat |
+   | `JWT_SECRET_KEY` | Secret for JWT signing (required for auth) |
+   | `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Optional; creates initial admin on first run |
+   | `QDRANT_HOST`, `QDRANT_PORT` | Default `qdrant:6333` in Docker |
+   | `REDIS_HOST`, `REDIS_PORT` | Default `redis:6379` in Docker |
+   | `WORKING_DIR` | Base path for uploads, logs, DB (default: current dir) |
+   | `COLLECTION_NAME` | Qdrant collection name (default: `agentic_web_starter`) |
+   | `ALLOWED_ORIGINS`, `BASE_PATH` | CORS and root path for the API |
+
+## Run with Docker (recommended)
+
+Starts the API, Qdrant, and Redis:
+
+```bash
 docker compose up --build
 ```
 
-The API runs with gunicorn (4 workers, uvicorn worker class) and is available at `http://localhost:8000`.
+API is served with Gunicorn (4 workers, uvicorn) at **http://localhost:8000**.
 
-To run in detached mode:
-```
-docker compose up -d --build
+- **Detached:** `docker compose up -d --build`
+- **Stop:** `docker compose down`
+
+**Run tests in Docker:**
+
+```bash
+docker compose run tests
 ```
 
-To stop:
-```
-docker compose down
-```
+SQLite data is persisted in `./sqlite_data`; Qdrant storage in `./qdrant_storage`.
 
-## Run Locally (API) + Docker (Dependencies)
-1. Start Qdrant and Redis:
-   ```
+## Run locally (API) with Docker dependencies
+
+1. **Start Qdrant and Redis:**
+
+   ```bash
    docker compose up -d qdrant redis
    ```
-2. Create a virtual environment and install dependencies:
-   ```
+
+2. **Create venv and install deps:**
+
+   ```bash
    python -m venv .venv
-   source .venv/bin/activate
+   source .venv/bin/activate   # Windows: .venv\Scripts\activate
    pip install -r requirements.txt
    ```
-3. Start the API (development with auto-reload):
-   ```
+
+3. **Start the API:**
+
+   ```bash
    uvicorn app.main:app --reload
    ```
-   Or with gunicorn (production-style, multiple workers):
-   ```
+
+   Or production-style with Gunicorn:
+
+   ```bash
    gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
    ```
 
-## API Endpoints
-- `GET /api/v1/health` - health check
-- `POST /api/v1/upload` - upload and ingest a document
-- `POST /api/v1/chat` - chat with retrieval augmentation
+4. **Run tests locally** (with Qdrant and Redis up):
+
+   ```bash
+   pytest -q app/tests
+   ```
+
+## API endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/health` | Health check |
+| `POST` | `/api/v1/auth/login` | Login (returns JWT) |
+| `POST` | `/api/v1/upload` | Upload and ingest document |
+| `POST` | `/api/v1/chat` | RAG chat |
+| `GET` | `/api/v1/users/list_users` | List users (auth) |
+| `GET` | `/api/v1/users/get_user/{user_id}` | Get user (auth) |
+| `POST` | `/api/v1/users/create_user` | Create user (auth) |
+| `PUT` | `/api/v1/users/update_user/{user_id}` | Update user (auth) |
+| `DELETE` | `/api/v1/users/delete_user/{user_id}` | Delete user (auth) |
+| `GET` | `/api/v1/roles/list_roles` | List roles (auth) |
+| `GET` | `/api/v1/roles/get_role/{role_id}` | Get role (auth) |
+| `POST` | `/api/v1/roles/create_role` | Create role (auth) |
+| `PUT` | `/api/v1/roles/update_role/{role_id}` | Update role (auth) |
+| `DELETE` | `/api/v1/roles/delete_role/{role_id}` | Delete role (auth) |
+
+Protected routes require a valid JWT in the `Authorization: Bearer <token>` header.
 
 ## Notes
-- Uploads/logs/vector data are stored under `WORKING_DIR` (default: current directory).
-- Hugging Face cache defaults to `WORKING_DIR/hf` unless `HF_HOME` is set.
-- The app requires Qdrant and Redis to be reachable at the configured host/port.
+
+- **SQLite** — User/role/ACL data is stored in `WORKING_DIR/sqlite_data/app.db` (e.g. `./sqlite_data/app.db` when using Docker volume).
+- **Admin bootstrap** — If `ADMIN_USERNAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` are set, the first run creates an admin user when no users exist.
+- **Uploads and logs** — Stored under `WORKING_DIR/<PROJECT_NAME>/static/uploads` and `.../logs`.
+- **Hugging Face** — Cache defaults to `WORKING_DIR/<PROJECT_NAME>/hf` unless `HF_HOME` is set.
+- **OpenAPI docs** — Available at `http://localhost:8000/docs` when the app is running.

@@ -1,10 +1,10 @@
 from langchain_community.chat_message_histories import RedisChatMessageHistory
-from app.config.redis_config import RedisConfig
+from app.config.redis_config import redis_config
 class RedisHistory:
     """Provide Redis-backed chat history instances."""
 
     def __init__(self):
-        self.redis_config = RedisConfig()
+        self.redis_config = redis_config
         self.redis_url = self.redis_config.get_redis_url()
     
     def get_redis_history(self, session_id: str, ttl: int = 600, key_prefix: str = "agent_chat:") -> RedisChatMessageHistory:

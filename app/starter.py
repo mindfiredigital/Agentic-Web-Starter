@@ -1,25 +1,22 @@
 import os
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+from app.config.env_config import settings
 from app.config.log_config import logger
+from app.exceptions import AppError
+from app.exceptions.handlers import app_error_handler, global_exception_handler, http_exception_handler, request_validation_handler
 from app.health import router as health_router
+from app.repository.sqlite_repository import _connect, init_db
+from app.routes.auth_route import router as auth_router
 from app.routes.chat_route import router as chat_router
 from app.routes.ingestion_route import router as ingestion_router
-from app.routes.auth_route import router as auth_router
-from app.routes.user_routes import router as user_router
 from app.routes.role_routes import router as role_router
-from app.config.env_config import settings
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi import APIRouter
-from fastapi.responses import JSONResponse
-
-from app.exceptions import (
-    AuthenticationError,
-    DomainValidationError,
-    NotFoundError,
-    PermissionDeniedError,
-)
-from app.repository.sqlite_repository import init_db, _connect
+from app.routes.user_routes import router as user_router
 from app.services.auth_service import AuthService
+from fastapi import APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 
 def start_application():
     """Create and configure the FastAPI application."""
@@ -33,24 +30,21 @@ def start_application():
     )
 
     os.makedirs(os.path.dirname(settings.DB_PATH), exist_ok=True)
-    init_db()
-    _bootstrap_admin_user()
+    try:
+        init_db()
+    except Exception as e:
+        logger.exception("Database initialization failed: %s", e)
+        raise
+    try:
+        _bootstrap_admin_user()
+    except Exception as e:
+        logger.exception("Admin bootstrap failed: %s", e)
+        raise
 
-    @app.exception_handler(AuthenticationError)
-    async def authentication_error_handler(request: Request, exc: AuthenticationError):
-        return JSONResponse(status_code=401, content={"detail": exc.message})
-
-    @app.exception_handler(PermissionDeniedError)
-    async def permission_error_handler(request: Request, exc: PermissionDeniedError):
-        return JSONResponse(status_code=403, content={"detail": exc.message})
-
-    @app.exception_handler(NotFoundError)
-    async def not_found_error_handler(request: Request, exc: NotFoundError):
-        return JSONResponse(status_code=404, content={"detail": exc.message})
-
-    @app.exception_handler(DomainValidationError)
-    async def validation_error_handler(request: Request, exc: DomainValidationError):
-        return JSONResponse(status_code=422, content={"detail": exc.message})
+    app.add_exception_handler(RequestValidationError, request_validation_handler)
+    app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+    app.add_exception_handler(AppError, app_error_handler)
+    app.add_exception_handler(Exception, global_exception_handler)
     
     app.add_middleware(
         CORSMiddleware,

@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 from typing import Generator
 
 from app.config.env_config import settings
+from app.config.log_config import logger
+from app.exceptions import InternalError
 
 
 def utc_now_iso() -> str:
@@ -28,7 +30,11 @@ def get_db() -> Generator[sqlite3.Connection, None, None]:
 
 def init_db() -> None:
     """Initialize the SQLite database."""
-    db = _connect()
+    try:
+        db = _connect()
+    except sqlite3.Error as e:
+        logger.exception("Database connection failed: %s", e)
+        raise InternalError("Database initialization failed") from e
     try:
         cursor = db.cursor()
 
@@ -102,9 +108,10 @@ def init_db() -> None:
             )
             """
         )
-        # Commit the changes.
         db.commit()
-    # Close the database connection.
+    except sqlite3.Error as e:
+        logger.exception("Database schema creation failed: %s", e)
+        raise InternalError("Database initialization failed") from e
     finally:
         db.close()
 

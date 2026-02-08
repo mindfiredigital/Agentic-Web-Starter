@@ -1,22 +1,21 @@
+import sqlite3
 from typing import List
 
 from fastapi import APIRouter, Depends, status
-import sqlite3
 
 from app.repository.sqlite_repository import get_db
 from app.schemas.role_schema import RoleCreate, RoleResponse, RoleUpdate
 from app.services.role_service import RoleService
 from app.utils.auth_deps import TokenPayload, get_current_user_payload
 
-
 router = APIRouter(prefix="/roles", tags=["roles"])
-
 
 @router.get("/list_roles", response_model=List[RoleResponse])
 def list_roles(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> List[RoleResponse]:
+    """List roles. Exceptions handled by global handlers."""
     service = RoleService(db)
     return service.list_roles(role_ids=payload.role_ids)
 
@@ -27,6 +26,7 @@ def get_role(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> RoleResponse:
+    """Get role by id. Exceptions handled by global handlers."""
     service = RoleService(db)
     return service.get_role(role_id=role_id, role_ids=payload.role_ids)
 
@@ -37,6 +37,7 @@ def create_role(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> RoleResponse:
+    """Create role. Exceptions handled by global handlers."""
     service = RoleService(db)
     return service.create_role(
         name=request.name,
@@ -53,6 +54,7 @@ def update_role(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> RoleResponse:
+    """Update role. Exceptions handled by global handlers."""
     service = RoleService(db)
     return service.update_role(
         role_id=role_id,
@@ -69,6 +71,7 @@ def delete_role(
     payload: TokenPayload = Depends(get_current_user_payload),
     db: sqlite3.Connection = Depends(get_db),
 ) -> dict:
+    """Delete role. Exceptions handled by global handlers."""
     service = RoleService(db)
     service.delete_role(role_id=role_id, role_ids=payload.role_ids)
     return {"detail": "Role deleted"}

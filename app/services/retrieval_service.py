@@ -1,9 +1,10 @@
-from typing import Optional, List
+from typing import List, Optional
 
 from langchain_qdrant import QdrantVectorStore
 
-from app.constants.app_constants import VECTOR_DB
 from app.config.log_config import logger
+from app.constants.app_constants import VECTOR_DB
+from app.exceptions import InternalError
 from app.repository.qdrant_repository import build_vectordb, get_collection_name_with_model
 
 
@@ -44,5 +45,5 @@ class VectorRetriever:
         try:
             return self.vectordb.similarity_search(query, k=self.top_k)
         except Exception as e:
-            logger.error("Error querying qdrant vectordb: %s", e)
-            raise ValueError(f"Error querying qdrant vectordb: {str(e)}") from e
+            logger.exception("Error querying qdrant vectordb: %s", e)
+            raise InternalError("Retrieval failed") from e

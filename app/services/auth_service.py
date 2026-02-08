@@ -1,6 +1,7 @@
 import sqlite3
 
-from app.exceptions import AuthenticationError, PermissionDeniedError
+from app.config.log_config import logger
+from app.exceptions import ConflictError, InternalError, UnauthorizedError
 from app.repository.acl_repository import ACLRepository
 from app.repository.component_repository import ComponentRepository
 from app.repository.role_repository import RoleRepository
@@ -21,58 +22,80 @@ class AuthService:
         self.acl_repo = ACLRepository(db)
         
     def login(self, username: str, password: str) -> str:
-        user = self.user_repo.get_user_by_username(username)
+        try:
+            user = self.user_repo.get_user_by_username(username)
+        except sqlite3.Error as e:
+            logger.exception("Database error during login: %s", e)
+            raise InternalError("Authentication failed") from e
 
         if not user or not auth_utils.verify_password(password, user.hashed_password):
-            raise AuthenticationError("Invalid credentials")
+            raise UnauthorizedError("Invalid credentials")
 
-        roles = self.user_repo.get_roles_for_user(user.id)
-        role_ids = [role.id for role in roles]
-        return JWT_utils.create_access_token(user_id=user.id, role_ids=role_ids)
+        try:
+            roles = self.user_repo.get_roles_for_user(user.id)
+            role_ids = [role.id for role in roles]
+            return JWT_utils.create_access_token(user_id=user.id, role_ids=role_ids)
+        except sqlite3.Error as e:
+            logger.exception("Database error during login: %s", e)
+            raise InternalError("Authentication failed") from e
 
     def bootstrap_admin(self, username: str, email: str | None, password: str) -> bool:
         """Create the initial admin user if no users exist."""
-        existing_users = self.user_repo.list_users()
+        try:
+            existing_users = self.user_repo.list_users()
+        except sqlite3.Error as e:
+            logger.exception("Database error during bootstrap: %s", e)
+            raise InternalError("Bootstrap failed") from e
+
         if existing_users:
             return False
 
-        existing_user = self.user_repo.get_user_by_username(username)
+        try:
+            existing_user = self.user_repo.get_user_by_username(username)
+        except sqlite3.Error as e:
+            logger.exception("Database error during bootstrap: %s", e)
+            raise InternalError("Bootstrap failed") from e
+
         if existing_user:
-            raise PermissionDeniedError("Username already exists")
+            raise ConflictError("Username already exists")
 
         hashed_password = auth_utils.hash_password(password)
-        user = self.user_repo.create_user(
-            username=username,
-            email=email,
-            hashed_password=hashed_password,
-        )
-
-        admin_role = self.role_repo.get_role_by_name("admin")
-        if not admin_role:
-            admin_role = self.role_repo.create_role(
-                name="admin",
-                description="Initial administrator role",
-                created_by=user.id,
+        try:
+            user = self.user_repo.create_user(
+                username=username,
+                email=email,
+                hashed_password=hashed_password,
             )
 
-        users_component = self.component_repo.get_component_by_uri(USER_COMPONENT_URI)
-        if not users_component:
-            users_component = self.component_repo.create_component(
-                name="users",
-                component_uri=USER_COMPONENT_URI,
-                created_by=user.id,
-            )
+            admin_role = self.role_repo.get_role_by_name("admin")
+            if not admin_role:
+                admin_role = self.role_repo.create_role(
+                    name="admin",
+                    description="Initial administrator role",
+                    created_by=user.id,
+                )
 
-        roles_component = self.component_repo.get_component_by_uri(ROLE_COMPONENT_URI)
-        if not roles_component:
-            roles_component = self.component_repo.create_component(
-                name="roles",
-                component_uri=ROLE_COMPONENT_URI,
-                created_by=user.id,
-            )
+            users_component = self.component_repo.get_component_by_uri(USER_COMPONENT_URI)
+            if not users_component:
+                users_component = self.component_repo.create_component(
+                    name="users",
+                    component_uri=USER_COMPONENT_URI,
+                    created_by=user.id,
+                )
 
-        self.user_repo.add_role_to_user(user.id, admin_role.id)
-        self.acl_repo.add_component_to_role(admin_role.id, users_component.id)
-        self.acl_repo.add_component_to_role(admin_role.id, roles_component.id)
+            roles_component = self.component_repo.get_component_by_uri(ROLE_COMPONENT_URI)
+            if not roles_component:
+                roles_component = self.component_repo.create_component(
+                    name="roles",
+                    component_uri=ROLE_COMPONENT_URI,
+                    created_by=user.id,
+                )
+
+            self.user_repo.add_role_to_user(user.id, admin_role.id)
+            self.acl_repo.add_component_to_role(admin_role.id, users_component.id)
+            self.acl_repo.add_component_to_role(admin_role.id, roles_component.id)
+        except sqlite3.Error as e:
+            logger.exception("Database error during bootstrap: %s", e)
+            raise InternalError("Bootstrap failed") from e
 
         return True
