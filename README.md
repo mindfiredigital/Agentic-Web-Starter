@@ -50,7 +50,7 @@ This starts the API, Qdrant, and Redis in containers:
 docker compose up --build
 ```
 
-The API will be available at `http://localhost:8000`.
+The API runs with gunicorn (4 workers, uvicorn worker class) and is available at `http://localhost:8000`.
 
 To run in detached mode:
 ```
@@ -73,9 +73,13 @@ docker compose down
    source .venv/bin/activate
    pip install -r requirements.txt
    ```
-3. Start the API:
+3. Start the API (development with auto-reload):
    ```
    uvicorn app.main:app --reload
+   ```
+   Or with gunicorn (production-style, multiple workers):
+   ```
+   gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
    ```
 
 ## API Endpoints

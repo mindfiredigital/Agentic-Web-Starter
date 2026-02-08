@@ -1,5 +1,4 @@
 import os
-import uvicorn
 from fastapi import FastAPI, Request
 from app.config.log_config import logger
 from app.health import router as health_router
