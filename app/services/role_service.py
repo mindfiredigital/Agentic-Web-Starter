@@ -4,13 +4,10 @@ import sqlite3
 
 from app.config.log_config import logger
 from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
-from app.repository.acl_repository import ACLRepository
-from app.repository.component_repository import ComponentRepository
-from app.repository.role_repository import RoleRepository
+from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository
 
 
 ROLE_COMPONENT_URI = "/api/v1/roles"
-
 
 class RoleService:
     """Role business logic with ACL enforcement."""

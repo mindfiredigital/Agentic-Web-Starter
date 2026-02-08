@@ -4,15 +4,11 @@ import sqlite3
 
 from app.config.log_config import logger
 from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
-from app.repository.acl_repository import ACLRepository
-from app.repository.component_repository import ComponentRepository
-from app.repository.role_repository import RoleRepository
-from app.repository.user_repository import UserRepository
-from app.utils.auth_utils import auth_utils
+from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
+from app.utils.auth import auth_utils
 
 
 USER_COMPONENT_URI = "/api/v1/users"
-
 
 class UserService:
     """User business logic with ACL enforcement."""

@@ -3,41 +3,30 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
-from app.repository.sqlite_repository import get_db
+from app.utils.database import get_db
 from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from app.services.user_service import UserService
-from app.utils.auth_deps import TokenPayload, get_current_user_payload
+from app.utils.auth import get_current_user_payload, TokenPayload
 
 router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.get("/list_users", response_model=List[UserResponse])
-def list_users(
-    payload: TokenPayload = Depends(get_current_user_payload),
-    db: sqlite3.Connection = Depends(get_db),
-) -> List[UserResponse]:
+def list_users(payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> List[UserResponse]:
     """List users. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.list_users(role_ids=payload.role_ids)
 
 
 @router.get("/get_user/{user_id}", response_model=UserResponse)
-def get_user(
-    user_id: str,
-    payload: TokenPayload = Depends(get_current_user_payload),
-    db: sqlite3.Connection = Depends(get_db),
-) -> UserResponse:
+def get_user(user_id: str, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> UserResponse:
     """Get user by id. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.get_user(user_id=user_id, role_ids=payload.role_ids)
 
 
 @router.post("/create_user", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def create_user(
-    request: UserCreate,
-    payload: TokenPayload = Depends(get_current_user_payload),
-    db: sqlite3.Connection = Depends(get_db),
-) -> UserResponse:
+def create_user(request: UserCreate, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> UserResponse:
     """Create user. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.create_user(
@@ -50,12 +39,7 @@ def create_user(
 
 
 @router.put("/update_user/{user_id}", response_model=UserResponse)
-def update_user(
-    user_id: str,
-    request: UserUpdate,
-    payload: TokenPayload = Depends(get_current_user_payload),
-    db: sqlite3.Connection = Depends(get_db),
-) -> UserResponse:
+def update_user(user_id: str, request: UserUpdate, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> UserResponse:
     """Update user. Exceptions handled by global handlers."""
     service = UserService(db)
     return service.update_user(
@@ -69,11 +53,7 @@ def update_user(
 
 
 @router.delete("/delete_user/{user_id}", status_code=status.HTTP_200_OK)
-def delete_user(
-    user_id: str,
-    payload: TokenPayload = Depends(get_current_user_payload),
-    db: sqlite3.Connection = Depends(get_db),
-) -> dict:
+def delete_user(user_id: str, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> dict:
     """Delete user. Exceptions handled by global handlers."""
     service = UserService(db)
     service.delete_user(user_id=user_id, role_ids=payload.role_ids)

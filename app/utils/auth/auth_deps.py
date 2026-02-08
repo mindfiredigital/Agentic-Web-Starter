@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
-from app.utils.jwt_utils import JWT_utils, JWTError
+from app.utils.auth.jwt_utils import JWT_utils, JWTError
 
 security = HTTPBearer(auto_error=False)
 

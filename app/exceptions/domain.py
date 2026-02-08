@@ -1,10 +1,3 @@
-"""Domain exception types and their HTTP response shape.
-
-All app-raised errors inherit from AppError and define status_code and code.
-Handlers use to_response_content() so the error payload is defined here.
-"""
-
-
 class AppError(Exception):
     """Base application error with HTTP status and error code."""
 

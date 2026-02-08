@@ -5,7 +5,7 @@ from fastapi import UploadFile
 from app.config.log_config import logger
 from app.exceptions import InternalError, ValidationError
 from app.tools.indexer_tool import IndexerTool
-from app.utils.file_utils import FileProcessor
+from app.utils.document import FileProcessor
 
 
 class IngestionService:

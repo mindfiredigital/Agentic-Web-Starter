@@ -3,16 +3,15 @@ from typing import List, Optional
 from langchain_qdrant import QdrantVectorStore
 
 from app.config.log_config import logger
-from app.config.qdrant_config import qdrant_config
-
-from app.repository.qdrant_repository import build_vectordb, get_collection_name_with_model
+from app.repository.vector_repository import qdrant_repository
 
 # call qdrant repository which repositories folder
 class Indexer:
     """Qdrant-backed indexer for embedding chunks."""
 
     def __init__(self):
-        self.collection_name = get_collection_name_with_model()
+        self.qdrant_repo = qdrant_repository
+        self.collection_name = self.qdrant_repo.get_collection_name_with_model()
         self.vectordb: Optional[QdrantVectorStore] = None
 
     def initialize_vectordb(self) -> QdrantVectorStore:
@@ -21,7 +20,7 @@ class Indexer:
         Returns:
             Initialized Qdrant vector store.
         """
-        self.vectordb = build_vectordb(collection_name=self.collection_name)
+        self.vectordb = self.qdrant_repo.build_vectordb(collection_name=self.collection_name)
 
         return self.vectordb
 
@@ -61,13 +60,12 @@ class Indexer:
         Returns:
             Metadata about the deletion.
         """
-        client = qdrant_config.get_qdrant_client()
-        if self.collection_name not in [col.name for col in client.get_collections().collections]:
+        if not self.qdrant_repo.collection_exists(self.collection_name):
             logger.warning("Collection %s not found; skipping deletion", self.collection_name)
             return
 
         try:
-            client.delete_collection(collection_name=self.collection_name)
+            self.qdrant_repo.delete_collection(collection_name=self.collection_name)
             logger.info("Vector database deleted successfully")
             return {"success": True, "collection_name": self.collection_name}
         except Exception as e:

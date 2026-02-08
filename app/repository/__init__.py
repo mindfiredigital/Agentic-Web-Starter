@@ -1,0 +1,30 @@
+"""Repository layer for data access.
+
+This module provides organized access to:
+- SQL: Relational database repositories
+- Vector: Vector database repositories for embeddings
+"""
+
+# SQL repositories
+from app.repository.sql_repository import (
+    BaseRepository,
+    UserRepository,
+    RoleRepository,
+    ComponentRepository,
+    ACLRepository,
+)
+
+# Vector repositories
+from app.repository.vector_repository import QdrantRepository, qdrant_repository
+
+__all__ = [
+    # SQL
+    "BaseRepository",
+    "UserRepository",
+    "RoleRepository",
+    "ComponentRepository",
+    "ACLRepository",
+    # Vector
+    "QdrantRepository",
+    "qdrant_repository",
+]

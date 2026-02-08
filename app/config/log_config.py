@@ -19,10 +19,13 @@ class JsonFormatter(logging.Formatter):
             "line": record.lineno,
             "env": ENV,
         }
+
         if record.exc_info:
             log_entry["exception"] = self.formatException(record.exc_info)
+
         if record.stack_info:
             log_entry["stack"] = self.formatStack(record.stack_info)
+            
         return json.dumps(log_entry, ensure_ascii=True)
 
 

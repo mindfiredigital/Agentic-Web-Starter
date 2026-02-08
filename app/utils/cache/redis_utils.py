@@ -1,5 +1,6 @@
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from app.config.redis_config import redis_config
+
 class RedisHistory:
     """Provide Redis-backed chat history instances."""
 

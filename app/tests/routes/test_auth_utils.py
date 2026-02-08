@@ -1,4 +1,4 @@
-from app.utils.auth_utils import auth_utils
+from app.utils.auth import auth_utils
 
 
 def test_hash_and_verify_password():

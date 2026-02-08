@@ -1,9 +1,3 @@
-"""Global exception handlers for production-ready error responses.
-
-Each handler turns a specific exception type into a JSONResponse.
-Domain errors (AppError) use the response shape from domain.to_response_content().
-"""
-
 import asyncio
 from fastapi import Request
 from fastapi.exceptions import RequestValidationError
@@ -14,9 +8,7 @@ from app.config.log_config import logger
 from app.exceptions.domain import AppError
 
 
-async def request_validation_handler(
-    request: Request, exc: RequestValidationError
-) -> JSONResponse:
+async def request_validation_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
     """Handle Pydantic request validation errors (422)."""
     return JSONResponse(
         status_code=422,
@@ -30,9 +22,7 @@ async def request_validation_handler(
         },
     )
 
-async def http_exception_handler(
-    request: Request, exc: StarletteHTTPException
-) -> JSONResponse:
+async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
     """Handle FastAPI/Starlette HTTPException."""
     status_code = exc.status_code
     detail = exc.detail
@@ -56,9 +46,7 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
     )
 
 
-async def global_exception_handler(
-    request: Request, exc: Exception
-) -> JSONResponse:
+async def global_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Catch-all for unhandled exceptions; log and return safe 500 response."""
     logger.exception(
         "Unhandled exception",
@@ -76,8 +64,6 @@ async def global_exception_handler(
     )
 
 
-async def cancelled_error_handler(
-    request: Request, exc: asyncio.CancelledError
-) -> None:
+async def cancelled_error_handler(request: Request, exc: asyncio.CancelledError) -> None:
     """Re-raise CancelledError so it is not logged as an unhandled exception."""
     raise exc

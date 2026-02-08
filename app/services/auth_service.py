@@ -2,14 +2,10 @@ import sqlite3
 
 from app.config.log_config import logger
 from app.exceptions import ConflictError, InternalError, UnauthorizedError
-from app.repository.acl_repository import ACLRepository
-from app.repository.component_repository import ComponentRepository
-from app.repository.role_repository import RoleRepository
-from app.repository.user_repository import UserRepository
+from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
 from app.services.role_service import ROLE_COMPONENT_URI
 from app.services.user_service import USER_COMPONENT_URI
-from app.utils.auth_utils import auth_utils
-from app.utils.jwt_utils import JWT_utils
+from app.utils.auth import auth_utils, JWT_utils
 
 class AuthService:
     """Authentication business logic."""

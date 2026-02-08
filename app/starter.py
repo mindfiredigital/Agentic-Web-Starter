@@ -8,7 +8,7 @@ from app.config.log_config import logger
 from app.exceptions import AppError
 from app.exceptions.handlers import app_error_handler, global_exception_handler, http_exception_handler, request_validation_handler
 from app.health import router as health_router
-from app.repository.sqlite_repository import _connect, init_db
+from app.utils.database import init_db, sqlite_db
 from app.routes.auth_route import router as auth_router
 from app.routes.chat_route import router as chat_router
 from app.routes.ingestion_route import router as ingestion_router
@@ -77,7 +77,7 @@ def _bootstrap_admin_user() -> None:
         logger.info("Admin bootstrap skipped: ADMIN_USERNAME/PASSWORD not set")
         return
 
-    db = _connect()
+    db = sqlite_db.connect()
     try:
         service = AuthService(db)
         created = service.bootstrap_admin(

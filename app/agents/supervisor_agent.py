@@ -16,6 +16,7 @@ class SupervisorAgent(BaseAgent):
         tools = [self.retrieve_tool]
         super().__init__(llm=get_default_chat_client(), tools=tools, system_prompt=SUPERVISOR_PROMPT)
 
+    
     def invoke(self, thread_id: str, query: Optional[str] = None) -> str:
         """Handle a user query with tool execution.
 
@@ -30,16 +31,21 @@ class SupervisorAgent(BaseAgent):
             raise ValidationError("Provide a query.")
 
         self.retrieve_tool.thread_id = thread_id
+
         try:
             result = self.agent_with_memory.invoke(
                 {"input": query},
                 config={"configurable": {"session_id": thread_id}},
             )
+
             if isinstance(result, dict) and "output" in result:
                 return result["output"]
+
             return result
+
         except (ValidationError, InternalError):
             raise
+
         except Exception as e:
             logger.exception("Chat/agent invocation failed: %s", e)
             raise InternalError("Chat request failed") from e
