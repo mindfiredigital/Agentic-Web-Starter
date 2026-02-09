@@ -5,7 +5,6 @@ from app.config.log_config import logger
 
 router = APIRouter()
 
-
 class HealthResponse(BaseModel):
     message: str = Field(..., description="Health status message")
 

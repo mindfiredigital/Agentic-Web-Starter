@@ -3,7 +3,7 @@ import importlib
 import pytest
 
 from app.config import env_config
-from app.utils.auth import jwt_utils
+from app.utils.iam_utils.auth import jwt_utils
 
 
 def test_create_and_decode_token(clear_env, set_env_vars):

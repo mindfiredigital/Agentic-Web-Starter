@@ -6,7 +6,7 @@ from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import BaseTool
 
 from app.llms.llm_factory import get_default_chat_client
-from app.utils.cache import redis_history
+from app.utils.core_utils.cache import redis_history
 
 
 class BaseAgent:

@@ -2,7 +2,7 @@ from langchain_core.tools import BaseTool
 from typing import Type
 from pydantic import BaseModel, Field
 from app.config.env_config import settings
-from app.services.retrieval_service import VectorRetriever
+from app.services.core_services.retrieval_service import VectorRetriever
 class RetrieverToolInput(BaseModel):
     query: str = Field(description="The query to retrieve documents from the vector database")
 class RetrieverTool(BaseTool):

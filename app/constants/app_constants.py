@@ -1,11 +1,5 @@
 from enum import Enum 
 
-class AppConstants(Enum):
-    """Generic application constants."""
-    HOST = "127.0.0.1"
-    PORT = 3000
-    RELOAD = True
-
 class Environment(Enum):
     """Environment names and path constants."""
     LOCAL = "local"
@@ -42,6 +36,13 @@ class VECTOR_DB(Enum):
 
     EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 
+
+class ROUTE_CONSTANTS(Enum):
+    """API route/path constants shared across the app."""
+
+    API_V1_PREFIX = "/api/v1"
+    USER_COMPONENT_URI = "/api/v1/users"
+    ROLE_COMPONENT_URI = "/api/v1/roles"
 
 
 

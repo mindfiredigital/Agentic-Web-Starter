@@ -1,5 +1,6 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -7,16 +8,15 @@ from app.config.env_config import settings
 from app.config.log_config import logger
 from app.exceptions import AppError
 from app.exceptions.handlers import app_error_handler, global_exception_handler, http_exception_handler, request_validation_handler
+
 from app.health import router as health_router
-from app.utils.database import init_db, sqlite_db
-from app.routes.auth_route import router as auth_router
-from app.routes.chat_route import router as chat_router
-from app.routes.ingestion_route import router as ingestion_router
-from app.routes.role_routes import router as role_router
-from app.routes.user_routes import router as user_router
-from app.services.auth_service import AuthService
-from fastapi import APIRouter
-from fastapi.middleware.cors import CORSMiddleware
+from app.utils.core_utils.database import init_db, sqlite_db
+
+from app.routes.iam_routes.router import router as iam_router
+from app.routes.core_routes.router import router as core_router
+
+from app.constants.app_constants import ROUTE_CONSTANTS
+from app.services.iam_services.auth_service import AuthService
 
 def start_application():
     """Create and configure the FastAPI application."""
@@ -29,7 +29,12 @@ def start_application():
         # contact = {"name":"Mindfire Solutions", "url":"https://www.mindfire.com", "email":"support@mindfire.com"},
     )
 
+    # PATH HANDLING 
     os.makedirs(os.path.dirname(settings.DB_PATH), exist_ok=True)
+    os.makedirs(os.path.dirname(settings.LOG_DIR), exist_ok=True)
+    os.makedirs(os.path.dirname(settings.UPLOAD_DIR), exist_ok=True)
+
+    # DATABASE INITIALIZATION
     try:
         init_db()
     except Exception as e:
@@ -41,11 +46,13 @@ def start_application():
         logger.exception("Admin bootstrap failed: %s", e)
         raise
 
+    # EXCEPTION HANDLERS
     app.add_exception_handler(RequestValidationError, request_validation_handler)
     app.add_exception_handler(StarletteHTTPException, http_exception_handler)
     app.add_exception_handler(AppError, app_error_handler)
     app.add_exception_handler(Exception, global_exception_handler)
     
+    # CORS MIDDLEWARE
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.ALLOWED_ORIGINS,
@@ -53,19 +60,13 @@ def start_application():
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # ROUTERS
     app.include_router(health_router)
-    api_v1 = APIRouter(prefix="/api/v1")
-    api_v1.include_router(auth_router)
-    api_v1.include_router(chat_router)
-    api_v1.include_router(ingestion_router)
-    api_v1.include_router(user_router)
-    api_v1.include_router(role_router)
+    api_v1 = APIRouter(prefix=ROUTE_CONSTANTS.API_V1_PREFIX.value)
+    api_v1.include_router(iam_router)
+    api_v1.include_router(core_router)
     app.include_router(api_v1)
-
-
-    # PATH HANDLING 
-    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-    os.makedirs(settings.LOG_DIR, exist_ok=True)
 
     logger.info("Application started successfully")
 

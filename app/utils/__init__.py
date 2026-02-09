@@ -7,8 +7,8 @@ This module provides organized utilities for:
 - Cache: Caching and session management
 """
 
-# Auth utilities
-from app.utils.auth import (
+# IAM auth utilities
+from app.utils.iam_utils.auth import (
     AuthUtils,
     auth_utils,
     JWTUtils,
@@ -19,7 +19,7 @@ from app.utils.auth import (
 )
 
 # Database utilities
-from app.utils.database import (
+from app.utils.core_utils.database import (
     SQLiteDatabase,
     sqlite_db,
     get_db,
@@ -28,7 +28,7 @@ from app.utils.database import (
 )
 
 # Document utilities
-from app.utils.document import (
+from app.utils.core_utils.document import (
     EmbeddingClient,
     embeddings_client,
     TextProcessor,
@@ -37,7 +37,7 @@ from app.utils.document import (
 )
 
 # Cache utilities
-from app.utils.cache import (
+from app.utils.core_utils.cache import (
     RedisHistory,
     redis_history,
 )

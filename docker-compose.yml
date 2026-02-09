@@ -7,12 +7,14 @@ services:
     env_file:
       - .env
     environment:
-      - WORKING_DIR=/app
+      # Use a stable container path, but persist to the host WORKING_DIR.
+      - WORKING_DIR=/workdir
       - GUNICORN_WORKERS=4
     command: >
-      sh -c "gunicorn app.main:app -w $${GUNICORN_WORKERS:-4} -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
+      sh -c "gunicorn app.main:app --preload -w $${GUNICORN_WORKERS:-4} -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
     volumes:
-      - ./sqlite_data:/app/sqlite_data
+      # Persist *everything* (uploads, logs, sqlite_data, etc.) under your host WORKING_DIR.
+      - ${WORKING_DIR:-./temp}:/workdir
     depends_on:
       - qdrant
       - redis
@@ -25,9 +27,9 @@ services:
     env_file:
       - .env
     environment:
-      - WORKING_DIR=/app
+      - WORKING_DIR=/workdir
     volumes:
-      - ./sqlite_data:/app/sqlite_data
+      - ${WORKING_DIR:-./temp}:/workdir
     depends_on:
       - qdrant
       - redis
@@ -39,7 +41,8 @@ services:
       - "6333:6333"
       - "6334:6334"
     volumes:
-      - ./qdrant_storage:/qdrant/storage
+      # Keep qdrant storage under the same host WORKING_DIR.
+      - ${WORKING_DIR:-./temp}/qdrant_storage:/qdrant/storage
 
   redis:
     image: redis:7-alpine

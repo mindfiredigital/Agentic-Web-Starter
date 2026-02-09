@@ -1,8 +1,9 @@
-import sqlite3
 import uuid
-from typing import Generic, List, Optional, Type, TypeVar
+import sqlite3
 from pydantic import BaseModel
-from app.utils.database import utc_now_iso
+from typing import Generic, List, Optional, Type, TypeVar
+
+from app.utils.core_utils.database import utc_now_iso
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -82,12 +83,7 @@ class BaseRepository(Generic[T]):
         rows = self.db.execute(query).fetchall()
         return self._rows_to_models(rows)
 
-    def update(
-        self,
-        id: str,
-        updated_by: Optional[str] = None,
-        **fields
-    ) -> Optional[T]:
+    def update(self, id: str, updated_by: Optional[str] = None, **fields) -> Optional[T]:
         """Update a record by ID.
         
         Args:
@@ -145,11 +141,7 @@ class BaseRepository(Generic[T]):
         self.db.commit()
         return record
 
-    def create(
-        self,
-        created_by: Optional[str] = None,
-        **fields
-    ) -> T:
+    def create(self, created_by: Optional[str] = None, **fields) -> T:
         """Create a new record.
         
         Args:

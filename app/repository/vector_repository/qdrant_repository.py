@@ -7,7 +7,7 @@ from app.config.log_config import logger
 from app.config.qdrant_config import qdrant_config
 from app.constants.app_constants import VECTOR_DB
 from app.config.env_config import settings
-from app.utils.document import embeddings_client
+from app.utils.core_utils.document import embeddings_client
 
 
 class QdrantRepository:
@@ -52,10 +52,7 @@ class QdrantRepository:
         model = VECTOR_DB.EMBEDDING_MODEL.value
         return f"{base}_{self._normalize_model_name(model)}"
 
-    def build_vectordb(
-        self,
-        collection_name: Optional[str] = None,
-    ) -> QdrantVectorStore:
+    def build_vectordb(self, collection_name: Optional[str] = None) -> QdrantVectorStore:
         """Create and return a Qdrant-backed vector store.
 
         Args:
