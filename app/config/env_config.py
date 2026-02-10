@@ -55,5 +55,15 @@ class Settings:
         self.REDIS_PORT = os.getenv("REDIS_PORT", "6379")
         self.REDIS_PROTOCOL = os.getenv("REDIS_PROTOCOL", "http")
         self.REDIS_DB = os.getenv("REDIS_DB", "0")
+
+        # 9. RabbitMQ configuration (optional)
+        self.USE_RABBITMQ_INGESTION: bool = os.getenv("USE_RABBITMQ_INGESTION", "false").strip().lower() in {"1", "true", "yes", "y", "on"}
+        self.RABBITMQ_HOST: str = os.getenv("RABBITMQ_HOST", "rabbitmq")
+        self.RABBITMQ_PORT: int = int(os.getenv("RABBITMQ_PORT", "5672"))
+        self.RABBITMQ_USERNAME: str = os.getenv("RABBITMQ_USERNAME", "guest")
+        self.RABBITMQ_PASSWORD: str = os.getenv("RABBITMQ_PASSWORD", "guest")
+        self.RABBITMQ_VHOST: str = os.getenv("RABBITMQ_VHOST", "/")
+        self.RABBITMQ_AMQP_URL: str | None = os.getenv("RABBITMQ_AMQP_URL", "").strip() or None
+        self.RABBITMQ_INGEST_QUEUE: str = os.getenv("RABBITMQ_INGEST_QUEUE", "agentic_web_starter.ingestion")
         
 settings = Settings()

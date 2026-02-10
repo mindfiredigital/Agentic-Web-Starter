@@ -1,0 +1,2 @@
+"""Queue utilities (RabbitMQ, etc.)."""
+

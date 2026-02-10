@@ -11,6 +11,7 @@ python-dotenv==1.2.1
 python-multipart==0.0.9
 qdrant_client==1.16.2
 redis==5.0.8
+aio-pika
 gunicorn==23.0.0
 uvicorn==0.40.0
 PyJWT

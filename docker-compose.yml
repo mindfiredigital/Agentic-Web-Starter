@@ -18,6 +18,7 @@ services:
     depends_on:
       - qdrant
       - redis
+      - rabbitmq
 
   tests:
     build: .
@@ -33,6 +34,24 @@ services:
     depends_on:
       - qdrant
       - redis
+      - rabbitmq
+
+  worker:
+    build: .
+    container_name: agentic_rag_worker
+    profiles: ["worker"]
+    command: >
+      sh -c "python -m app.workers.ingestion_worker"
+    env_file:
+      - .env
+    environment:
+      - WORKING_DIR=/workdir
+    volumes:
+      - ${WORKING_DIR:-./temp}:/workdir
+    depends_on:
+      - qdrant
+      - redis
+      - rabbitmq
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -49,3 +68,21 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-/}
+    volumes:
+      - ${WORKING_DIR:-./temp}/rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10

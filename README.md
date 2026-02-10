@@ -17,6 +17,7 @@ FastAPI-based agentic RAG service with document ingestion, retrieval-augmented c
 - **Python 3.10+** for local runs
 - **Docker & Docker Compose** for containerized runs
 - **Qdrant** and **Redis** (included in Compose)
+- **RabbitMQ** (optional; included in Compose)
 
 ## Project structure
 
@@ -62,13 +63,18 @@ agentic_rag_template/
    | `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Optional; creates initial admin on first run |
    | `QDRANT_HOST`, `QDRANT_PORT` | Default `qdrant:6333` in Docker |
    | `REDIS_HOST`, `REDIS_PORT` | Default `redis:6379` in Docker |
+   | `USE_RABBITMQ_INGESTION` | If `true`, `/api/v1/upload` queues ingestion instead of indexing inline |
+   | `RABBITMQ_HOST`, `RABBITMQ_PORT` | Default `rabbitmq:5672` in Docker |
+   | `RABBITMQ_USERNAME`, `RABBITMQ_PASSWORD` | RabbitMQ credentials (defaults: `guest/guest`) |
+   | `RABBITMQ_VHOST` / `RABBITMQ_AMQP_URL` | VHost or full AMQP URL override |
+   | `RABBITMQ_INGEST_QUEUE` | Queue name for async ingestion jobs |
    | `WORKING_DIR` | Base path for uploads, logs, DB (default: current dir) |
    | `COLLECTION_NAME` | Qdrant collection name (default: `agentic_web_starter`) |
    | `ALLOWED_ORIGINS`, `BASE_PATH` | CORS and root path for the API |
 
 ## Run with Docker (recommended)
 
-Starts the API, Qdrant, and Redis:
+Starts the API, Qdrant, Redis, and RabbitMQ:
 
 ```bash
 docker compose up --build
@@ -87,12 +93,20 @@ docker compose run tests
 
 SQLite data is persisted in `./sqlite_data`; Qdrant storage in `./qdrant_storage`.
 
+**Optional: run the ingestion worker (RabbitMQ consumer):**
+
+```bash
+docker compose --profile worker up --build worker
+```
+
+RabbitMQ management UI is available at `http://localhost:15672` (default login: `guest/guest`).
+
 ## Run locally (API) with Docker dependencies
 
-1. **Start Qdrant and Redis:**
+1. **Start Qdrant, Redis, and RabbitMQ:**
 
    ```bash
-   docker compose up -d qdrant redis
+   docker compose up -d qdrant redis rabbitmq
    ```
 
 2. **Create venv and install deps:**
