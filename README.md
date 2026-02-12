@@ -39,7 +39,7 @@ agentic_rag_template/
 │   ├── tests/            # Pytest tests
 │   ├── main.py           # FastAPI app entry (uses starter)
 │   └── starter.py        # App bootstrap, routers, exception handlers
-├── docker-compose.yml    # app, tests, qdrant, redis
+├── docker-compose.yml    # app, worker, tests, qdrant, redis, rabbitmq
 ├── Dockerfile
 ├── env.example
 ├── requirements.txt
@@ -74,7 +74,7 @@ agentic_rag_template/
 
 ## Run with Docker (recommended)
 
-Starts the API, Qdrant, Redis, and RabbitMQ:
+Starts the API, ingestion worker, Qdrant, Redis, and RabbitMQ:
 
 ```bash
 docker compose up --build
@@ -85,6 +85,16 @@ API is served with Gunicorn (4 workers, uvicorn) at **http://localhost:8000**.
 - **Detached:** `docker compose up -d --build`
 - **Stop:** `docker compose down`
 
+**Services included:**
+
+| Service | Description |
+|---------|-------------|
+| `app` | FastAPI API server |
+| `worker` | Ingestion worker — consumes RabbitMQ queue and indexes uploaded documents into Qdrant (required when `USE_RABBITMQ_INGESTION=true`) |
+| `qdrant` | Vector database |
+| `redis` | Chat history cache |
+| `rabbitmq` | Message queue for async ingestion |
+
 **Run tests in Docker:**
 
 ```bash
@@ -92,12 +102,6 @@ docker compose run tests
 ```
 
 SQLite data is persisted in `./sqlite_data`; Qdrant storage in `./qdrant_storage`.
-
-**Optional: run the ingestion worker (RabbitMQ consumer):**
-
-```bash
-docker compose --profile worker up --build worker
-```
 
 RabbitMQ management UI is available at `http://localhost:15672` (default login: `guest/guest`).
 
@@ -129,7 +133,13 @@ RabbitMQ management UI is available at `http://localhost:15672` (default login: 
    gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
    ```
 
-4. **Run tests locally** (with Qdrant and Redis up):
+4. **If using RabbitMQ ingestion** (`USE_RABBITMQ_INGESTION=true`), start the worker in a separate terminal:
+
+   ```bash
+   python -m app.workers.ingestion_worker
+   ```
+
+5. **Run tests locally** (with Qdrant and Redis up):
 
    ```bash
    pytest -q app/tests

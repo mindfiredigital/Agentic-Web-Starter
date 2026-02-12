@@ -39,7 +39,6 @@ services:
   worker:
     build: .
     container_name: agentic_rag_worker
-    profiles: ["worker"]
     command: >
       sh -c "python -m app.workers.ingestion_worker"
     env_file:
