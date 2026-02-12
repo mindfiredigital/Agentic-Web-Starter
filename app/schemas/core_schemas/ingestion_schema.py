@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class IngestionRequest(BaseModel):
+    """Request body for file ingestion endpoint."""
     file: UploadFile = Field(..., description="File to upload")
 
     class Config:
@@ -10,6 +11,7 @@ class IngestionRequest(BaseModel):
 
 
 class IngestionResponse(BaseModel):
+    """Response body for file ingestion endpoint."""
     message: str = Field(..., description="Upload status message")
     file_path: str = Field(..., description="Saved file path on server")
     filename: str = Field(..., description="Original filename")

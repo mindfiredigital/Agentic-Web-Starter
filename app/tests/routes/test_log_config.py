@@ -6,6 +6,7 @@ from app.config import env_config, log_config
 
 
 def test_json_formatter_includes_env(clear_env, set_env_vars):
+    """Verify JsonFormatter outputs JSON with message, level, and env."""
     importlib.reload(env_config)
     importlib.reload(log_config)
 
@@ -27,6 +28,7 @@ def test_json_formatter_includes_env(clear_env, set_env_vars):
 
 
 def test_log_level_from_env(clear_env, set_env_vars):
+    """Verify LOG_LEVEL is DEBUG when ENV is dev."""
     importlib.reload(env_config)
     importlib.reload(log_config)
 

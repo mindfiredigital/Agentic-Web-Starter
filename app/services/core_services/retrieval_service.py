@@ -11,7 +11,12 @@ from app.repository.vector_repository import qdrant_repository
 class VectorRetriever:
     """Qdrant-backed retriever for existing collections."""
 
-    def __init__(self, collection_name: Optional[str] = None):
+    def __init__(self, collection_name: Optional[str] = None) -> None:
+        """Initialize retriever with collection name.
+
+        Args:
+            collection_name: Optional collection override. Defaults to repo collection.
+        """
         self.qdrant_repo = qdrant_repository
         self.collection_name = collection_name or self.qdrant_repo.get_collection_name_with_model()
         self.vectordb: Optional[QdrantVectorStore] = None

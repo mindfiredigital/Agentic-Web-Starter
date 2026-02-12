@@ -12,13 +12,22 @@ class IngestionService:
     """Coordinate file storage and indexing."""
 
     def __init__(self, file: UploadFile) -> None:
+        """Initialize with uploaded file.
+
+        Args:
+            file: FastAPI UploadFile instance.
+        """
         self.file = file
 
     def save_file(self) -> str:
         """Save the file to the upload directory.
 
         Returns:
-            Saved file path.
+            Path where file was saved.
+
+        Raises:
+            ValidationError: If file save fails.
+            InternalError: If unexpected error occurs.
         """
         try:
             file_processor = FileProcessor(file=self.file)
@@ -37,10 +46,14 @@ class IngestionService:
         """Index the file into the vector database.
 
         Args:
-            saved_path: Optional pre-saved file path.
+            saved_path: Optional pre-saved file path. If None, saves file first.
 
         Returns:
-            Ingestion result with saved path and index metadata.
+            Dict with saved_path and index_result.
+
+        Raises:
+            ValidationError: If file handling fails.
+            InternalError: If ingestion/indexing fails.
         """
         try:
             if saved_path is None:

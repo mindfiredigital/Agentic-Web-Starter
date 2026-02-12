@@ -19,7 +19,11 @@ from app.constants.app_constants import ROUTE_CONSTANTS
 from app.services.iam_services.auth_service import AuthService
 
 def start_application():
-    """Create and configure the FastAPI application."""
+    """Create and configure the FastAPI application.
+
+    Returns:
+        Configured FastAPI app instance with middleware, routers, and DB init.
+    """
     logger.info("Starting application...")
     app = FastAPI(
         title = settings.PROJECT_NAME,
@@ -73,7 +77,10 @@ def start_application():
     return app
 
 def _bootstrap_admin_user() -> None:
-    """Create the initial admin user from environment variables."""
+    """Create the initial admin user from environment variables.
+
+    Skips if ADMIN_USERNAME or ADMIN_PASSWORD are not set, or if users already exist.
+    """
     if not settings.ADMIN_USERNAME or not settings.ADMIN_PASSWORD:
         logger.info("Admin bootstrap skipped: ADMIN_USERNAME/PASSWORD not set")
         return

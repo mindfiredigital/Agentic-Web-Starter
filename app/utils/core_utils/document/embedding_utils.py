@@ -7,11 +7,20 @@ from app.config.log_config import logger
 class EmbeddingClient:
     """Factory for embeddings clients."""
 
-    def __init__(self, embedding_model_name: str = VECTOR_DB.EMBEDDING_MODEL.value):
+    def __init__(self, embedding_model_name: str = VECTOR_DB.EMBEDDING_MODEL.value) -> None:
+        """Initialize the embedding client.
+
+        Args:
+            embedding_model_name: Hugging Face model name. Defaults to VECTOR_DB setting.
+        """
         self.embedding_model_name = embedding_model_name
 
     def create_embeddings(self):
-        """Create embeddings client for the vector database."""
+        """Create embeddings client for the vector database.
+
+        Returns:
+            HuggingFaceEmbeddings instance configured for the model.
+        """
         encode_kwargs = {"normalize_embeddings": True}
 
         logger.info("Loading embedding model %s (first run may download from Hugging Face)...", self.embedding_model_name)

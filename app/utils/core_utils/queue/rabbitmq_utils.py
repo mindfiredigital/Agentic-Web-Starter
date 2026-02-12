@@ -15,12 +15,23 @@ MessageHandler = Callable[[JsonDict, AbstractIncomingMessage], Awaitable[None]]
 
 
 async def _connect() -> AbstractRobustConnection:
+    """Establish a robust connection to RabbitMQ.
+
+    Returns:
+        AbstractRobustConnection: A connected RabbitMQ connection instance.
+    """
     amqp_url = rabbitmq_config.get_amqp_url()
     return await connect_robust(amqp_url)
 
 
 async def publish_json(queue_name: str, payload: JsonDict, *, persistent: bool = True) -> None:
-    """Publish a JSON message to a durable queue (default exchange)."""
+    """Publish a JSON message to a durable queue (default exchange).
+
+    Args:
+        queue_name: Name of the queue to publish to.
+        payload: JSON-serializable dict to publish as message body.
+        persistent: If True, message survives broker restart. Defaults to True.
+    """
     connection = await _connect()
     async with connection:
         channel = await connection.channel()
@@ -38,7 +49,13 @@ async def publish_json(queue_name: str, payload: JsonDict, *, persistent: bool =
 
 
 async def consume_json(queue_name: str, handler: MessageHandler, *, prefetch: int = 10) -> None:
-    """Consume JSON messages from a durable queue and call handler(payload, message)."""
+    """Consume JSON messages from a durable queue and call handler(payload, message).
+
+    Args:
+        queue_name: Name of the queue to consume from.
+        handler: Async callback invoked with (payload_dict, message) for each message.
+        prefetch: Maximum unacked messages per consumer. Defaults to 10.
+    """
     connection = await _connect()
     channel = await connection.channel()
     await channel.set_qos(prefetch_count=prefetch)
@@ -56,6 +73,15 @@ async def consume_json(queue_name: str, handler: MessageHandler, *, prefetch: in
 
 
 def _safe_json_loads(body: bytes) -> JsonDict:
+    """Decode bytes to JSON dict, with fallback for invalid payloads.
+
+    Args:
+        body: Raw message body bytes.
+
+    Returns:
+        Parsed dict, or {"_value": parsed} if parsed value is not dict,
+        or {"_raw": decoded_str} if JSON decode fails.
+    """
     try:
         parsed = json.loads(body.decode("utf-8"))
         if isinstance(parsed, dict):

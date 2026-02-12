@@ -10,13 +10,29 @@ router = APIRouter()
 
 
 def get_ingestion_request(file: UploadFile = File(...)) -> IngestionRequest:
-    """Create an ingestion request from an uploaded file."""
+    """Create an ingestion request from an uploaded file.
+
+    Args:
+        file: File uploaded via multipart form.
+
+    Returns:
+        IngestionRequest wrapping the file.
+    """
     return IngestionRequest(file=file)
 
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=IngestionResponse)
 async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)):
-    """Upload a file and index it. Exceptions handled by global handlers."""
+    """Upload a file and index it (or queue for async ingestion if RabbitMQ enabled).
+
+    Args:
+        request: IngestionRequest with uploaded file.
+
+    Returns:
+        IngestionResponse with message, file_path, and filename.
+
+    Exceptions handled by global handlers.
+    """
     file = request.file
     ingestion_service = IngestionService(file=file)
     if settings.USE_RABBITMQ_INGESTION:

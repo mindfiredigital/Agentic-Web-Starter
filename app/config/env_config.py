@@ -6,9 +6,8 @@ load_dotenv()
 class Settings:
     """Load and expose environment settings for the application."""
 
-    def __init__(self):
-        #  LOAD ENVIRONMENT VARIABLES
-
+    def __init__(self) -> None:
+        """Initialize settings from environment variables."""
         # 1. Project information
         self.ENV: str = os.getenv("ENV")
         self.PROJECT_NAME: str = os.getenv("PROJECT_NAME")

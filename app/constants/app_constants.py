@@ -1,5 +1,6 @@
-from enum import Enum 
+"""Application constants: env names, file types, model config, route paths."""
 
+from enum import Enum 
 class Environment(Enum):
     """Environment names and path constants."""
     LOCAL = "local"

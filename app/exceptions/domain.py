@@ -5,11 +5,23 @@ class AppError(Exception):
     code: str = "internal_error"
 
     def __init__(self, message: str) -> None:
+        """Initialize AppError with a message.
+
+        Args:
+            message: Human-readable error description.
+        """
         super().__init__(message)
         self.message = message
 
     def to_response_content(self, path: str) -> dict:
-        """Build the JSON body for this error (used by handlers)."""
+        """Build the JSON body for this error (used by handlers).
+
+        Args:
+            path: Request path for the response.
+
+        Returns:
+            Dict with error code, message, and path.
+        """
         return {
             "error": {"code": self.code, "message": self.message},
             "path": path,

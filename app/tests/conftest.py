@@ -1,3 +1,5 @@
+"""Pytest fixtures for application tests."""
+
 import importlib
 
 import pytest
@@ -34,12 +36,22 @@ ENV_VARS = [
 
 @pytest.fixture
 def clear_env(monkeypatch):
+    """Remove standard env vars so tests start with clean state."""
     for var in ENV_VARS:
         monkeypatch.delenv(var, raising=False)
 
 
 @pytest.fixture
 def set_env_vars(monkeypatch, tmp_path):
+    """Set required env vars for test runs.
+
+    Args:
+        monkeypatch: Pytest monkeypatch.
+        tmp_path: Temporary directory path.
+
+    Returns:
+        tmp_path for use by dependent fixtures.
+    """
     monkeypatch.setenv("ENV", "dev")
     monkeypatch.setenv("PROJECT_NAME", "TestProj")
     monkeypatch.setenv("PROJECT_VERSION", "1.0.0")
@@ -60,6 +72,7 @@ def set_env_vars(monkeypatch, tmp_path):
 
 @pytest.fixture
 def client(clear_env, set_env_vars, monkeypatch):
+    """Provide a TestClient for the FastAPI app with mocked DB init and bootstrap."""
     from app.config import env_config, log_config
 
     importlib.reload(env_config)

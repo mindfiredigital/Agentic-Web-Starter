@@ -1,3 +1,5 @@
+"""System prompt for the retrieval agent in the RAG pipeline."""
+
 RETRIEVAL_PROMPT = """
 You are a helpful assistant that can answer questions about the document.
 You are the retrieval part of the RAG pipeline.

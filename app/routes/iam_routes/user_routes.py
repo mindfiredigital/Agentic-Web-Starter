@@ -13,21 +13,53 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/list_users", response_model=List[UserResponse])
 def list_users(payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> List[UserResponse]:
-    """List users. Exceptions handled by global handlers."""
+    """List users (requires component access).
+
+    Args:
+        payload: Decoded JWT (injected).
+        db: Database connection (injected).
+
+    Returns:
+        List of UserResponse.
+
+    Exceptions handled by global handlers.
+    """
     service = UserService(db)
     return service.list_users(role_ids=payload.role_ids)
 
 
 @router.get("/get_user/{user_id}", response_model=UserResponse)
 def get_user(user_id: str, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> UserResponse:
-    """Get user by id. Exceptions handled by global handlers."""
+    """Get user by id.
+
+    Args:
+        user_id: User identifier.
+        payload: Decoded JWT (injected).
+        db: Database connection (injected).
+
+    Returns:
+        UserResponse for the user.
+
+    Exceptions handled by global handlers.
+    """
     service = UserService(db)
     return service.get_user(user_id=user_id, role_ids=payload.role_ids)
 
 
 @router.post("/create_user", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 def create_user(request: UserCreate, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> UserResponse:
-    """Create user. Exceptions handled by global handlers."""
+    """Create user.
+
+    Args:
+        request: UserCreate with username, email, password.
+        payload: Decoded JWT (injected).
+        db: Database connection (injected).
+
+    Returns:
+        UserResponse for created user.
+
+    Exceptions handled by global handlers.
+    """
     service = UserService(db)
     return service.create_user(
         username=request.username,
@@ -40,7 +72,19 @@ def create_user(request: UserCreate, payload: TokenPayload = Depends(get_current
 
 @router.put("/update_user/{user_id}", response_model=UserResponse)
 def update_user(user_id: str, request: UserUpdate, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> UserResponse:
-    """Update user. Exceptions handled by global handlers."""
+    """Update user.
+
+    Args:
+        user_id: User identifier.
+        request: UserUpdate with optional username, email, password.
+        payload: Decoded JWT (injected).
+        db: Database connection (injected).
+
+    Returns:
+        UserResponse for updated user.
+
+    Exceptions handled by global handlers.
+    """
     service = UserService(db)
     return service.update_user(
         user_id=user_id,
@@ -54,7 +98,18 @@ def update_user(user_id: str, request: UserUpdate, payload: TokenPayload = Depen
 
 @router.delete("/delete_user/{user_id}", status_code=status.HTTP_200_OK)
 def delete_user(user_id: str, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> dict:
-    """Delete user. Exceptions handled by global handlers."""
+    """Delete user.
+
+    Args:
+        user_id: User identifier.
+        payload: Decoded JWT (injected).
+        db: Database connection (injected).
+
+    Returns:
+        Dict with "detail": "User deleted".
+
+    Exceptions handled by global handlers.
+    """
     service = UserService(db)
     service.delete_user(user_id=user_id, role_ids=payload.role_ids)
     return {"detail": "User deleted"}

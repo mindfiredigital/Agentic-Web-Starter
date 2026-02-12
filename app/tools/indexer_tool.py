@@ -14,8 +14,10 @@ class IndexerTool(BaseTool):
     def _run(self):
         """Execute the indexing tool.
 
+        Loads document, splits into chunks, indexes into Qdrant.
+
         Returns:
-            Result of the indexing operation.
+            Dict with success status and collection_name, or None if no chunks.
         """
         text_processor = TextProcessor(file_path=self.filepath)
         

@@ -1,3 +1,5 @@
+"""System prompt for the supervisor agent that routes upload vs retrieve requests."""
+
 SUPERVISOR_PROMPT = """
 You are an autonomous supervisor agent for a RAG system.
 Decide whether to upload a file or retrieve an answer:

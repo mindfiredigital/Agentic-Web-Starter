@@ -4,10 +4,11 @@ from pydantic import BaseModel, Field
 from app.config.env_config import settings
 from app.services.core_services.retrieval_service import VectorRetriever
 class RetrieverToolInput(BaseModel):
+    """Input schema for the retriever tool."""
     query: str = Field(description="The query to retrieve documents from the vector database")
+
 class RetrieverTool(BaseTool):
     """Tool that retrieves documents from the vector database."""
-
     name: str = "retrieve_documents"
     description: str = "Retrieves documents from the vector database"
     args_schema: Type[BaseModel] = RetrieverToolInput

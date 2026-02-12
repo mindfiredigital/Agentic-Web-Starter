@@ -4,6 +4,8 @@ from pydantic import BaseModel, ConfigDict
 
 
 class User(BaseModel):
+    """User domain model for IAM."""
+
     model_config = ConfigDict(frozen=True)
 
     id: str
@@ -17,6 +19,8 @@ class User(BaseModel):
 
 
 class Role(BaseModel):
+    """Role domain model for IAM."""
+
     model_config = ConfigDict(frozen=True)
 
     id: str
@@ -29,6 +33,8 @@ class Role(BaseModel):
 
 
 class Component(BaseModel):
+    """Component (resource/feature) domain model for ACL."""
+
     model_config = ConfigDict(frozen=True)
 
     id: str

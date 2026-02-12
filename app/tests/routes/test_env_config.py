@@ -1,10 +1,9 @@
 import os
 import importlib
-
 from app.config import env_config
 
-
 def test_reads_from_env(clear_env, set_env_vars):
+    """Verify Settings loads values from environment."""
     importlib.reload(env_config)
     settings = env_config.Settings()
 
@@ -16,6 +15,7 @@ def test_reads_from_env(clear_env, set_env_vars):
 
 
 def test_paths_from_working_dir(clear_env, set_env_vars):
+    """Verify paths are derived from WORKING_DIR."""
     importlib.reload(env_config)
     settings = env_config.Settings()
 
@@ -27,6 +27,7 @@ def test_paths_from_working_dir(clear_env, set_env_vars):
 
 
 def test_defaults_when_missing(clear_env):
+    """Verify default values when env vars are absent."""
     importlib.reload(env_config)
     settings = env_config.Settings()
 
