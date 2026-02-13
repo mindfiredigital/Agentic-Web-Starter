@@ -64,7 +64,7 @@ agentic_rag_template/
    | `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Optional; creates initial admin on first run |
    | `QDRANT_HOST`, `QDRANT_PORT` | Default `qdrant:6333` in Docker |
    | `REDIS_HOST`, `REDIS_PORT` | Default `redis:6379` in Docker |
-   | `USE_RABBITMQ_INGESTION` | If `true`, `/api/v1/upload` queues ingestion instead of indexing inline |
+   | `USE_RABBITMQ` | If `true`, use message queue for async processing (ingestion, etc.); `/api/v1/upload` queues instead of indexing inline |
    | `RABBITMQ_HOST`, `RABBITMQ_PORT` | Default `rabbitmq:5672` in Docker |
    | `RABBITMQ_USERNAME`, `RABBITMQ_PASSWORD` | RabbitMQ credentials (defaults: `guest/guest`) |
    | `RABBITMQ_VHOST` / `RABBITMQ_AMQP_URL` | VHost or full AMQP URL override |
@@ -91,7 +91,7 @@ API is served with Gunicorn (4 workers, uvicorn) at **http://localhost:8000**.
 | Service | Description |
 |---------|-------------|
 | `app` | FastAPI API server |
-| `worker` | Ingestion worker — consumes RabbitMQ queue and indexes uploaded documents into Qdrant (required when `USE_RABBITMQ_INGESTION=true`) |
+| `worker` | Ingestion worker — consumes RabbitMQ queue and indexes uploaded documents into Qdrant (required when `USE_RABBITMQ=true`) |
 | `qdrant` | Vector database |
 | `redis` | Chat history cache |
 | `rabbitmq` | Message queue for async ingestion |
@@ -134,7 +134,7 @@ RabbitMQ management UI is available at `http://localhost:15672` (default login: 
    gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
    ```
 
-4. **If using RabbitMQ ingestion** (`USE_RABBITMQ_INGESTION=true`), start the worker in a separate terminal:
+4. **If using RabbitMQ** (`USE_RABBITMQ=true`), start the worker in a separate terminal:
 
    ```bash
    python -m app.workers.ingestion_worker

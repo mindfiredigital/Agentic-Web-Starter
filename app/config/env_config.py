@@ -56,7 +56,9 @@ class Settings:
         self.REDIS_DB = os.getenv("REDIS_DB", "0")
 
         # 9. RabbitMQ configuration (optional)
-        self.USE_RABBITMQ_INGESTION: bool = os.getenv("USE_RABBITMQ_INGESTION", "false").strip().lower() in {"1", "true", "yes", "y", "on"}
+        # Master switch for RabbitMQ; when true, uses queue for async processing (ingestion, etc.).
+        _use_mq = os.getenv("USE_RABBITMQ", "").strip().lower() or os.getenv("USE_RABBITMQ_INGESTION", "").strip().lower()
+        self.USE_RABBITMQ: bool = _use_mq in {"1", "true", "yes", "y", "on"}
         self.RABBITMQ_HOST: str = os.getenv("RABBITMQ_HOST", "rabbitmq")
         self.RABBITMQ_PORT: int = int(os.getenv("RABBITMQ_PORT", "5672"))
         self.RABBITMQ_USERNAME: str = os.getenv("RABBITMQ_USERNAME", "guest")

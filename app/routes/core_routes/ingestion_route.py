@@ -35,7 +35,7 @@ async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)
     """
     file = request.file
     ingestion_service = IngestionService(file=file)
-    if settings.USE_RABBITMQ_INGESTION:
+    if settings.USE_RABBITMQ:
         saved_path = ingestion_service.save_file()
         client = MessageQueueClient()
         await client.publish_json(
