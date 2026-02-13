@@ -3,8 +3,8 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
-from app.utils.core_utils.database import get_db
-from app.utils.iam_utils.auth import get_current_user_payload, TokenPayload
+from app.utils.core_utils import get_db
+from app.utils.iam_utils import get_current_user_payload, TokenPayload
 from app.services.iam_services.user_service import UserService
 from app.schemas.iam_schemas.user_schema import UserCreate, UserResponse, UserUpdate
 

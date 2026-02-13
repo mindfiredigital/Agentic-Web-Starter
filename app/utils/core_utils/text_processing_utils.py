@@ -69,4 +69,3 @@ class TextProcessor:
         """
         docs = self.load_documents()
         return self.split_documents(docs)
-

@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
 
 from app.config import env_config
-from app.utils.iam_utils.auth import auth_deps, jwt_utils
+from app.utils.iam_utils import auth_deps, jwt_utils
 
 
 def test_missing_credentials_raises(clear_env, set_env_vars):

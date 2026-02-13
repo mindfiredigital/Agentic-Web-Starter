@@ -2,7 +2,7 @@ import sqlite3
 
 from fastapi import APIRouter, Depends, status
 
-from app.utils.core_utils.database import get_db
+from app.utils.core_utils import get_db
 from app.services.iam_services.auth_service import AuthService
 from app.schemas.iam_schemas.auth_schema import LoginRequest, TokenResponse
 

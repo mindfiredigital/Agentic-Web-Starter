@@ -217,4 +217,3 @@ def init_db() -> None:
     Creates all required tables if they do not exist.
     """
     sqlite_db.initialize_schema()
-

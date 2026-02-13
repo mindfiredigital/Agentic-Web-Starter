@@ -5,7 +5,7 @@ from app.exceptions import ConflictError, InternalError, UnauthorizedError
 from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
 from app.services.iam_services.role_service import ROLE_COMPONENT_URI
 from app.services.iam_services.user_service import USER_COMPONENT_URI
-from app.utils.iam_utils.auth import auth_utils, JWT_utils
+from app.utils.iam_utils import auth_utils, JWT_utils
 
 
 class AuthService:

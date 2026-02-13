@@ -30,4 +30,3 @@ class RedisHistory:
 
 
 redis_history = RedisHistory()
-

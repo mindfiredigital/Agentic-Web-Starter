@@ -33,4 +33,3 @@ class AuthUtils:
 
 
 auth_utils = AuthUtils()
-

@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
-from app.utils.iam_utils.auth.jwt_utils import JWT_utils, JWTError
+from app.utils.iam_utils.jwt_utils import JWT_utils, JWTError
 
 security = HTTPBearer(auto_error=False)
 
@@ -57,4 +57,3 @@ def get_current_user_payload(credentials: HTTPAuthorizationCredentials = Depends
         )
 
     return TokenPayload(sub=user_id, role_ids=role_ids)
-

@@ -73,4 +73,3 @@ class JWTUtils:
 
 
 JWT_utils = JWTUtils()
-

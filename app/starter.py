@@ -10,7 +10,7 @@ from app.exceptions import AppError
 from app.exceptions.handlers import app_error_handler, global_exception_handler, http_exception_handler, request_validation_handler
 
 from app.health import router as health_router
-from app.utils.core_utils.database import init_db, sqlite_db
+from app.utils.core_utils import init_db, sqlite_db
 
 from app.routes.iam_routes.router import router as iam_router
 from app.routes.core_routes.router import router as core_router

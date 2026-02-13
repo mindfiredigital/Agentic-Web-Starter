@@ -5,7 +5,7 @@ import sqlite3
 from app.config.log_config import logger
 from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
 from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
-from app.utils.iam_utils.auth import auth_utils
+from app.utils.iam_utils import auth_utils
 from app.constants.app_constants import ROUTE_CONSTANTS
 
 USER_COMPONENT_URI = ROUTE_CONSTANTS.USER_COMPONENT_URI.value

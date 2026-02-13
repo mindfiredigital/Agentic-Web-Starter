@@ -34,4 +34,3 @@ class EmbeddingClient:
 
 
 embeddings_client = EmbeddingClient().create_embeddings()
-

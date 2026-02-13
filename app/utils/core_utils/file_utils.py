@@ -85,4 +85,3 @@ class FileProcessor:
         os.remove(file_path)
         logger.info(f"File deleted: {file_path}")
         return file_path
-

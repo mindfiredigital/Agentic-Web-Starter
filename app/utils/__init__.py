@@ -8,7 +8,7 @@ This module provides organized utilities for:
 """
 
 # IAM auth utilities
-from app.utils.iam_utils.auth import (
+from app.utils.iam_utils import (
     AuthUtils,
     auth_utils,
     JWTUtils,
@@ -18,26 +18,18 @@ from app.utils.iam_utils.auth import (
     get_current_user_payload,
 )
 
-# Database utilities
-from app.utils.core_utils.database import (
+# Core utilities (database, document, cache)
+from app.utils.core_utils import (
     SQLiteDatabase,
     sqlite_db,
     get_db,
     init_db,
     utc_now_iso,
-)
-
-# Document utilities
-from app.utils.core_utils.document import (
     EmbeddingClient,
     embeddings_client,
     TextProcessor,
     FileProcessor,
     Indexer,
-)
-
-# Cache utilities
-from app.utils.core_utils.cache import (
     RedisHistory,
     redis_history,
 )

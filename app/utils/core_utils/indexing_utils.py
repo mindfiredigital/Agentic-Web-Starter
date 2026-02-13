@@ -71,4 +71,3 @@ class Indexer:
         except Exception as e:
             logger.error("Error deleting vector database: %s", e)
             raise ValueError(f"Error deleting vector database: {str(e)}") from e
-
