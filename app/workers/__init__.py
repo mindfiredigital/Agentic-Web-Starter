@@ -1,2 +1,1 @@
-"""Background workers (RabbitMQ consumers, etc.)."""
-
+"""Background workers that consume from message queues."""

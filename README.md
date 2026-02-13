@@ -33,8 +33,9 @@ agentic_rag_template/
 │   ├── repository/      # Qdrant, SQLite, user, role, ACL repos
 │   ├── routes/           # Auth, chat, ingestion, users, roles
 │   ├── schemas/          # Pydantic request/response schemas
-│   ├── services/         # Auth, ingestion, retrieval, user, role
+│   ├── services/         # Auth, ingestion, retrieval, user, role, message_queue_services
 │   ├── tools/            # Indexer and retriever tools
+│   ├── workers/          # Background workers (ingestion consumer, etc.)
 │   ├── utils/            # Auth, JWT, embeddings, Redis, file utils
 │   ├── tests/            # Pytest tests
 │   ├── main.py           # FastAPI app entry (uses starter)

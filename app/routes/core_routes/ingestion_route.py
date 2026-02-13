@@ -4,7 +4,7 @@ from app.config.env_config import settings
 from app.config.log_config import logger
 from app.services.core_services.ingestion_service import IngestionService
 from app.schemas.core_schemas.ingestion_schema import IngestionRequest, IngestionResponse
-from app.utils.core_utils.queue.rabbitmq_utils import publish_json
+from app.services.message_queue_services.message_queue_client import MessageQueueClient
 
 router = APIRouter()
 
@@ -37,7 +37,8 @@ async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)
     ingestion_service = IngestionService(file=file)
     if settings.USE_RABBITMQ_INGESTION:
         saved_path = ingestion_service.save_file()
-        await publish_json(
+        client = MessageQueueClient()
+        await client.publish_json(
             settings.RABBITMQ_INGEST_QUEUE,
             {"saved_path": saved_path, "filename": file.filename},
         )
