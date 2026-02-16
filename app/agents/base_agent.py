@@ -6,8 +6,7 @@ from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import BaseTool
 
 from app.llms.llm_factory import get_default_chat_client
-from app.utils.core_utils.cache import redis_history
-
+from app.utils.core_utils.cache import message_history_factory
 
 class BaseAgent:
     """Base class for tool-calling agents with memory."""
@@ -23,7 +22,6 @@ class BaseAgent:
         self.llm = llm or get_default_chat_client()
         self.tools = tools or []
         self.system_prompt = system_prompt
-        self.redis_history = redis_history
         self.prompt = self.get_prompt()
         self.agent = self.get_agent()
         self.agent_executor = self.get_agent_executor()
@@ -57,10 +55,10 @@ class BaseAgent:
         )
     
     def get_agent_with_memory(self):
-        """Create the agent runnable with Redis-backed memory."""
+        """Create the agent runnable with configurable memory backend."""
         return RunnableWithMessageHistory(
             self.agent_executor,
-            self.redis_history.get_redis_history,
+            message_history_factory,
             input_messages_key="input",
             history_messages_key="chat_history",
             output_messages_key="output",

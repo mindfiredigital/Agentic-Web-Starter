@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Settings:
     """Load and expose environment settings for the application."""
 
@@ -45,6 +46,9 @@ class Settings:
 
         # 7. Qdrant configuration
         self.COLLECTION_NAME: str = os.getenv("COLLECTION_NAME", "agentic_web_starter")
+        self.USE_QDRANT: bool = os.getenv("USE_QDRANT", "true").strip().lower() == "true"
+        self.USE_REDIS: bool = os.getenv("USE_REDIS", "true").strip().lower() == "true"
+        self.USE_SQL: bool = os.getenv("USE_SQL", "true").strip().lower() == "true"
 
         self.QDRANT_HOST = os.getenv("QDRANT_HOST", "qdrant")
         self.QDRANT_PORT = os.getenv("QDRANT_PORT", "6333")
@@ -57,7 +61,7 @@ class Settings:
         self.REDIS_DB = os.getenv("REDIS_DB", "0")
 
         # 9. RabbitMQ configuration (optional)
-        self.USE_RABBITMQ_INGESTION: bool = os.getenv("USE_RABBITMQ_INGESTION", "false").strip().lower() in {"1", "true", "yes", "y", "on"}
+        self.USE_RABBITMQ: bool = os.getenv("USE_RABBITMQ", "true").strip().lower() == "true"
         self.RABBITMQ_HOST: str = os.getenv("RABBITMQ_HOST", "rabbitmq")
         self.RABBITMQ_PORT: int = int(os.getenv("RABBITMQ_PORT", "5672"))
         self.RABBITMQ_USERNAME: str = os.getenv("RABBITMQ_USERNAME", "guest")

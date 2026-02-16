@@ -49,3 +49,7 @@ class VectorRetriever:
             logger.exception("Error querying qdrant vectordb: %s", e)
             raise InternalError("Retrieval failed") from e
 
+
+# Singleton for use when USE_QDRANT (or other vector backend) is enabled.
+vector_retriever = VectorRetriever()
+

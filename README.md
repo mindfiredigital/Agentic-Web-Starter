@@ -1,13 +1,14 @@
 # Agentic RAG Template
 
-FastAPI-based agentic RAG service with document ingestion, retrieval-augmented chat, JWT authentication, and user/role management. Uses Qdrant for vector search, Redis for chat history, and SQLite for users, roles, and ACLs.
+FastAPI-based agentic RAG service with document ingestion, retrieval-augmented chat, JWT authentication, and user/role management. Uses Qdrant for vector search, configurable Redis/in-memory chat history, and optional SQLite for users, roles, and ACLs.
 
 ## Features
 
 - **Document ingestion** — File upload and indexing into Qdrant with configurable embedding
 - **RAG chat** — Chat endpoint with retrieval augmentation and prompt orchestration
-- **Authentication** — JWT-based auth with optional admin user bootstrap
-- **User & role management** — CRUD for users and roles with SQLite persistence
+- **Configurable memory** — Redis-backed or in-memory chat history
+- **Authentication (optional)** — JWT-based auth with optional admin user bootstrap
+- **User & role management (optional)** — CRUD for users and roles with SQLite persistence
 - **Global exception handling** — Consistent error responses (401, 403, 404, 422)
 - **Health check** — `/health` endpoint for liveness
 - **Tests** — Pytest suite runnable via Docker Compose
@@ -61,9 +62,12 @@ agentic_rag_template/
    | `OPENAI_API_KEY` / `GEMINI_API_KEY` | At least one required for chat |
    | `JWT_SECRET_KEY` | Secret for JWT signing (required for auth) |
    | `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Optional; creates initial admin on first run |
-   | `QDRANT_HOST`, `QDRANT_PORT` | Default `qdrant:6333` in Docker |
+   | `USE_QDRANT` | If `false`, ingestion is disabled and `/api/v1/upload` returns a configuration alert |
+   | `USE_REDIS` | If `false`, chat history is handled in-memory instead of Redis |
+   | `USE_SQL` | If `false`, SQL init/bootstrap are skipped and IAM routes (`/auth`, `/users`, `/roles`) are disabled |
+   | `QDRANT_HOST`, `QDRANT_PORT`, `QDRANT_PROTOCOL` | Default `qdrant:6333` (http) in Docker |
    | `REDIS_HOST`, `REDIS_PORT` | Default `redis:6379` in Docker |
-   | `USE_RABBITMQ_INGESTION` | If `true`, `/api/v1/upload` queues ingestion instead of indexing inline |
+   | `USE_RABBITMQ` | Global RabbitMQ enablement flag for messaging features (including async ingestion) |
    | `RABBITMQ_HOST`, `RABBITMQ_PORT` | Default `rabbitmq:5672` in Docker |
    | `RABBITMQ_USERNAME`, `RABBITMQ_PASSWORD` | RabbitMQ credentials (defaults: `guest/guest`) |
    | `RABBITMQ_VHOST` / `RABBITMQ_AMQP_URL` | VHost or full AMQP URL override |
@@ -90,7 +94,7 @@ API is served with Gunicorn (4 workers, uvicorn) at **http://localhost:8000**.
 | Service | Description |
 |---------|-------------|
 | `app` | FastAPI API server |
-| `worker` | Ingestion worker — consumes RabbitMQ queue and indexes uploaded documents into Qdrant (required when `USE_RABBITMQ_INGESTION=true`) |
+| `worker` | Ingestion worker — consumes RabbitMQ queue and indexes uploaded documents into Qdrant (required when `USE_RABBITMQ=true`) |
 | `qdrant` | Vector database |
 | `redis` | Chat history cache |
 | `rabbitmq` | Message queue for async ingestion |
@@ -133,7 +137,7 @@ RabbitMQ management UI is available at `http://localhost:15672` (default login: 
    gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
    ```
 
-4. **If using RabbitMQ ingestion** (`USE_RABBITMQ_INGESTION=true`), start the worker in a separate terminal:
+4. **If using RabbitMQ** (`USE_RABBITMQ=true`), start the worker in a separate terminal:
 
    ```bash
    python -m app.workers.ingestion_worker
@@ -150,19 +154,19 @@ RabbitMQ management UI is available at `http://localhost:15672` (default login: 
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/health` | Health check |
-| `POST` | `/api/v1/auth/login` | Login (returns JWT) |
+| `POST` | `/api/v1/auth/login` | Login (returns JWT; available when `USE_SQL=true`) |
 | `POST` | `/api/v1/upload` | Upload and ingest document |
 | `POST` | `/api/v1/chat` | RAG chat |
-| `GET` | `/api/v1/users/list_users` | List users (auth) |
-| `GET` | `/api/v1/users/get_user/{user_id}` | Get user (auth) |
-| `POST` | `/api/v1/users/create_user` | Create user (auth) |
-| `PUT` | `/api/v1/users/update_user/{user_id}` | Update user (auth) |
-| `DELETE` | `/api/v1/users/delete_user/{user_id}` | Delete user (auth) |
-| `GET` | `/api/v1/roles/list_roles` | List roles (auth) |
-| `GET` | `/api/v1/roles/get_role/{role_id}` | Get role (auth) |
-| `POST` | `/api/v1/roles/create_role` | Create role (auth) |
-| `PUT` | `/api/v1/roles/update_role/{role_id}` | Update role (auth) |
-| `DELETE` | `/api/v1/roles/delete_role/{role_id}` | Delete role (auth) |
+| `GET` | `/api/v1/users/list_users` | List users (auth; available when `USE_SQL=true`) |
+| `GET` | `/api/v1/users/get_user/{user_id}` | Get user (auth; available when `USE_SQL=true`) |
+| `POST` | `/api/v1/users/create_user` | Create user (auth; available when `USE_SQL=true`) |
+| `PUT` | `/api/v1/users/update_user/{user_id}` | Update user (auth; available when `USE_SQL=true`) |
+| `DELETE` | `/api/v1/users/delete_user/{user_id}` | Delete user (auth; available when `USE_SQL=true`) |
+| `GET` | `/api/v1/roles/list_roles` | List roles (auth; available when `USE_SQL=true`) |
+| `GET` | `/api/v1/roles/get_role/{role_id}` | Get role (auth; available when `USE_SQL=true`) |
+| `POST` | `/api/v1/roles/create_role` | Create role (auth; available when `USE_SQL=true`) |
+| `PUT` | `/api/v1/roles/update_role/{role_id}` | Update role (auth; available when `USE_SQL=true`) |
+| `DELETE` | `/api/v1/roles/delete_role/{role_id}` | Delete role (auth; available when `USE_SQL=true`) |
 
 Protected routes require a valid JWT in the `Authorization: Bearer <token>` header.
 

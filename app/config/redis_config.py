@@ -6,8 +6,8 @@ class RedisConfig:
 
     def __init__(self):
         self.host = settings.REDIS_HOST
-        self.port = int(settings.REDIS_PORT)
-        self.db = int(settings.REDIS_DB)
+        self.port = int((settings.REDIS_PORT or "6379").strip() or "6379")
+        self.db = int((settings.REDIS_DB or "0").strip() or "0")
     
     def get_redis_client(self):
         """Create and return a Redis client."""

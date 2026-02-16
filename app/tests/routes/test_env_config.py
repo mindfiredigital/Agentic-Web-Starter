@@ -13,6 +13,10 @@ def test_reads_from_env(clear_env, set_env_vars):
     assert settings.PROJECT_VERSION == "1.0.0"
     assert settings.ALLOWED_ORIGINS == ["http://localhost", "http://127.0.0.1"]
     assert settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES == 15
+    assert settings.USE_QDRANT is True
+    assert settings.USE_REDIS is True
+    assert settings.USE_SQL is True
+    assert settings.USE_RABBITMQ is False
 
 
 def test_paths_from_working_dir(clear_env, set_env_vars):
@@ -34,3 +38,12 @@ def test_defaults_when_missing(clear_env):
     assert settings.JWT_ALGORITHM == "HS256"
     expected_expiry = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
     assert settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES == expected_expiry
+    assert settings.USE_QDRANT is True
+    assert settings.USE_REDIS is True
+    assert settings.USE_SQL is True
+    expected_use_rabbitmq = (
+        os.getenv("USE_RABBITMQ", os.getenv("USE_RABBITMQ_INGESTION", "false")).strip().lower()
+        == "true"
+    )
+    assert settings.USE_RABBITMQ is expected_use_rabbitmq
+

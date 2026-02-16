@@ -22,6 +22,10 @@ ENV_VARS = [
     "WORKING_DIR",
     "HF_HOME",
     "COLLECTION_NAME",
+    "USE_QDRANT",
+    "USE_REDIS",
+    "USE_SQL",
+    "USE_RABBITMQ",
     "QDRANT_HOST",
     "QDRANT_PORT",
     "QDRANT_PROTOCOL",
@@ -55,6 +59,10 @@ def set_env_vars(monkeypatch, tmp_path):
     monkeypatch.setenv("ADMIN_EMAIL", "admin@example.com")
     monkeypatch.setenv("ADMIN_PASSWORD", "admin-password")
     monkeypatch.setenv("WORKING_DIR", str(tmp_path))
+    monkeypatch.setenv("USE_QDRANT", "true")
+    monkeypatch.setenv("USE_REDIS", "true")
+    monkeypatch.setenv("USE_SQL", "true")
+    monkeypatch.setenv("USE_RABBITMQ", "false")
     return tmp_path
 
 
