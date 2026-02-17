@@ -6,7 +6,7 @@ from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import BaseTool
 
 from app.llms.llm_factory import get_default_chat_client
-from app.utils.core_utils.cache import message_history_factory
+from app.utils.core_utils.history_factory_utils import message_history_factory
 
 class BaseAgent:
     """Base class for tool-calling agents with memory."""
@@ -28,7 +28,11 @@ class BaseAgent:
         self.agent_with_memory = self.get_agent_with_memory()
 
     def get_prompt(self):
-        """Build the agent prompt template."""
+        """Build the agent prompt template.
+
+        Returns:
+            ChatPromptTemplate with system prompt, chat_history, input prompt placeholder, and agent_scratchpad placeholder.
+        """
         return ChatPromptTemplate.from_messages(
             [
                 ("system", self.system_prompt),
@@ -39,7 +43,11 @@ class BaseAgent:
         )
     
     def get_agent(self):
-        """Create the tool-calling agent."""
+        """Create the tool-calling agent.
+
+        Returns:
+            LangChain agent configured with llm, tools, and prompt.
+        """
         return create_tool_calling_agent(
             llm=self.llm,
             tools=self.tools,
@@ -47,7 +55,11 @@ class BaseAgent:
         )
     
     def get_agent_executor(self):
-        """Create the agent executor."""
+        """Create the agent executor.
+
+        Returns:
+            AgentExecutor with intermediate steps enabled.
+        """
         return AgentExecutor(
             agent=self.agent,
             tools=self.tools,
@@ -55,7 +67,11 @@ class BaseAgent:
         )
     
     def get_agent_with_memory(self):
-        """Create the agent runnable with configurable memory backend."""
+        """Create the agent runnable with Redis-backed memory.
+
+        Returns:
+            RunnableWithMessageHistory wrapping the agent executor.
+        """
         return RunnableWithMessageHistory(
             self.agent_executor,
             message_history_factory,

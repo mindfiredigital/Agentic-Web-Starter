@@ -8,11 +8,12 @@ from app.agents.base_agent import BaseAgent
 from app.llms.llm_factory import get_default_chat_client
 from app.tools.retriever_tool import RetrieverTool
 
-# AGENT 
+# AGENT
 class RetrieverAgent(BaseAgent):
     """Agent that retrieves documents before answering."""
 
-    def __init__(self) -> None:        
+    def __init__(self) -> None:
+        """Initialize the retriever agent with retriever tool and retrieval prompt."""
         tools = [RetrieverTool(collection_name=settings.COLLECTION_NAME)]
         super().__init__(llm=get_default_chat_client(), tools=tools, system_prompt=RETRIEVAL_PROMPT)
 
@@ -33,6 +34,7 @@ class RetrieverAgent(BaseAgent):
 
 # TO USE AGENT AS A TOOL
 class RetrieverAgentToolInput(BaseModel):
+    """Input schema for the retriever agent tool."""
     query: str = Field(description="The query to retrieve documents from the vector database")
 
 class RetrieverAgentTool(BaseTool):

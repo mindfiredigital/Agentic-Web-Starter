@@ -7,7 +7,7 @@ from app.config.log_config import logger
 from app.config.qdrant_config import qdrant_config
 from app.constants.app_constants import VECTOR_DB
 from app.config.env_config import settings
-from app.utils.core_utils.document import embeddings_client
+from app.utils.core_utils import embeddings_client
 
 
 class QdrantRepository:

@@ -3,10 +3,11 @@ import importlib
 import pytest
 
 from app.config import env_config
-from app.utils.iam_utils.auth import jwt_utils
+from app.utils.iam_utils import jwt_utils
 
 
 def test_create_and_decode_token(clear_env, set_env_vars):
+    """Verify token creation and decoding round-trip."""
     importlib.reload(env_config)
     importlib.reload(jwt_utils)
 
@@ -18,6 +19,7 @@ def test_create_and_decode_token(clear_env, set_env_vars):
 
 
 def test_expired_token_raises(clear_env, set_env_vars):
+    """Verify JWTError when decoding expired token."""
     importlib.reload(env_config)
     importlib.reload(jwt_utils)
 

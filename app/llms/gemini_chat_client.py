@@ -5,7 +5,8 @@ from app.config.env_config import settings
 class GeminiChatClient:
     """Factory for Gemini chat model clients."""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize with model name and temperature from constants."""
         self.model_name = GEMINI_CHAT_MODEL.MODEL_NAME.value
         self.temperature = GEMINI_CHAT_MODEL.TEMPERATURE.value
 

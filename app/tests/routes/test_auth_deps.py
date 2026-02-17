@@ -5,10 +5,11 @@ from fastapi import HTTPException
 from fastapi.security import HTTPAuthorizationCredentials
 
 from app.config import env_config
-from app.utils.iam_utils.auth import auth_deps, jwt_utils
+from app.utils.iam_utils import auth_deps, jwt_utils
 
 
 def test_missing_credentials_raises(clear_env, set_env_vars):
+    """Verify HTTP 401 when no credentials are provided."""
     importlib.reload(env_config)
     importlib.reload(jwt_utils)
     importlib.reload(auth_deps)
@@ -18,6 +19,7 @@ def test_missing_credentials_raises(clear_env, set_env_vars):
 
 
 def test_invalid_token_raises(clear_env, set_env_vars):
+    """Verify HTTP 401 when token is invalid."""
     importlib.reload(env_config)
     importlib.reload(jwt_utils)
     importlib.reload(auth_deps)
@@ -31,6 +33,7 @@ def test_invalid_token_raises(clear_env, set_env_vars):
 
 
 def test_valid_token_returns_payload(clear_env, set_env_vars):
+    """Verify valid token returns correct TokenPayload with sub and role_ids."""
     importlib.reload(env_config)
     importlib.reload(jwt_utils)
     importlib.reload(auth_deps)

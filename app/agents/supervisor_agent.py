@@ -12,6 +12,7 @@ class SupervisorAgent(BaseAgent):
     """Supervisor agent that routes requests to tools."""
 
     def __init__(self) -> None:
+        """Initialize the supervisor agent with retriever tool and supervisor prompt."""
         self.retrieve_tool = RetrieverAgentTool(thread_id="")
         tools = [self.retrieve_tool]
         super().__init__(llm=get_default_chat_client(), tools=tools, system_prompt=SUPERVISOR_PROMPT)
@@ -25,7 +26,7 @@ class SupervisorAgent(BaseAgent):
             query: User query string.
 
         Returns:
-            Agent response output.
+            Supervisor agent response output.
         """
         if not query:
             raise ValidationError("Provide a query.")

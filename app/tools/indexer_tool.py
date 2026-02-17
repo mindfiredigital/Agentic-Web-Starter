@@ -2,7 +2,7 @@ from langchain.tools import BaseTool
 from typing import Type
 from pydantic import BaseModel, Field
 from app.constants.app_constants import VECTOR_DB
-from app.utils.core_utils.document import TextProcessor, Indexer
+from app.utils.core_utils import TextProcessor, Indexer
 
 class IndexerTool(BaseTool):
     """Tool that indexes a document into the vector database."""
@@ -14,8 +14,10 @@ class IndexerTool(BaseTool):
     def _run(self):
         """Execute the indexing tool.
 
+        Loads document, splits into chunks, indexes into Qdrant.
+
         Returns:
-            Result of the indexing operation.
+            Dict with success status and collection_name, or None if no chunks.
         """
         text_processor = TextProcessor(file_path=self.filepath)
         

@@ -1,3 +1,5 @@
+"""System prompt for the retrieval agent in the RAG pipeline."""
+
 RETRIEVAL_PROMPT = """
 You are the retrieval agent in a RAG pipeline. You answer questions using only documents stored in the vector database.
 

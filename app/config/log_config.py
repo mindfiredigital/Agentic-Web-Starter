@@ -8,7 +8,17 @@ ENV = settings.ENV
 LOG_LEVEL = logging.DEBUG if ENV == "dev" else logging.INFO
 
 class JsonFormatter(logging.Formatter):
+    """Custom formatter that outputs log records as JSON."""
+
     def format(self, record: logging.LogRecord) -> str:
+        """Format a log record as a JSON string.
+
+        Args:
+            record: The log record to format.
+
+        Returns:
+            JSON-encoded string representation of the log entry.
+        """
         log_entry = {
             "timestamp": datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat(),
             "level": record.levelname,

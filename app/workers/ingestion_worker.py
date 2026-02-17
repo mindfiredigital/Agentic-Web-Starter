@@ -6,10 +6,16 @@ from typing import Any
 from app.config.env_config import settings
 from app.config.log_config import logger
 from app.services.core_services.ingestion_service import ingestion_service
-from app.utils.core_utils.queue.rabbitmq_utils import consume_json
+from app.services.message_queue_services.message_queue_client import MessageQueueClient
 
 
 async def _handle_ingestion_message(payload: dict[str, Any], _message) -> None:
+    """Process a single ingestion message from RabbitMQ.
+
+    Args:
+        payload: Message body; must contain "saved_path" key.
+        _message: Raw aio_pika message (unused).
+    """
     saved_path = payload.get("saved_path")
     if not saved_path:
         logger.warning("Skipping message without saved_path: %s", payload)
@@ -27,7 +33,8 @@ async def main() -> None:
 
     queue_name = settings.RABBITMQ_INGEST_QUEUE
     logger.info("Starting ingestion worker. queue=%s", queue_name)
-    await consume_json(queue_name, _handle_ingestion_message)
+    client = MessageQueueClient()
+    await client.consume_json(queue_name, _handle_ingestion_message)
 
 
 if __name__ == "__main__":

@@ -5,13 +5,18 @@ from app.exceptions import ConflictError, InternalError, UnauthorizedError
 from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
 from app.services.iam_services.role_service import ROLE_COMPONENT_URI
 from app.services.iam_services.user_service import USER_COMPONENT_URI
-from app.utils.iam_utils.auth import auth_utils, JWT_utils
+from app.utils.iam_utils import auth_utils, JWT_utils
 
 
 class AuthService:
     """Authentication business logic."""
 
     def __init__(self, db: sqlite3.Connection) -> None:
+        """Initialize AuthService with database connection.
+
+        Args:
+            db: Active SQLite connection.
+        """
         self.db = db
         self.user_repo = UserRepository(db)
         self.role_repo = RoleRepository(db)
@@ -19,6 +24,19 @@ class AuthService:
         self.acl_repo = ACLRepository(db)
 
     def login(self, username: str, password: str) -> str:
+        """Authenticate user and return JWT access token.
+
+        Args:
+            username: User's username.
+            password: Plain text password.
+
+        Returns:
+            JWT access token string.
+
+        Raises:
+            UnauthorizedError: If credentials are invalid.
+            InternalError: If database operations fail.
+        """
         try:
             user = self.user_repo.get_user_by_username(username)
         except sqlite3.Error as e:
@@ -37,7 +55,20 @@ class AuthService:
             raise InternalError("Authentication failed") from e
 
     def bootstrap_admin(self, username: str, email: str | None, password: str) -> bool:
-        """Create the initial admin user if no users exist."""
+        """Create the initial admin user if no users exist.
+
+        Args:
+            username: Admin username.
+            email: Admin email (optional).
+            password: Admin password.
+
+        Returns:
+            True if admin was created, False if users already exist.
+
+        Raises:
+            ConflictError: If username already exists.
+            InternalError: If bootstrap fails.
+        """
         try:
             existing_users = self.user_repo.list_users()
         except sqlite3.Error as e:

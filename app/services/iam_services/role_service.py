@@ -14,12 +14,27 @@ class RoleService:
     """Role business logic with ACL enforcement."""
 
     def __init__(self, db: sqlite3.Connection) -> None:
+        """Initialize RoleService with database connection.
+
+        Args:
+            db: Active SQLite connection.
+        """
         self.db = db
         self.role_repo = RoleRepository(db)
         self.acl_repo = ACLRepository(db)
         self.component_repo = ComponentRepository(db)
 
     def _ensure_access(self, role_ids: List[str]) -> None:
+        """Verify that roles have access to the roles component.
+
+        Args:
+            role_ids: List of role IDs to check.
+
+        Raises:
+            NotFoundError: If roles component not registered.
+            ForbiddenError: If roles lack access.
+            InternalError: If database error occurs.
+        """
         try:
             component = self.component_repo.get_component_by_uri(ROLE_COMPONENT_URI)
             if not component:
@@ -40,6 +55,22 @@ class RoleService:
         current_user_id: str,
         role_ids: List[str],
     ):
+        """Create a new role.
+
+        Args:
+            name: Role name.
+            description: Optional role description.
+            current_user_id: ID of user performing the action.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            Created Role instance.
+
+        Raises:
+            ConflictError: If role name exists.
+            ForbiddenError: If requester lacks access.
+            InternalError: If creation fails.
+        """
         self._ensure_access(role_ids)
         try:
             existing_role = self.role_repo.get_role_by_name(name)
@@ -57,6 +88,20 @@ class RoleService:
             raise InternalError("Create role failed") from e
 
     def get_role(self, role_id: str, role_ids: List[str]):
+        """Get role by ID.
+
+        Args:
+            role_id: Role identifier.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            Role instance.
+
+        Raises:
+            NotFoundError: If role not found.
+            ForbiddenError: If requester lacks access.
+            InternalError: If fetch fails.
+        """
         self._ensure_access(role_ids)
         try:
             role = self.role_repo.get_role_by_id(role_id)
@@ -70,6 +115,18 @@ class RoleService:
             raise InternalError("Get role failed") from e
 
     def list_roles(self, role_ids: List[str]):
+        """List all roles.
+
+        Args:
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            List of Role instances.
+
+        Raises:
+            ForbiddenError: If requester lacks access.
+            InternalError: If fetch fails.
+        """
         self._ensure_access(role_ids)
         try:
             return self.role_repo.list_roles()
@@ -85,6 +142,24 @@ class RoleService:
         current_user_id: str,
         role_ids: List[str],
     ):
+        """Update role by ID.
+
+        Args:
+            role_id: Role identifier.
+            name: Optional new name.
+            description: Optional new description.
+            current_user_id: ID of user performing the action.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            Updated Role instance.
+
+        Raises:
+            ConflictError: If role name exists for another role.
+            NotFoundError: If role not found.
+            ForbiddenError: If requester lacks access.
+            InternalError: If update fails.
+        """
         self._ensure_access(role_ids)
         try:
             if name:
@@ -107,6 +182,20 @@ class RoleService:
             raise InternalError("Update role failed") from e
 
     def delete_role(self, role_id: str, role_ids: List[str]):
+        """Delete role by ID.
+
+        Args:
+            role_id: Role identifier.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            Deleted Role instance.
+
+        Raises:
+            NotFoundError: If role not found.
+            ForbiddenError: If requester lacks access.
+            InternalError: If deletion fails.
+        """
         self._ensure_access(role_ids)
         try:
             role = self.role_repo.delete_role(role_id)

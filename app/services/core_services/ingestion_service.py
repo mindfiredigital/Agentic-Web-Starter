@@ -5,7 +5,7 @@ from fastapi import UploadFile
 from app.config.log_config import logger
 from app.exceptions import InternalError, ValidationError
 from app.tools.indexer_tool import IndexerTool
-from app.utils.core_utils.document import FileProcessor
+from app.utils.core_utils import FileProcessor
 
 
 class IngestionService:
@@ -18,7 +18,11 @@ class IngestionService:
             file: The uploaded file to save.
 
         Returns:
-            Saved file path.
+            Path where file was saved.
+
+        Raises:
+            ValidationError: If file save fails.
+            InternalError: If unexpected error occurs.
         """
         try:
             file_processor = FileProcessor(file=file)
@@ -43,7 +47,11 @@ class IngestionService:
             saved_path: Optional pre-saved file path; if None, file is saved first.
 
         Returns:
-            Ingestion result with saved path and index metadata.
+            Dict with saved_path and index_result.
+
+        Raises:
+            ValidationError: If file handling fails.
+            InternalError: If ingestion/indexing fails.
         """
         try:
             if saved_path is None:

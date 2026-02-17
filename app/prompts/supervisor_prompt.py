@@ -1,3 +1,5 @@
+"""System prompt for the supervisor agent that routes upload vs retrieve requests."""
+
 SUPERVISOR_PROMPT = """
 You are the supervisor agent for a RAG (Retrieval-Augmented Generation) system. Your job is to route user requests to the appropriate action.
 

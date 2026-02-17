@@ -5,7 +5,7 @@ import sqlite3
 from app.config.log_config import logger
 from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
 from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
-from app.utils.iam_utils.auth import auth_utils
+from app.utils.iam_utils import auth_utils
 from app.constants.app_constants import ROUTE_CONSTANTS
 
 USER_COMPONENT_URI = ROUTE_CONSTANTS.USER_COMPONENT_URI.value
@@ -15,6 +15,11 @@ class UserService:
     """User business logic with ACL enforcement."""
 
     def __init__(self, db: sqlite3.Connection) -> None:
+        """Initialize UserService with database connection.
+
+        Args:
+            db: Active SQLite connection.
+        """
         self.db = db
         self.user_repo = UserRepository(db)
         self.role_repo = RoleRepository(db)
@@ -22,6 +27,16 @@ class UserService:
         self.component_repo = ComponentRepository(db)
 
     def _ensure_access(self, role_ids: List[str]) -> None:
+        """Verify that roles have access to the users component.
+
+        Args:
+            role_ids: List of role IDs to check.
+
+        Raises:
+            NotFoundError: If users component not registered.
+            ForbiddenError: If roles lack access.
+            InternalError: If database error occurs.
+        """
         try:
             component = self.component_repo.get_component_by_uri(USER_COMPONENT_URI)
             if not component:
@@ -43,6 +58,23 @@ class UserService:
         current_user_id: str,
         role_ids: List[str],
     ):
+        """Create a new user with default member role.
+
+        Args:
+            username: Username for new user.
+            email: Optional email.
+            password: Plain text password.
+            current_user_id: ID of user performing the action.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            Created User instance.
+
+        Raises:
+            ConflictError: If username exists.
+            ForbiddenError: If requester lacks access.
+            InternalError: If creation fails.
+        """
         self._ensure_access(role_ids)
         try:
             existing_user = self.user_repo.get_user_by_username(username)
@@ -71,6 +103,20 @@ class UserService:
             raise InternalError("Create user failed") from e
 
     def get_user(self, user_id: str, role_ids: List[str]):
+        """Get user by ID.
+
+        Args:
+            user_id: User identifier.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            User instance.
+
+        Raises:
+            NotFoundError: If user not found.
+            ForbiddenError: If requester lacks access.
+            InternalError: If fetch fails.
+        """
         self._ensure_access(role_ids)
         try:
             user = self.user_repo.get_user_by_id(user_id)
@@ -84,6 +130,18 @@ class UserService:
             raise InternalError("Get user failed") from e
 
     def list_users(self, role_ids: List[str]):
+        """List all users.
+
+        Args:
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            List of User instances.
+
+        Raises:
+            ForbiddenError: If requester lacks access.
+            InternalError: If fetch fails.
+        """
         self._ensure_access(role_ids)
         try:
             return self.user_repo.list_users()
@@ -100,6 +158,25 @@ class UserService:
         current_user_id: str,
         role_ids: List[str],
     ):
+        """Update user by ID.
+
+        Args:
+            user_id: User identifier.
+            username: Optional new username.
+            email: Optional new email.
+            password: Optional new password.
+            current_user_id: ID of user performing the action.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            Updated User instance.
+
+        Raises:
+            ConflictError: If username exists for another user.
+            NotFoundError: If user not found.
+            ForbiddenError: If requester lacks access.
+            InternalError: If update fails.
+        """
         self._ensure_access(role_ids)
         try:
             if username:
@@ -124,6 +201,20 @@ class UserService:
             raise InternalError("Update user failed") from e
 
     def delete_user(self, user_id: str, role_ids: List[str]):
+        """Delete user by ID.
+
+        Args:
+            user_id: User identifier.
+            role_ids: Requester's role IDs (for ACL check).
+
+        Returns:
+            Deleted User instance.
+
+        Raises:
+            NotFoundError: If user not found.
+            ForbiddenError: If requester lacks access.
+            InternalError: If deletion fails.
+        """
         self._ensure_access(role_ids)
         try:
             user = self.user_repo.delete_user(user_id)

@@ -8,7 +8,11 @@ from app.exceptions import InternalError
 
 
 def utc_now_iso() -> str:
-    """Get the current timestamp in ISO format."""
+    """Get the current timestamp in ISO format.
+
+    Returns:
+        Current UTC datetime as ISO 8601 string.
+    """
     return datetime.now(timezone.utc).isoformat()
 
 
@@ -76,7 +80,11 @@ class SQLiteDatabase:
             db.close()
 
     def _create_users_table(self, db: sqlite3.Connection) -> None:
-        """Create the users table."""
+        """Create the users table.
+
+        Args:
+            db: Active database connection.
+        """
         query = """
             CREATE TABLE IF NOT EXISTS users (
                 id TEXT PRIMARY KEY,
@@ -92,7 +100,11 @@ class SQLiteDatabase:
         db.execute(query)
 
     def _create_roles_table(self, db: sqlite3.Connection) -> None:
-        """Create the roles table."""
+        """Create the roles table.
+
+        Args:
+            db: Active database connection.
+        """
         query = """
             CREATE TABLE IF NOT EXISTS roles (
                 id TEXT PRIMARY KEY,
@@ -107,7 +119,11 @@ class SQLiteDatabase:
         db.execute(query)
 
     def _create_components_table(self, db: sqlite3.Connection) -> None:
-        """Create the components table."""
+        """Create the components table.
+
+        Args:
+            db: Active database connection.
+        """
         query = """
             CREATE TABLE IF NOT EXISTS components (
                 id TEXT PRIMARY KEY,
@@ -122,7 +138,11 @@ class SQLiteDatabase:
         db.execute(query)
 
     def _create_user_role_mapping_table(self, db: sqlite3.Connection) -> None:
-        """Create the user_role_mapping table."""
+        """Create the user_role_mapping table.
+
+        Args:
+            db: Active database connection.
+        """
         query = """
             CREATE TABLE IF NOT EXISTS user_role_mapping (
                 user_id TEXT NOT NULL,
@@ -135,7 +155,11 @@ class SQLiteDatabase:
         db.execute(query)
 
     def _create_role_component_mapping_table(self, db: sqlite3.Connection) -> None:
-        """Create the role_component_mapping table."""
+        """Create the role_component_mapping table.
+
+        Args:
+            db: Active database connection.
+        """
         query = """
             CREATE TABLE IF NOT EXISTS role_component_mapping (
                 role_id TEXT NOT NULL,
@@ -179,11 +203,17 @@ sqlite_db = SQLiteDatabase()
 
 
 def get_db() -> Generator[sqlite3.Connection, None, None]:
-    """Get a database connection (backward compatibility)."""
+    """Get a database connection (backward compatibility).
+
+    Yields:
+        SQLite database connection (context-managed).
+    """
     yield from sqlite_db.get_connection()
 
 
 def init_db() -> None:
-    """Initialize the database schema (backward compatibility)."""
-    sqlite_db.initialize_schema()
+    """Initialize the database schema (backward compatibility).
 
+    Creates all required tables if they do not exist.
+    """
+    sqlite_db.initialize_schema()

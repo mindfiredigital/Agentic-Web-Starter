@@ -34,8 +34,9 @@ agentic_rag_template/
 │   ├── repository/      # Qdrant, SQLite, user, role, ACL repos
 │   ├── routes/           # Auth, chat, ingestion, users, roles
 │   ├── schemas/          # Pydantic request/response schemas
-│   ├── services/         # Auth, ingestion, retrieval, user, role
+│   ├── services/         # Auth, ingestion, retrieval, user, role, message_queue_services
 │   ├── tools/            # Indexer and retriever tools
+│   ├── workers/          # Background workers (ingestion consumer, etc.)
 │   ├── utils/            # Auth, JWT, embeddings, Redis, file utils
 │   ├── tests/            # Pytest tests
 │   ├── main.py           # FastAPI app entry (uses starter)
@@ -67,7 +68,7 @@ agentic_rag_template/
    | `USE_SQL` | If `false`, SQL init/bootstrap are skipped and IAM routes (`/auth`, `/users`, `/roles`) are disabled |
    | `QDRANT_HOST`, `QDRANT_PORT`, `QDRANT_PROTOCOL` | Default `qdrant:6333` (http) in Docker |
    | `REDIS_HOST`, `REDIS_PORT` | Default `redis:6379` in Docker |
-   | `USE_RABBITMQ` | Global RabbitMQ enablement flag for messaging features (including async ingestion) |
+   | `USE_RABBITMQ` | If `true`, use message queue for async processing (ingestion, etc.); `/api/v1/upload` queues instead of indexing inline |
    | `RABBITMQ_HOST`, `RABBITMQ_PORT` | Default `rabbitmq:5672` in Docker |
    | `RABBITMQ_USERNAME`, `RABBITMQ_PASSWORD` | RabbitMQ credentials (defaults: `guest/guest`) |
    | `RABBITMQ_VHOST` / `RABBITMQ_AMQP_URL` | VHost or full AMQP URL override |

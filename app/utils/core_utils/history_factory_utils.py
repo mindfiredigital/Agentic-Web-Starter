@@ -1,9 +1,6 @@
-from typing import Any
-
 from app.config.env_config import settings
-from app.utils.core_utils.cache.in_memory_utils import in_memory_history
-from app.utils.core_utils.cache.redis_utils import redis_history
-
+from app.utils.core_utils.in_memory_utils import in_memory_history
+from app.utils.core_utils.redis_utils import redis_history
 
 def get_message_history_factory():
     """Return the configured history factory for agent chat memory."""

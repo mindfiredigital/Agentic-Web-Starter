@@ -10,14 +10,18 @@ from app.exceptions import AppError
 from app.exceptions.handlers import app_error_handler, global_exception_handler, http_exception_handler, request_validation_handler
 
 from app.health import router as health_router
-from app.utils.core_utils.database import init_db, sqlite_db
+from app.utils.core_utils import init_db, sqlite_db
 
 from app.routes.core_routes.router import router as core_router
 
 from app.constants.app_constants import ROUTE_CONSTANTS
 
 def start_application():
-    """Create and configure the FastAPI application."""
+    """Create and configure the FastAPI application.
+
+    Returns:
+        Configured FastAPI app instance with middleware, routers, and DB init.
+    """
     logger.info("Starting application...")
     app = FastAPI(
         title = settings.PROJECT_NAME,

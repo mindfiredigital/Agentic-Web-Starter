@@ -3,7 +3,7 @@ import sqlite3
 from pydantic import BaseModel
 from typing import Generic, List, Optional, Type, TypeVar
 
-from app.utils.core_utils.database import utc_now_iso
+from app.utils.core_utils import utc_now_iso
 
 T = TypeVar('T', bound=BaseModel)
 

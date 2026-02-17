@@ -4,9 +4,10 @@ from app.constants.app_constants import OPENAI_CHAT_MODEL
 
 
 class OpenAIChatClient:
-    """Factory for chat model clients."""
+    """Factory for OpenAI chat model clients."""
 
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialize with model name and temperature from constants."""
         self.model_name = OPENAI_CHAT_MODEL.MODEL_NAME.value
         self.temperature = OPENAI_CHAT_MODEL.TEMPERATURE.value
 
