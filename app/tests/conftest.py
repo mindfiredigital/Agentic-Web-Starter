@@ -50,15 +50,19 @@ def set_env_vars(monkeypatch, tmp_path):
     monkeypatch.setenv("PROJECT_DESCRIPTION", "Test project")
     monkeypatch.setenv("ALLOWED_ORIGINS", "http://localhost,http://127.0.0.1")
     monkeypatch.setenv("BASE_PATH", "")
+
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     monkeypatch.setenv("GEMINI_API_KEY", "gm-test")
-    monkeypatch.setenv("JWT_SECRET_KEY", "test-secret")
+
+    monkeypatch.setenv("JWT_SECRET_KEY", "a" * 32)
     monkeypatch.setenv("JWT_ALGORITHM", "HS256")
     monkeypatch.setenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "15")
+
     monkeypatch.setenv("ADMIN_USERNAME", "admin")
     monkeypatch.setenv("ADMIN_EMAIL", "admin@example.com")
     monkeypatch.setenv("ADMIN_PASSWORD", "admin-password")
     monkeypatch.setenv("WORKING_DIR", str(tmp_path))
+
     monkeypatch.setenv("USE_QDRANT", "true")
     monkeypatch.setenv("USE_REDIS", "true")
     monkeypatch.setenv("USE_SQL", "true")

@@ -1,13 +1,10 @@
 from fastapi import UploadFile
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class IngestionRequest(BaseModel):
     file: UploadFile = Field(..., description="File to upload")
-
-    class Config:
-        arbitrary_types_allowed = True
-
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class IngestionResponse(BaseModel):
     message: str = Field(..., description="Upload status message")

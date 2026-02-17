@@ -20,3 +20,6 @@ JWT_AUTH_AND_SQL_SETUP.md
 
 docs/
 temp/
+
+# E2E / manual testing checklist (local notes)
+E2E_FLAG_TESTING_CHECKLIST.md

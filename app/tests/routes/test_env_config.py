@@ -1,6 +1,6 @@
 import os
 import importlib
-
+import pytest
 from app.config import env_config
 
 
@@ -30,7 +30,11 @@ def test_paths_from_working_dir(clear_env, set_env_vars):
     assert settings.UPLOAD_DIR == os.path.join(expected_project_dir, "static", "uploads")
 
 
-def test_defaults_when_missing(clear_env):
+def test_defaults_when_missing(clear_env, monkeypatch, tmp_path):
+    monkeypatch.setattr("dotenv.load_dotenv", lambda *a, **k: None)
+    # Minimal vars for Settings to instantiate; leave USE_*, JWT_*, etc. unset for defaults
+    monkeypatch.setenv("PROJECT_NAME", "TestProj")
+    monkeypatch.setenv("WORKING_DIR", str(tmp_path))
     importlib.reload(env_config)
     settings = env_config.Settings()
 
@@ -41,9 +45,6 @@ def test_defaults_when_missing(clear_env):
     assert settings.USE_QDRANT is True
     assert settings.USE_REDIS is True
     assert settings.USE_SQL is True
-    expected_use_rabbitmq = (
-        os.getenv("USE_RABBITMQ", os.getenv("USE_RABBITMQ_INGESTION", "false")).strip().lower()
-        == "true"
-    )
-    assert settings.USE_RABBITMQ is expected_use_rabbitmq
+    # env_config defaults USE_RABBITMQ to "true" when unset
+    assert settings.USE_RABBITMQ is True
 

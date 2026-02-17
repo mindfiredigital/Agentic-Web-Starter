@@ -10,6 +10,7 @@ services:
       # Use a stable container path, but persist to the host WORKING_DIR.
       - WORKING_DIR=/workdir
       - GUNICORN_WORKERS=4
+      - PYTHONWARNINGS=ignore
     command: >
       sh -c "gunicorn app.main:app --preload -w $${GUNICORN_WORKERS:-4} -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
     volumes:
@@ -29,6 +30,7 @@ services:
       - .env
     environment:
       - WORKING_DIR=/workdir
+      - PYTHONWARNINGS=ignore
     volumes:
       - ${WORKING_DIR:-./temp}:/workdir
     depends_on:
@@ -45,6 +47,7 @@ services:
       - .env
     environment:
       - WORKING_DIR=/workdir
+      - PYTHONWARNINGS=ignore
     volumes:
       - ${WORKING_DIR:-./temp}:/workdir
     depends_on:
@@ -55,6 +58,8 @@ services:
   qdrant:
     image: qdrant/qdrant:latest
     container_name: qdrant
+    environment:
+      - PYTHONWARNINGS=ignore
     ports:
       - "6333:6333"
       - "6334:6334"
@@ -65,6 +70,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: redis
+    environment:
+      - PYTHONWARNINGS=ignore
     ports:
       - "6379:6379"
 
@@ -78,6 +85,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
       - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-/}
+      - PYTHONWARNINGS=ignore
     volumes:
       - ${WORKING_DIR:-./temp}/rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
