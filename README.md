@@ -26,19 +26,23 @@ FastAPI-based agentic RAG service with document ingestion, retrieval-augmented c
 agentic_rag_template/
 ├── app/
 │   ├── agents/           # Retriever and supervisor agents
-│   ├── config/           # Env, logging, Qdrant, Redis config
+│   ├── config/           # Env, logging, Qdrant, Redis, RabbitMQ config
 │   ├── constants/        # App constants
+│   ├── exceptions/       # Domain exceptions and global handlers
 │   ├── llms/             # OpenAI and Gemini chat clients
-│   ├── models/           # SQLAlchemy/SQLite models
-│   ├── prompts/         # Prompt templates
-│   ├── repository/      # Qdrant, SQLite, user, role, ACL repos
-│   ├── routes/           # Auth, chat, ingestion, users, roles
-│   ├── schemas/          # Pydantic request/response schemas
-│   ├── services/         # Auth, ingestion, retrieval, user, role, message_queue_services
+│   ├── models/           # SQLAlchemy/SQLite models (user, role, component)
+│   ├── prompts/          # Prompt templates
+│   ├── repository/       # vector_repository (Qdrant), sql_repository (user, role, ACL)
+│   ├── routes/
+│   │   ├── core_routes/  # Chat and ingestion endpoints
+│   │   └── iam_routes/   # Auth, users, roles endpoints
+│   ├── schemas/          # core_schemas, iam_schemas (Pydantic request/response)
+│   ├── services/         # core_services, iam_services, message_queue_services
 │   ├── tools/            # Indexer and retriever tools
-│   ├── workers/          # Background workers (ingestion consumer, etc.)
-│   ├── utils/            # Auth, JWT, embeddings, Redis, file utils
+│   ├── workers/          # Ingestion worker (consumes RabbitMQ queue)
+│   ├── utils/            # core_utils, iam_utils (auth, JWT, embeddings, Redis)
 │   ├── tests/            # Pytest tests
+│   ├── health.py        # Health check endpoint
 │   ├── main.py           # FastAPI app entry (uses starter)
 │   └── starter.py        # App bootstrap, routers, exception handlers
 ├── docker-compose.yml    # app, worker, tests, qdrant, redis, rabbitmq
@@ -73,7 +77,8 @@ agentic_rag_template/
    | `RABBITMQ_USERNAME`, `RABBITMQ_PASSWORD` | RabbitMQ credentials (defaults: `guest/guest`) |
    | `RABBITMQ_VHOST` / `RABBITMQ_AMQP_URL` | VHost or full AMQP URL override |
    | `RABBITMQ_INGEST_QUEUE` | Queue name for async ingestion jobs |
-   | `WORKING_DIR` | Base path for uploads, logs, DB (default: current dir) |
+   | `WORKING_DIR` | Base path for uploads, logs, DB (default: `./temp` in Docker) |
+   | `PROJECT_NAME` | Used for upload/log paths under `WORKING_DIR` (default: `agentic_rag`) |
    | `COLLECTION_NAME` | Qdrant collection name (default: `agentic_web_starter`) |
    | `ALLOWED_ORIGINS`, `BASE_PATH` | CORS and root path for the API |
 
@@ -106,7 +111,7 @@ API is served with Gunicorn (4 workers, uvicorn) at **http://localhost:8000**.
 docker compose run tests
 ```
 
-SQLite data is persisted in `./sqlite_data`; Qdrant storage in `./qdrant_storage`.
+Data persistence uses `WORKING_DIR` (default: `./temp` when running via Docker). SQLite is at `{WORKING_DIR}/sqlite_data/app.db`; Qdrant storage at `{WORKING_DIR}/qdrant_storage`; RabbitMQ data at `{WORKING_DIR}/rabbitmq_data`.
 
 RabbitMQ management UI is available at `http://localhost:15672` (default login: `guest/guest`).
 
@@ -117,6 +122,8 @@ RabbitMQ management UI is available at `http://localhost:15672` (default login: 
    ```bash
    docker compose up -d qdrant redis rabbitmq
    ```
+
+   Then set `QDRANT_HOST=localhost`, `REDIS_HOST=localhost`, and `RABBITMQ_HOST=localhost` in `.env` so the local API can reach the containers.
 
 2. **Create venv and install deps:**
 
@@ -173,8 +180,8 @@ Protected routes require a valid JWT in the `Authorization: Bearer <token>` head
 
 ## Notes
 
-- **SQLite** — User/role/ACL data is stored in `WORKING_DIR/sqlite_data/app.db` (e.g. `./sqlite_data/app.db` when using Docker volume).
+- **SQLite** — User/role/ACL data is stored in `WORKING_DIR/sqlite_data/app.db` (e.g. `./temp/sqlite_data/app.db` when using Docker default `WORKING_DIR=./temp`).
 - **Admin bootstrap** — If `ADMIN_USERNAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` are set, the first run creates an admin user when no users exist.
-- **Uploads and logs** — Stored under `WORKING_DIR/<PROJECT_NAME>/static/uploads` and `.../logs`.
+- **Uploads and logs** — Stored under `WORKING_DIR/<PROJECT_NAME>/static/uploads` and `WORKING_DIR/<PROJECT_NAME>/logs` (e.g. `./temp/agentic_rag/static/uploads` with default `PROJECT_NAME=agentic_rag`).
 - **Hugging Face** — Cache defaults to `WORKING_DIR/<PROJECT_NAME>/hf` unless `HF_HOME` is set.
-- **OpenAPI docs** — Available at `http://localhost:8000/docs` when the app is running.
+- **OpenAPI docs** — Available at `http://localhost:8000/docs` when the app is running. If `BASE_PATH` is set (e.g. `/agentic_rag`), use `http://localhost:8000{BASE_PATH}/docs` when behind a reverse proxy.
