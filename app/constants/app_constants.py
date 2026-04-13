@@ -25,9 +25,6 @@ class GEMINI_CHAT_MODEL(Enum):
 
 class VECTOR_DB(Enum):
     """Vector database configuration constants."""
-    NAME = "agentic_rag_template"
-    COLLECTION_NAME = "agentic_rag_template"
-
     TOP_K = 5
     CHUNK_SIZE = 500
     CHUNK_OVERLAP = 50 

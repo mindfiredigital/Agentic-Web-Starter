@@ -1,4 +1,4 @@
-# Agentic RAG Template
+# Agentic Web Starter
 
 FastAPI-based agentic RAG service with document ingestion, retrieval-augmented chat, JWT authentication, and user/role management. Uses Qdrant for vector search, configurable Redis/in-memory chat history, and optional SQLite for users, roles, and ACLs.
 
@@ -23,7 +23,7 @@ FastAPI-based agentic RAG service with document ingestion, retrieval-augmented c
 ## Project structure
 
 ```
-agentic_rag_template/
+agentic_web_starter/
 ├── app/
 │   ├── agents/           # Retriever and supervisor agents
 │   ├── config/           # Env, logging, Qdrant, Redis, RabbitMQ config

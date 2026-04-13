@@ -31,11 +31,11 @@ def start_application():
         # contact = {"name":"Mindfire Solutions", "url":"https://www.mindfire.com", "email":"support@mindfire.com"},
     )
 
-    # PATH HANDLING 
+    # PATH HANDLING
     if settings.USE_SQL:
         os.makedirs(os.path.dirname(settings.DB_PATH), exist_ok=True)
-    os.makedirs(os.path.dirname(settings.LOG_DIR), exist_ok=True)
-    os.makedirs(os.path.dirname(settings.UPLOAD_DIR), exist_ok=True)
+    os.makedirs(settings.LOG_DIR, exist_ok=True)
+    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 
     # DATABASE INITIALIZATION
     if settings.USE_SQL:
