@@ -3,6 +3,8 @@
 venv/
 env/
 
+env.example
+
 # Python bytecode and caches
 __pycache__/
 *.pyc
@@ -55,3 +57,6 @@ JWT_AUTH_AND_SQL_SETUP.md
 *.ipynb
 *.pdf
 app/static/*
+temp/
+docker-compose.yml
+.pre-commit-config.yaml

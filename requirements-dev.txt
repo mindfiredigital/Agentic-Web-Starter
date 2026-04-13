@@ -1,8 +1,0 @@
-# Development-only: linting and formatting (not used by Docker image).
-# Install with: pip install -r requirements.txt -r requirements-dev.txt
-# Optional: mypy app/ --ignore-missing-imports (not enforced in CI until types are fully cleaned up)
-pre-commit==4.0.1
-black==24.10.0
-isort==5.13.2
-ruff==0.8.4
-mypy==1.14.1

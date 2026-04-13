@@ -122,7 +122,7 @@ Black, isort, and Ruff must produce **zero errors** (same as GitHub Actions). My
 ### Installation (if not already installed)
 
 ```bash
-pip install -r requirements.txt -r requirements-dev.txt
+pip install -e ".[dev]"
 ```
 
 ---
@@ -243,7 +243,7 @@ Private/internal helpers (prefixed `_`) may omit docstrings if their purpose is 
 
 ### 4.7 Dependencies
 
-- New dependencies added to `requirements.txt` with a **pinned version** (`==`) for all direct dependencies
+- New dependencies added to `pyproject.toml` under `[project] dependencies` with a **pinned version** (`==`) for all direct dependencies
 - Verify the package is not already included transitively before adding
 - No unused dependencies — if a library is imported but not actively used, remove it
 
@@ -393,7 +393,7 @@ _Mark N/A on items that don't apply to this PR type._
 - [ ] Relevant docs in `docs/` updated if architecture or flow changed
 
 ### Dependencies
-- [ ] New dependencies added to `requirements.txt` with a pinned version (`==`)
+- [ ] New dependencies added to `pyproject.toml` with a pinned version (`==`)
 - [ ] No unused dependencies introduced
 
 ### Tests
@@ -413,7 +413,7 @@ _Mark N/A on items that don't apply to this PR type._
 |--------|-----------|
 | Ideal size | 200–400 lines changed |
 | Hard limit | 600 lines changed |
-| Exclusions from limit | `requirements.txt` version bumps, auto-generated files, migration files |
+| Exclusions from limit | `pyproject.toml` version bumps, auto-generated files, migration files |
 | Single concern | One PR = one logical change |
 
 If a PR exceeds 600 lines, it must be split. Each PR should be fully reviewable in under 30 minutes.

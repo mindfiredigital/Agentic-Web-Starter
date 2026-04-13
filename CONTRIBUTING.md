@@ -26,11 +26,18 @@ We welcome and appreciate your contributions. These guidelines exist to keep col
 4. **Make your changes** and ensure they follow the [code rules](#code-rules).
 5. **Install dev tooling** (once per environment) so lint commands match CI:
    ```bash
-   pip install -r requirements.txt -r requirements-dev.txt
+   make setup
    ```
-   **Optional — Git pre-commit hooks** (runs Black, isort, and Ruff on staged files before each commit; same tools as CI):
+   This creates `.venv`, installs dev dependencies, and installs pre-commit hooks.
+
+   **Manual alternative:**
    ```bash
+   python3.11 -m venv .venv
+   source .venv/bin/activate   # Windows: .venv\Scripts\activate
+   python -m pip install --upgrade pip
+   python -m pip install -e ".[dev]"
    pre-commit install
+   pre-commit install --hook-type pre-push
    ```
    Test hooks on the whole tree once: `pre-commit run --all-files`
 6. **Run quality checks** before committing (same commands as CI):
@@ -91,7 +98,7 @@ Every PR must:
 
 - Address **exactly one concern** (no mixing features and refactors)
 - Have a **filled-out PR description** using the template in [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md#7-pr-description--checklist)
-- Pass **all CI checks** on GitHub Actions (Black, isort, Ruff, pytest — see [`.github/workflows/ci.yml`](./.github/workflows/ci.yml))
+- Pass **all CI checks** on GitHub Actions (Black, isort, Ruff, pytest — see [`.github/workflows/ci.yml`](./.github/workflows/ci.yml); install locally with `pip install -e ".[dev]"`)
 - Have **at least 1 approving review** (2 for security/auth changes)
 - Have **all reviewer comments resolved** before merge
 

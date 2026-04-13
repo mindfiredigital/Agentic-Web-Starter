@@ -47,10 +47,9 @@ agentic_web_starter/
 │   └── starter.py        # App bootstrap, routers, exception handlers
 ├── docker-compose.yml    # app, worker, tests, qdrant, redis, rabbitmq
 ├── Dockerfile
+├── Makefile              # local bootstrap (`make setup`)
 ├── env.example
-├── requirements.txt
-├── requirements-dev.txt   # Black, isort, Ruff, mypy, pre-commit (local / optional)
-├── pyproject.toml         # isort profile=black (keeps formatters aligned)
+├── pyproject.toml         # dependencies, dev extras, isort profile=black
 ├── .pre-commit-config.yaml # optional local hooks (run: pre-commit install)
 ├── .github/workflows/ci.yml
 └── README.md
@@ -129,12 +128,23 @@ RabbitMQ management UI is available at `http://localhost:15672` (default login: 
 
    Then set `QDRANT_HOST=localhost`, `REDIS_HOST=localhost`, and `RABBITMQ_HOST=localhost` in `.env` so the local API can reach the containers.
 
-2. **Create venv and install deps:**
+2. **Bootstrap local developer setup (recommended):**
 
    ```bash
-   python -m venv .venv
+   make setup
+   ```
+
+   This creates `.venv`, installs dev dependencies, and installs both pre-commit and pre-push hooks.
+
+   **Or manually, if you do not use `make`:**
+
+   ```bash
+   python3.11 -m venv .venv
    source .venv/bin/activate   # Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
+   python -m pip install --upgrade pip
+   python -m pip install -e ".[dev]"
+   pre-commit install
+   pre-commit install --hook-type pre-push
    ```
 
 3. **Start the API:**

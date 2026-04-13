@@ -16,9 +16,42 @@ repos:
       - id: isort
         files: ^app/
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.8.4"
+  - repo: local
     hooks:
-      - id: ruff
-        args: [--fix]
+      - id: ruff-working-dir-cache
+        name: ruff (WORKING_DIR cache)
+        language: system
+        pass_filenames: false
+        entry: >
+          bash -c '
+          if [ -f .env ]; then set -a; source .env; set +a; fi;
+          CACHE_ROOT="${WORKING_DIR:-./temp}/cache";
+          ruff check --fix --cache-dir "${CACHE_ROOT}/ruff" app/
+          '
         files: ^app/
+
+      - id: mypy-working-dir-cache
+        name: mypy (WORKING_DIR cache)
+        language: system
+        pass_filenames: false
+        entry: >
+          bash -c '
+          if [ -f .env ]; then set -a; source .env; set +a; fi;
+          CACHE_ROOT="${WORKING_DIR:-./temp}/cache";
+          mypy --cache-dir "${CACHE_ROOT}/mypy" app/ --ignore-missing-imports
+          '
+        files: ^app/
+        stages: [pre-push]
+
+      - id: pytest-working-dir-cache
+        name: pytest (WORKING_DIR cache)
+        language: system
+        pass_filenames: false
+        entry: >
+          bash -c '
+          if [ -f .env ]; then set -a; source .env; set +a; fi;
+          CACHE_ROOT="${WORKING_DIR:-./temp}/cache";
+          pytest -o cache_dir="${CACHE_ROOT}/pytest" -q app/tests
+          '
+        files: ^app/
+        stages: [pre-push]

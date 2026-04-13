@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir -p /app/data
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY pyproject.toml /app/pyproject.toml
+RUN pip install --no-cache-dir .
 
 COPY . /app
 

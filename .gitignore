@@ -6,6 +6,10 @@ simple_rag.ipynb
 
 __pycache__/
 *.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
 
 app/static/*
 test_doc.pdf
