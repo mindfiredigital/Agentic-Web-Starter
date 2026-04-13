@@ -9,7 +9,6 @@ from aio_pika.abc import AbstractIncomingMessage, AbstractRobustConnection
 from app.config.log_config import logger
 from app.config.rabbitmq_config import rabbitmq_config
 
-
 JsonDict = dict[str, Any]
 MessageHandler = Callable[[JsonDict, AbstractIncomingMessage], Awaitable[None]]
 
@@ -45,9 +44,11 @@ class MessageQueueClient:
             message = Message(
                 body=body,
                 content_type="application/json",
-                delivery_mode=DeliveryMode.PERSISTENT
-                if persistent
-                else DeliveryMode.NOT_PERSISTENT,
+                delivery_mode=(
+                    DeliveryMode.PERSISTENT
+                    if persistent
+                    else DeliveryMode.NOT_PERSISTENT
+                ),
             )
 
             await channel.default_exchange.publish(message, routing_key=queue_name)

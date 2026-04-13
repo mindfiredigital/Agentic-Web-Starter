@@ -2,10 +2,14 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 
 from app.config.env_config import settings
 from app.config.log_config import logger
+from app.schemas.core_schemas.ingestion_schema import (
+    IngestionRequest,
+    IngestionResponse,
+)
 from app.services.core_services.ingestion_service import ingestion_service
-from app.schemas.core_schemas.ingestion_schema import IngestionRequest, IngestionResponse
 
 router = APIRouter()
+
 
 def get_ingestion_request(file: UploadFile = File(...)) -> IngestionRequest:
     """Create an ingestion request from an uploaded file.
@@ -19,7 +23,9 @@ def get_ingestion_request(file: UploadFile = File(...)) -> IngestionRequest:
     return IngestionRequest(file=file)
 
 
-@router.post("/upload", status_code=status.HTTP_201_CREATED, response_model=IngestionResponse)
+@router.post(
+    "/upload", status_code=status.HTTP_201_CREATED, response_model=IngestionResponse
+)
 async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)):
     """Upload a file and index it (or queue for async ingestion if RabbitMQ enabled).
 
@@ -40,7 +46,9 @@ async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)
     file = request.file
 
     if settings.USE_RABBITMQ:
-        from app.services.message_queue_services.message_queue_client import MessageQueueClient
+        from app.services.message_queue_services.message_queue_client import (
+            MessageQueueClient,
+        )
 
         saved_path = ingestion_service.save_file(file)
         client = MessageQueueClient()
@@ -61,4 +69,3 @@ async def ingest_file(request: IngestionRequest = Depends(get_ingestion_request)
         "file_path": ingest_result["saved_path"],
         "filename": file.filename,
     }
-

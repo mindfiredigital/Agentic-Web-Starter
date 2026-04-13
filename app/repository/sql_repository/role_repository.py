@@ -12,10 +12,12 @@ class RoleRepository(BaseRepository[Role]):
         """Initialize with database connection and roles table."""
         super().__init__(db, "roles", Role)
 
-    def create_role(self, 
-        name: str, 
-        description: Optional[str] = None, 
-        created_by: Optional[str] = None) -> Role:
+    def create_role(
+        self,
+        name: str,
+        description: Optional[str] = None,
+        created_by: Optional[str] = None,
+    ) -> Role:
         """Create a new role.
 
         Args:
@@ -76,7 +78,9 @@ class RoleRepository(BaseRepository[Role]):
         Returns:
             Updated Role instance or None if not found.
         """
-        return self.update(role_id, updated_by=updated_by, name=name, description=description)
+        return self.update(
+            role_id, updated_by=updated_by, name=name, description=description
+        )
 
     def delete_role(self, role_id: str) -> Optional[Role]:
         """Delete a role.

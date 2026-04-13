@@ -47,7 +47,9 @@ class FileProcessor:
         file_name = self.get_file_name()
         file_extension = self.get_file_extension()
 
-        if not any(file_extension == ext.lower() for ext in ALLOWED_FILES.ALL_FILES.value):
+        if not any(
+            file_extension == ext.lower() for ext in ALLOWED_FILES.ALL_FILES.value
+        ):
             logger.error(f"Invalid file extension: {file_extension}")
             raise HTTPException(status_code=400, detail="Invalid file extension")
 

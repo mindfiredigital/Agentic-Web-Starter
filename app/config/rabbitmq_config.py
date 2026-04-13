@@ -32,4 +32,3 @@ class RabbitMQConfig:
 
 
 rabbitmq_config = RabbitMQConfig()
-

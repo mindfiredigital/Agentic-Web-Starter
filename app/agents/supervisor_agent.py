@@ -15,9 +15,10 @@ class SupervisorAgent(BaseAgent):
         """Initialize the supervisor agent with retriever tool and supervisor prompt."""
         self.retrieve_tool = RetrieverAgentTool(thread_id="")
         tools = [self.retrieve_tool]
-        super().__init__(llm=get_default_chat_client(), tools=tools, system_prompt=SUPERVISOR_PROMPT)
+        super().__init__(
+            llm=get_default_chat_client(), tools=tools, system_prompt=SUPERVISOR_PROMPT
+        )
 
-    
     def invoke(self, thread_id: str, query: Optional[str] = None) -> str:
         """Handle a user query with tool execution.
 

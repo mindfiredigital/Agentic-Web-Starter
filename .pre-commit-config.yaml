@@ -1,0 +1,24 @@
+# Install once per clone: pre-commit install
+# Run manually on all files: pre-commit run --all-files
+# https://pre-commit.com
+
+repos:
+  - repo: https://github.com/psf/black
+    rev: "24.10.0"
+    hooks:
+      - id: black
+        language_version: python3.11
+        files: ^app/
+
+  - repo: https://github.com/pycqa/isort
+    rev: "5.13.2"
+    hooks:
+      - id: isort
+        files: ^app/
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.8.4"
+    hooks:
+      - id: ruff
+        args: [--fix]
+        files: ^app/

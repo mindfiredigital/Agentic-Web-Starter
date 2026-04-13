@@ -1,7 +1,8 @@
-import os
 import importlib
-import pytest
+import os
+
 from app.config import env_config
+
 
 def test_reads_from_env(clear_env, set_env_vars):
     """Verify Settings loads values from environment."""
@@ -28,7 +29,9 @@ def test_paths_from_working_dir(clear_env, set_env_vars):
     assert settings.WORKING_PROJECT_DIR == expected_project_dir
     assert settings.DB_PATH == os.path.join(str(set_env_vars), "sqlite_data", "app.db")
     assert settings.LOG_DIR == os.path.join(expected_project_dir, "logs")
-    assert settings.UPLOAD_DIR == os.path.join(expected_project_dir, "static", "uploads")
+    assert settings.UPLOAD_DIR == os.path.join(
+        expected_project_dir, "static", "uploads"
+    )
 
 
 def test_defaults_when_missing(clear_env, monkeypatch, tmp_path):
@@ -48,4 +51,3 @@ def test_defaults_when_missing(clear_env, monkeypatch, tmp_path):
     assert settings.USE_SQL is True
     # env_config defaults USE_RABBITMQ to "true" when unset
     assert settings.USE_RABBITMQ is True
-

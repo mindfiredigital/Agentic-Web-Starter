@@ -4,6 +4,7 @@ from typing import List, Optional
 from app.models import Role, User
 from app.repository.sql_repository.base_repository import BaseRepository
 
+
 class UserRepository(BaseRepository[User]):
     """Data access for users."""
 
@@ -57,7 +58,7 @@ class UserRepository(BaseRepository[User]):
             created_by=created_by,
             username=username,
             email=email,
-            hashed_password=hashed_password
+            hashed_password=hashed_password,
         )
 
     def get_user_by_id(self, user_id: str) -> Optional[User]:
@@ -129,7 +130,7 @@ class UserRepository(BaseRepository[User]):
             updated_by=updated_by,
             username=username,
             email=email,
-            hashed_password=hashed_password
+            hashed_password=hashed_password,
         )
 
     def delete_user(self, user_id: str) -> Optional[User]:

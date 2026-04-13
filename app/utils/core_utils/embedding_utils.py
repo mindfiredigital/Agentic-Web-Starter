@@ -1,13 +1,15 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from app.constants.app_constants import VECTOR_DB
 from app.config.log_config import logger
+from app.constants.app_constants import VECTOR_DB
 
 
 class EmbeddingClient:
     """Factory for embeddings clients."""
 
-    def __init__(self, embedding_model_name: str = VECTOR_DB.EMBEDDING_MODEL.value) -> None:
+    def __init__(
+        self, embedding_model_name: str = VECTOR_DB.EMBEDDING_MODEL.value
+    ) -> None:
         """Initialize the embedding client.
 
         Args:
@@ -23,7 +25,10 @@ class EmbeddingClient:
         """
         encode_kwargs = {"normalize_embeddings": True}
 
-        logger.info("Loading embedding model %s (first run may download from Hugging Face)...", self.embedding_model_name)
+        logger.info(
+            "Loading embedding model %s (first run may download from Hugging Face)...",
+            self.embedding_model_name,
+        )
 
         model = HuggingFaceEmbeddings(
             model_name=self.embedding_model_name,

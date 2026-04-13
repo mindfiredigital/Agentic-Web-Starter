@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,28 +25,40 @@ class Settings:
         # 3. Authentication configuration
         self.JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "change-me")
         self.JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
-        self.JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+        self.JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
+            os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30")
+        )
 
         # 4. Admin configuration
-        self.ADMIN_USERNAME: str | None = os.getenv("ADMIN_USERNAME", "").strip() or None
+        self.ADMIN_USERNAME: str | None = (
+            os.getenv("ADMIN_USERNAME", "").strip() or None
+        )
         self.ADMIN_EMAIL: str | None = os.getenv("ADMIN_EMAIL", "").strip() or None
-        self.ADMIN_PASSWORD: str | None = os.getenv("ADMIN_PASSWORD", "").strip() or None
-        
+        self.ADMIN_PASSWORD: str | None = (
+            os.getenv("ADMIN_PASSWORD", "").strip() or None
+        )
+
         # 5. Working directory
         working_dir = os.path.abspath(os.getenv("WORKING_DIR", ".").strip() or ".")
 
-        self.WORKING_PROJECT_DIR: str = os.path.join(working_dir,self.PROJECT_NAME)
+        self.WORKING_PROJECT_DIR: str = os.path.join(working_dir, self.PROJECT_NAME)
         self.DB_PATH: str = os.path.join(working_dir, "sqlite_data", "app.db")
         self.LOG_DIR: str = os.path.join(self.WORKING_PROJECT_DIR, "logs")
-        self.UPLOAD_DIR: str = os.path.join(self.WORKING_PROJECT_DIR, "static", "uploads")
+        self.UPLOAD_DIR: str = os.path.join(
+            self.WORKING_PROJECT_DIR, "static", "uploads"
+        )
 
         # 6. Hugging Face configuration
-        self.HF_HOME: str = os.getenv("HF_HOME", os.path.join(self.WORKING_PROJECT_DIR, "hf"))
+        self.HF_HOME: str = os.getenv(
+            "HF_HOME", os.path.join(self.WORKING_PROJECT_DIR, "hf")
+        )
         os.environ.setdefault("HF_HOME", self.HF_HOME)
 
         # 7. Qdrant configuration
         self.COLLECTION_NAME: str = os.getenv("COLLECTION_NAME", "agentic_web_starter")
-        self.USE_QDRANT: bool = os.getenv("USE_QDRANT", "true").strip().lower() == "true"
+        self.USE_QDRANT: bool = (
+            os.getenv("USE_QDRANT", "true").strip().lower() == "true"
+        )
         self.USE_REDIS: bool = os.getenv("USE_REDIS", "true").strip().lower() == "true"
         self.USE_SQL: bool = os.getenv("USE_SQL", "true").strip().lower() == "true"
 
@@ -60,13 +73,20 @@ class Settings:
         self.REDIS_DB = os.getenv("REDIS_DB", "0")
 
         # 9. RabbitMQ configuration (optional)
-        self.USE_RABBITMQ: bool = os.getenv("USE_RABBITMQ", "true").strip().lower() == "true"
+        self.USE_RABBITMQ: bool = (
+            os.getenv("USE_RABBITMQ", "true").strip().lower() == "true"
+        )
         self.RABBITMQ_HOST: str = os.getenv("RABBITMQ_HOST", "rabbitmq")
         self.RABBITMQ_PORT: int = int(os.getenv("RABBITMQ_PORT", "5672"))
         self.RABBITMQ_USERNAME: str = os.getenv("RABBITMQ_USERNAME", "guest")
         self.RABBITMQ_PASSWORD: str = os.getenv("RABBITMQ_PASSWORD", "guest")
         self.RABBITMQ_VHOST: str = os.getenv("RABBITMQ_VHOST", "/")
-        self.RABBITMQ_AMQP_URL: str | None = os.getenv("RABBITMQ_AMQP_URL", "").strip() or None
-        self.RABBITMQ_INGEST_QUEUE: str = os.getenv("RABBITMQ_INGEST_QUEUE", "agentic_web_starter.ingestion")
-        
+        self.RABBITMQ_AMQP_URL: str | None = (
+            os.getenv("RABBITMQ_AMQP_URL", "").strip() or None
+        )
+        self.RABBITMQ_INGEST_QUEUE: str = os.getenv(
+            "RABBITMQ_INGEST_QUEUE", "agentic_web_starter.ingestion"
+        )
+
+
 settings = Settings()

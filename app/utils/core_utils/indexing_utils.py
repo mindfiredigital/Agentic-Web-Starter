@@ -21,7 +21,9 @@ class Indexer:
         Returns:
             Initialized QdrantVectorStore instance.
         """
-        self.vectordb = self.qdrant_repo.build_vectordb(collection_name=self.collection_name)
+        self.vectordb = self.qdrant_repo.build_vectordb(
+            collection_name=self.collection_name
+        )
         return self.vectordb
 
     def index_documents(self, chunks: List):
@@ -49,7 +51,9 @@ class Indexer:
             return {"success": True, "collection_name": self.collection_name}
         except Exception as e:
             logger.error("Error adding documents to qdrant vectordb: %s", e)
-            raise ValueError(f"Error adding documents to qdrant vectordb: {str(e)}") from e
+            raise ValueError(
+                f"Error adding documents to qdrant vectordb: {str(e)}"
+            ) from e
 
     def delete_database(self):
         """Delete the vector database.
@@ -61,7 +65,9 @@ class Indexer:
             ValueError: If deletion fails.
         """
         if not self.qdrant_repo.collection_exists(self.collection_name):
-            logger.warning("Collection %s not found; skipping deletion", self.collection_name)
+            logger.warning(
+                "Collection %s not found; skipping deletion", self.collection_name
+            )
             return
 
         try:

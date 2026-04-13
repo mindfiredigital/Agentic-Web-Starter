@@ -1,8 +1,8 @@
 from langchain.tools import BaseTool
-from typing import Type
-from pydantic import BaseModel, Field
-from app.constants.app_constants import VECTOR_DB
-from app.utils.core_utils import TextProcessor, Indexer
+from pydantic import Field
+
+from app.utils.core_utils import Indexer, TextProcessor
+
 
 class IndexerTool(BaseTool):
     """Tool that indexes a document into the vector database."""
@@ -20,7 +20,7 @@ class IndexerTool(BaseTool):
             Dict with success status and collection_name, or None if no chunks.
         """
         text_processor = TextProcessor(file_path=self.filepath)
-        
+
         text = text_processor.load_documents()
         chunks = text_processor.split_documents(text)
 

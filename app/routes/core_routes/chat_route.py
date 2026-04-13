@@ -20,4 +20,3 @@ async def chat(request: ChatRequest):
     """
     answer = supervisor.invoke(thread_id=request.thread_id, query=request.query)
     return {"thread_id": request.thread_id, "answer": answer}
-

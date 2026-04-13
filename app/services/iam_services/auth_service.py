@@ -2,10 +2,15 @@ import sqlite3
 
 from app.config.log_config import logger
 from app.exceptions import ConflictError, InternalError, UnauthorizedError
-from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
+from app.repository.sql_repository import (
+    ACLRepository,
+    ComponentRepository,
+    RoleRepository,
+    UserRepository,
+)
 from app.services.iam_services.role_service import ROLE_COMPONENT_URI
 from app.services.iam_services.user_service import USER_COMPONENT_URI
-from app.utils.iam_utils import auth_utils, JWT_utils
+from app.utils.iam_utils import JWT_utils, auth_utils
 
 
 class AuthService:
@@ -103,7 +108,9 @@ class AuthService:
                     created_by=user.id,
                 )
 
-            users_component = self.component_repo.get_component_by_uri(USER_COMPONENT_URI)
+            users_component = self.component_repo.get_component_by_uri(
+                USER_COMPONENT_URI
+            )
             if not users_component:
                 users_component = self.component_repo.create_component(
                     name="users",
@@ -111,7 +118,9 @@ class AuthService:
                     created_by=user.id,
                 )
 
-            roles_component = self.component_repo.get_component_by_uri(ROLE_COMPONENT_URI)
+            roles_component = self.component_repo.get_component_by_uri(
+                ROLE_COMPONENT_URI
+            )
             if not roles_component:
                 roles_component = self.component_repo.create_component(
                     name="roles",
@@ -127,4 +136,3 @@ class AuthService:
             raise InternalError("Bootstrap failed") from e
 
         return True
-

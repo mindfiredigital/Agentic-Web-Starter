@@ -11,11 +11,11 @@ python-dotenv==1.2.1
 python-multipart==0.0.9
 qdrant_client==1.16.2
 redis==5.0.8
-aio-pika
+aio-pika==9.5.8
 gunicorn==23.0.0
 uvicorn==0.40.0
-PyJWT
+PyJWT==2.11.0
 passlib[argon2]
 langchain-google-genai==1.0.8
-pytest
-httpx
+pytest==9.0.2
+httpx==0.28.1

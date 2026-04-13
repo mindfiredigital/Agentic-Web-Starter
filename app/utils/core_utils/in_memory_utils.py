@@ -7,7 +7,10 @@ class InMemoryHistory:
     def __init__(self) -> None:
         self._store: dict[str, InMemoryChatMessageHistory] = {}
 
-    def get_history( self, session_id: str,) -> InMemoryChatMessageHistory:
+    def get_history(
+        self,
+        session_id: str,
+    ) -> InMemoryChatMessageHistory:
         """Create or fetch a chat history store for a session.
 
         Args:
@@ -18,5 +21,6 @@ class InMemoryHistory:
         if session_id not in self._store:
             self._store[session_id] = InMemoryChatMessageHistory()
         return self._store[session_id]
+
 
 in_memory_history = InMemoryHistory()

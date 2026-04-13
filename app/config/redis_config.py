@@ -1,5 +1,7 @@
-from app.config.env_config import settings
 from redis import Redis
+
+from app.config.env_config import settings
+
 
 class RedisConfig:
     """Provide Redis connection details and helpers."""
@@ -9,7 +11,7 @@ class RedisConfig:
         self.host = settings.REDIS_HOST
         self.port = int((settings.REDIS_PORT or "6379").strip() or "6379")
         self.db = int((settings.REDIS_DB or "0").strip() or "0")
-    
+
     def get_redis_client(self):
         """Create and return a Redis client.
 
@@ -33,5 +35,6 @@ class RedisConfig:
         if scheme in {"http", "https"}:
             scheme = "redis"
         return f"{scheme}://{self.host}:{self.port}/{self.db}"
+
 
 redis_config = RedisConfig()

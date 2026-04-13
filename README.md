@@ -11,7 +11,7 @@ FastAPI-based agentic RAG service with document ingestion, retrieval-augmented c
 - **User & role management (optional)** — CRUD for users and roles with SQLite persistence
 - **Global exception handling** — Consistent error responses (401, 403, 404, 422)
 - **Health check** — `/health` endpoint for liveness
-- **Tests** — Pytest suite runnable via Docker Compose
+- **Tests** — Pytest suite runnable via Docker Compose; **CI** runs the same checks on GitHub Actions (Black, isort, Ruff, pytest — see `.github/workflows/ci.yml`)
 
 ## Requirements
 
@@ -49,6 +49,10 @@ agentic_web_starter/
 ├── Dockerfile
 ├── env.example
 ├── requirements.txt
+├── requirements-dev.txt   # Black, isort, Ruff, mypy, pre-commit (local / optional)
+├── pyproject.toml         # isort profile=black (keeps formatters aligned)
+├── .pre-commit-config.yaml # optional local hooks (run: pre-commit install)
+├── .github/workflows/ci.yml
 └── README.md
 ```
 

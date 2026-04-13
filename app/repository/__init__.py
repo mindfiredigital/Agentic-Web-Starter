@@ -7,11 +7,11 @@ This module provides organized access to:
 
 # SQL repositories
 from app.repository.sql_repository import (
-    BaseRepository,
-    UserRepository,
-    RoleRepository,
-    ComponentRepository,
     ACLRepository,
+    BaseRepository,
+    ComponentRepository,
+    RoleRepository,
+    UserRepository,
 )
 
 # Vector repositories

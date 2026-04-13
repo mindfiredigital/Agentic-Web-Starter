@@ -1,5 +1,7 @@
-from app.config.env_config import settings
 from qdrant_client import QdrantClient
+
+from app.config.env_config import settings
+
 
 class QdrantConfig:
     """Provide Qdrant connection details and helpers."""
@@ -10,7 +12,7 @@ class QdrantConfig:
         self.port = int(settings.QDRANT_PORT)
         self.collection_name = settings.COLLECTION_NAME
         self.protocol = settings.QDRANT_PROTOCOL
-        
+
     def get_qdrant_client(self):
         """Create and return a Qdrant client.
 
@@ -27,5 +29,6 @@ class QdrantConfig:
             Qdrant base URL (e.g., http://host:port).
         """
         return f"{settings.QDRANT_PROTOCOL}://{self.host}:{self.port}"
+
 
 qdrant_config = QdrantConfig()

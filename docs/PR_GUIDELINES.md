@@ -111,18 +111,18 @@ isort app/          # Consistent import ordering
 ruff check app/     # Fast, comprehensive linting
 ```
 
-### Type Checking
+### Type Checking (optional locally; not enforced in CI yet)
 
 ```bash
 mypy app/ --ignore-missing-imports
 ```
 
-All four tools must produce **zero errors**. A PR with linting or type errors will not be reviewed.
+Black, isort, and Ruff must produce **zero errors** (same as GitHub Actions). Mypy is recommended when you change typed modules; the full tree is not yet clean enough to gate CI on mypy.
 
 ### Installation (if not already installed)
 
 ```bash
-pip install black isort ruff mypy
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 ---
@@ -375,7 +375,7 @@ _How was this tested? Check what applies and fill in details._
 - [ ] `black app/` passes with zero errors
 - [ ] `isort app/` passes with zero errors
 - [ ] `ruff check app/` passes with zero errors
-- [ ] `mypy app/ --ignore-missing-imports` passes with zero errors
+- [ ] `mypy app/ --ignore-missing-imports` passes with zero errors — *recommended; not required by CI until repo-wide types are tightened*
 - [ ] No `print()` statements — structured logger used throughout
 - [ ] No hardcoded values (hosts, ports, model names, API keys) — all sourced from `settings`
 
@@ -466,7 +466,8 @@ PRs exhibiting any of the following will be **closed immediately** and must be r
 
 ```
 Before every push, run:
-  black app/ && isort app/ && ruff check app/ && mypy app/ --ignore-missing-imports
+  black app/ && isort app/ && ruff check app/
+  # optional: mypy app/ --ignore-missing-imports
 
 Before opening a PR, verify:
   ✓ Branch name follows convention

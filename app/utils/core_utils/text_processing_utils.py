@@ -58,7 +58,9 @@ class TextProcessor:
         Returns:
             List of document chunks.
         """
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap
+        )
         return text_splitter.split_documents(docs)
 
     def process(self) -> List:

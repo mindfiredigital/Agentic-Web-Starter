@@ -24,23 +24,33 @@ We welcome and appreciate your contributions. These guidelines exist to keep col
    ```
    See [Branch Naming](#branch-naming) below for all allowed prefixes.
 4. **Make your changes** and ensure they follow the [code rules](#code-rules).
-5. **Run quality checks** before committing:
+5. **Install dev tooling** (once per environment) so lint commands match CI:
    ```bash
-   black app/ && isort app/ && ruff check app/ && mypy app/ --ignore-missing-imports
+   pip install -r requirements.txt -r requirements-dev.txt
    ```
-6. **Run the test suite** and make sure everything passes:
+   **Optional — Git pre-commit hooks** (runs Black, isort, and Ruff on staged files before each commit; same tools as CI):
+   ```bash
+   pre-commit install
+   ```
+   Test hooks on the whole tree once: `pre-commit run --all-files`
+6. **Run quality checks** before committing (same commands as CI):
+   ```bash
+   black app/ && isort app/ && ruff check app/
+   ```
+   Optional — run mypy locally when you touch typed modules: `mypy app/ --ignore-missing-imports` (full-repo mypy is not enforced in CI yet).
+7. **Run the test suite** and make sure everything passes:
    ```bash
    pytest app/tests/ -v
    # or via Docker:
    docker compose run tests
    ```
-7. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/) format:
+8. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/) format:
    ```
    feat(agents): add timeout handling to supervisor agent
    fix(repository): handle empty result set in base_repository
    ```
-8. **Push** your branch and open a **Pull Request** against `main`.
-9. Fill in the **PR description template** from [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md#7-pr-description--checklist) completely — PRs with empty descriptions will not be reviewed.
+9. **Push** your branch and open a **Pull Request** against `main`.
+10. Fill in the **PR description template** from [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md#7-pr-description--checklist) completely — PRs with empty descriptions will not be reviewed.
 
 ---
 
@@ -81,7 +91,7 @@ Every PR must:
 
 - Address **exactly one concern** (no mixing features and refactors)
 - Have a **filled-out PR description** using the template in [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md#7-pr-description--checklist)
-- Pass **all CI checks** (linting, type checking, tests)
+- Pass **all CI checks** on GitHub Actions (Black, isort, Ruff, pytest — see [`.github/workflows/ci.yml`](./.github/workflows/ci.yml))
 - Have **at least 1 approving review** (2 for security/auth changes)
 - Have **all reviewer comments resolved** before merge
 
@@ -95,7 +105,7 @@ PRs that violate the rules in [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md)
 ✓ Branch name follows convention
 ✓ Commits follow Conventional Commits format
 ✓ .env not committed; env.example updated if new vars added
-✓ black, isort, ruff, mypy — all pass with zero errors
+✓ black, isort, ruff — all pass with zero errors (mypy optional until enforced in CI)
 ✓ No print() — structured logger used
 ✓ No hardcoded values — all config from settings
 ✓ Custom exceptions used — no raw Exception

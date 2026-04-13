@@ -18,7 +18,9 @@ class VectorRetriever:
             collection_name: Optional collection override. Defaults to repo collection.
         """
         self.qdrant_repo = qdrant_repository
-        self.collection_name = collection_name or self.qdrant_repo.get_collection_name_with_model()
+        self.collection_name = (
+            collection_name or self.qdrant_repo.get_collection_name_with_model()
+        )
         self.vectordb: Optional[QdrantVectorStore] = None
         self.top_k = VECTOR_DB.TOP_K.value
 
@@ -28,7 +30,9 @@ class VectorRetriever:
         Returns:
             Initialized Qdrant vector store.
         """
-        self.vectordb = self.qdrant_repo.build_vectordb(collection_name=self.collection_name)
+        self.vectordb = self.qdrant_repo.build_vectordb(
+            collection_name=self.collection_name
+        )
 
         return self.vectordb
 
@@ -57,4 +61,3 @@ class VectorRetriever:
 
 # Singleton for use when USE_QDRANT (or other vector backend) is enabled.
 vector_retriever = VectorRetriever()
-
