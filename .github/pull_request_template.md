@@ -19,7 +19,7 @@
 - [ ] Changes match the linked issue (or the scope described above).
 - [ ] **Tests:** Added or updated tests where appropriate (`pytest -q app/tests`).
 - [ ] **Lint/format:** Ran the same checks as CI — `black --check app/`, `isort --check-only app/`, `ruff check app/` (or `pre-commit run --all-files` if you use local hooks).
-- [ ] **Docs:** README, docstrings, or comments updated if behavior or setup changed.
+- [ ] **Docs:** `docs/` (Docusaurus), README, docstrings, or comments updated if behavior or setup changed.
 - [ ] **Manual check:** I ran tests (locally with deps up, or `docker compose run tests`) and the checks above before opening this PR.
 
 ### How tested

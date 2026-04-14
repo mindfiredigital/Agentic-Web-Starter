@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: agentic_rag_app
+    container_name: agentic_web_app
     ports:
       - "8000:8000"
     env_file:
@@ -23,7 +23,7 @@ services:
 
   tests:
     build: .
-    container_name: agentic_rag_tests
+    container_name: agentic_web_tests
     command: >
       sh -c "pytest -q app/tests"
     env_file:
@@ -40,7 +40,7 @@ services:
 
   worker:
     build: .
-    container_name: agentic_rag_worker
+    container_name: agentic_web_worker
     command: >
       sh -c "python -m app.workers.ingestion_worker"
     env_file:

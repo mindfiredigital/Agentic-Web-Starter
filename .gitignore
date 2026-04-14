@@ -22,8 +22,6 @@ PROJECT_INFO.md
 TODO_TABLE.md
 JWT_AUTH_AND_SQL_SETUP.md
 
-docs/*
-!docs/PR_GUIDELINES.md
 temp/
 
 # E2E / manual testing checklist (local notes)

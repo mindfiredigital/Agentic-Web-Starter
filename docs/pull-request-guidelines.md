@@ -1,6 +1,12 @@
-# Pull Request Guidelines
+---
+sidebar_position: 8
+title: Pull request guidelines
+description: Branch naming, commits, code quality, testing, security, and PR checklist for Agentic Web Starter.
+---
 
-This document defines the strict standards every contributor must follow before raising a Pull Request against this repository. These rules exist to keep the codebase secure, maintainable, and reviewable by everyone on the team.
+# Pull request guidelines
+
+This document defines the strict standards every contributor must follow before raising a pull request against this repository. These rules exist to keep the codebase secure, maintainable, and reviewable by everyone on the team.
 
 ---
 

@@ -13,6 +13,17 @@ FastAPI-based agentic RAG service with document ingestion, retrieval-augmented c
 - **Health check** — `/health` endpoint for liveness
 - **Tests** — Pytest suite runnable via Docker Compose; **CI** runs the same checks on GitHub Actions (Black, isort, Ruff, pytest — see `.github/workflows/ci.yml`)
 
+## Documentation site (Docusaurus)
+
+Handbook-style pages live under [`docs/`](docs/) (introduction, setup, configuration, architecture, auth, API pointers, contributing, and pull request guidelines). They are built with **[Docusaurus](https://docusaurus.io/)** from [`website/`](website/).
+
+| Command | Description |
+|---------|-------------|
+| `make docs` | Install npm dependencies if needed and start the doc dev server (`http://localhost:3000`) |
+| `make docs-build` | Production build to `website/build` |
+
+Or manually: `cd website && npm install && npm start` (dev) / `npm run build` (build). Edit `website/docusaurus.config.ts` to set `url`, `baseUrl`, and GitHub coordinates for deployment (for example GitHub Pages).
+
 ## Requirements
 
 - **Python 3.10+** for local runs
@@ -24,6 +35,8 @@ FastAPI-based agentic RAG service with document ingestion, retrieval-augmented c
 
 ```
 agentic_web_starter/
+├── docs/                 # Guides & API flows (Docusaurus content)
+├── website/              # Docusaurus dev server & static build
 ├── app/
 │   ├── agents/           # Retriever and supervisor agents
 │   ├── config/           # Env, logging, Qdrant, Redis, RabbitMQ config
@@ -81,7 +94,7 @@ agentic_web_starter/
    | `RABBITMQ_VHOST` / `RABBITMQ_AMQP_URL` | VHost or full AMQP URL override |
    | `RABBITMQ_INGEST_QUEUE` | Queue name for async ingestion jobs |
    | `WORKING_DIR` | Base path for uploads, logs, DB (default: `./temp` in Docker) |
-   | `PROJECT_NAME` | Used for upload/log paths under `WORKING_DIR` (default: `agentic_rag`) |
+   | `PROJECT_NAME` | Used for upload/log paths under `WORKING_DIR` (default: `agentic_web_starter` in `env.example`) |
    | `COLLECTION_NAME` | Qdrant collection name (default: `agentic_web_starter`) |
    | `ALLOWED_ORIGINS`, `BASE_PATH` | CORS and root path for the API |
 
@@ -196,6 +209,6 @@ Protected routes require a valid JWT in the `Authorization: Bearer <token>` head
 
 - **SQLite** — User/role/ACL data is stored in `WORKING_DIR/sqlite_data/app.db` (e.g. `./temp/sqlite_data/app.db` when using Docker default `WORKING_DIR=./temp`).
 - **Admin bootstrap** — If `ADMIN_USERNAME`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` are set, the first run creates an admin user when no users exist.
-- **Uploads and logs** — Stored under `WORKING_DIR/<PROJECT_NAME>/static/uploads` and `WORKING_DIR/<PROJECT_NAME>/logs` (e.g. `./temp/agentic_rag/static/uploads` with default `PROJECT_NAME=agentic_rag`).
+- **Uploads and logs** — Stored under `WORKING_DIR/<PROJECT_NAME>/static/uploads` and `WORKING_DIR/<PROJECT_NAME>/logs` (e.g. `./temp/agentic_web_starter/static/uploads` with default `PROJECT_NAME` from `env.example`).
 - **Hugging Face** — Cache defaults to `WORKING_DIR/<PROJECT_NAME>/hf` unless `HF_HOME` is set.
-- **OpenAPI docs** — Available at `http://localhost:8000/docs` when the app is running. If `BASE_PATH` is set (e.g. `/agentic_rag`), use `http://localhost:8000{BASE_PATH}/docs` when behind a reverse proxy.
+- **OpenAPI docs** — Available at `http://localhost:8000/docs` when the app is running. If `BASE_PATH` is set (e.g. `/agentic_web_starter`), use `http://localhost:8000{BASE_PATH}/docs` when behind a reverse proxy.

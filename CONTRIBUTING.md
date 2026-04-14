@@ -1,4 +1,4 @@
-# Contributing to Agentic RAG Template
+# Contributing to Agentic Web Starter
 
 We welcome and appreciate your contributions. These guidelines exist to keep collaboration smooth, the codebase secure, and every change reviewable by the team.
 
@@ -18,19 +18,15 @@ We welcome and appreciate your contributions. These guidelines exist to keep col
 
 1. **Fork** the repository to your GitHub account.
 2. **Clone** your fork locally.
-3. Create a new **branch** following the naming convention:
-   ```
-   git checkout -b feature/<short-description>
-   ```
-   See [Branch Naming](#branch-naming) below for all allowed prefixes.
-4. **Make your changes** and ensure they follow the [code rules](#code-rules).
-5. **Install dev tooling** (once per environment) so lint commands match CI:
+3. **Install dev tooling** (once per clone) so hooks and lint commands match CI:
    ```bash
    make setup
    ```
-   This creates `.venv`, installs dev dependencies, and installs pre-commit hooks.
+   This creates `.venv`, installs dev dependencies, and installs pre-commit and pre-push hooks.
+   You **must** do this before your first commit — otherwise the pre-commit hook will fail with
+   `` `pre-commit` not found ``.
 
-   **Manual alternative:**
+   **Manual alternative (if you do not use `make`):**
    ```bash
    python3.11 -m venv .venv
    source .venv/bin/activate   # Windows: .venv\Scripts\activate
@@ -39,7 +35,14 @@ We welcome and appreciate your contributions. These guidelines exist to keep col
    pre-commit install
    pre-commit install --hook-type pre-push
    ```
-   Test hooks on the whole tree once: `pre-commit run --all-files`
+   Verify hooks on the whole tree once: `pre-commit run --all-files`
+
+4. Create a new **branch** following the naming convention:
+   ```
+   git checkout -b feature/<short-description>
+   ```
+   See [Branch Naming](#branch-naming) below for all allowed prefixes.
+5. **Make your changes** and ensure they follow the [code rules](#code-rules).
 6. **Run quality checks** before committing (same commands as CI):
    ```bash
    black app/ && isort app/ && ruff check app/
@@ -57,7 +60,7 @@ We welcome and appreciate your contributions. These guidelines exist to keep col
    fix(repository): handle empty result set in base_repository
    ```
 9. **Push** your branch and open a **Pull Request** against `main`.
-10. Fill in the **PR description template** from [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md#7-pr-description--checklist) completely — PRs with empty descriptions will not be reviewed.
+10. Fill in the **PR description template** from [`docs/pull-request-guidelines.md`](./docs/pull-request-guidelines.md#7-pr-description--checklist) completely — PRs with empty descriptions will not be reviewed.
 
 ---
 
@@ -79,7 +82,7 @@ We welcome and appreciate your contributions. These guidelines exist to keep col
 
 ## Code Rules
 
-A summary of the most important rules. See the full reference in [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md).
+A summary of the most important rules. See the full reference in [`docs/pull-request-guidelines.md`](./docs/pull-request-guidelines.md).
 
 - **Service layer** — all business logic goes in `app/services/`, not in route handlers
 - **Repository pattern** — all database access goes through `app/repository/`
@@ -97,12 +100,12 @@ A summary of the most important rules. See the full reference in [`docs/PR_GUIDE
 Every PR must:
 
 - Address **exactly one concern** (no mixing features and refactors)
-- Have a **filled-out PR description** using the template in [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md#7-pr-description--checklist)
+- Have a **filled-out PR description** using the template in [`docs/pull-request-guidelines.md`](./docs/pull-request-guidelines.md#7-pr-description--checklist)
 - Pass **all CI checks** on GitHub Actions (Black, isort, Ruff, pytest — see [`.github/workflows/ci.yml`](./.github/workflows/ci.yml); install locally with `pip install -e ".[dev]"`)
 - Have **at least 1 approving review** (2 for security/auth changes)
 - Have **all reviewer comments resolved** before merge
 
-PRs that violate the rules in [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md) will be closed and must be corrected before re-opening.
+PRs that violate the rules in [`docs/pull-request-guidelines.md`](./docs/pull-request-guidelines.md) will be closed and must be corrected before re-opening.
 
 ---
 
@@ -128,7 +131,7 @@ PRs that violate the rules in [`docs/PR_GUIDELINES.md`](./docs/PR_GUIDELINES.md)
 
 For the complete set of rules covering branch naming, commit standards, architecture rules, security requirements, testing expectations, review process, and automatic rejection criteria, read:
 
-**[docs/PR_GUIDELINES.md](./docs/PR_GUIDELINES.md)**
+**[docs/pull-request-guidelines.md](./docs/pull-request-guidelines.md)**
 
 ---
 
@@ -142,4 +145,4 @@ By contributing, you agree that your contributions will be licensed under the pr
 
 If you need clarification, open an issue or reach out to the maintainers directly.
 
-Thank you for contributing to Agentic RAG Template!
+Thank you for contributing to Agentic Web Starter!
