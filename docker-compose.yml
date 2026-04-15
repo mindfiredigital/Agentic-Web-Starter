@@ -1,0 +1,112 @@
+services:
+  app:
+    build: .
+    container_name: agentic_web_app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Use a stable container path, but persist to the host WORKING_DIR.
+      - WORKING_DIR=/workdir
+      - GUNICORN_WORKERS=4
+      - PYTHONWARNINGS=ignore
+    command: >
+      sh -c "gunicorn app.main:app --preload -w $${GUNICORN_WORKERS:-4} -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
+    volumes:
+      # Persist *everything* (uploads, logs, sqlite_data, etc.) under your host WORKING_DIR.
+      - ${WORKING_DIR:-./temp}:/workdir
+    depends_on:
+      - qdrant
+      - redis
+      - rabbitmq
+
+  tests:
+    build:
+      context: .
+      target: builder
+    container_name: agentic_web_tests
+    command: >
+      sh -c "pip install --no-cache-dir '.[dev]' -q && pytest -q app/tests"
+    env_file:
+      - .env
+    environment:
+      - WORKING_DIR=/workdir
+      - PYTHONWARNINGS=ignore
+    volumes:
+      - ${WORKING_DIR:-./temp}:/workdir
+    depends_on:
+      - qdrant
+      - redis
+      - rabbitmq
+
+  worker:
+    build: .
+    container_name: agentic_web_worker
+    command: >
+      sh -c "python -m app.workers.ingestion_worker"
+    env_file:
+      - .env
+    environment:
+      - WORKING_DIR=/workdir
+      - PYTHONWARNINGS=ignore
+    volumes:
+      - ${WORKING_DIR:-./temp}:/workdir
+    depends_on:
+      - qdrant
+      - redis
+      - rabbitmq
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    environment:
+      - QDRANT__LOG_LEVEL=WARN
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      # Keep qdrant storage under the same host WORKING_DIR.
+      - ${WORKING_DIR:-./temp}/qdrant_storage:/qdrant/storage
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: redis-server --loglevel warning
+    ports:
+      - "6379:6379"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-/}
+      - RABBITMQ_LOGS=-
+      - RABBITMQ_LOG_LEVEL=warning
+    volumes:
+      - ${WORKING_DIR:-./temp}/rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

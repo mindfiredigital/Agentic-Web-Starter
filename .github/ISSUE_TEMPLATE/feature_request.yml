@@ -1,0 +1,87 @@
+name: 'New feature proposal'
+description: Suggest an idea for this project
+title: '[Feature]: '
+labels: [':sparkles: feature request']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please fill in all required sections so the team can
+        evaluate the proposal effectively. The more context you provide, the faster we can act on it.
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: What problem does this feature solve?
+      description: |
+        Explain the use case, context, and rationale behind this request. Focus on the **end-user
+        experience** that led you here — not just the implementation idea.
+      placeholder: |
+        e.g. "When I upload a large PDF the chat takes 30 s to respond. Users need near-real-time
+        feedback on ingestion progress so they know the system is working."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature you'd like to see. If you have a rough design or API sketch, include it here.
+      placeholder: |
+        e.g. "Add a Server-Sent Events endpoint `/api/v1/upload/progress/{job_id}` that streams
+        percentage-complete events while a document is being indexed."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: List other approaches you evaluated and why you prefer the proposed solution.
+      placeholder: |
+        e.g. "Polling a status endpoint — works but less efficient; WebSocket — heavier to implement
+        and not needed for one-directional updates."
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Which area of the project does this affect?
+      multiple: true
+      options:
+        - Core API (chat / ingestion)
+        - Authentication / IAM
+        - Configuration / environment
+        - Documentation / developer experience
+        - CI / testing
+        - Infrastructure / Docker
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: How important is this to you?
+      options:
+        - Critical — blocking my use-case
+        - High — significantly improves the experience
+        - Medium — nice to have
+        - Low — minor improvement
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this has not been requested before.
+          required: true
+        - label: I am willing to help implement or test this feature.
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Screenshots, links to related issues, external references, or anything else that helps.
+      placeholder: 'Attach screenshots, paste related code snippets, or link to prior discussions.'

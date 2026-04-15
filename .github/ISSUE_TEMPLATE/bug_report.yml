@@ -1,0 +1,87 @@
+name: 'Bug report'
+description: Create a report to help us improve
+title: '[BUG]: '
+labels: [':bug: bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to report a bug! Please fill in the sections below as completely
+        as possible so we can reproduce and fix the issue quickly.
+
+  - type: textarea
+    id: describe-the-bug
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: e.g. "The `/api/v1/chat` endpoint returns a 500 error when `USE_REDIS=false`."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Exact steps to reliably reproduce the behaviour.
+      placeholder: |
+        1. Set `USE_REDIS=false` in `.env`
+        2. Start the API with `docker compose up --build`
+        3. Send `POST /api/v1/chat` with a valid body
+        4. Observe the 500 response
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      description: What should happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actually-happening
+    attributes:
+      label: Actual behaviour
+      description: What actually happens? Include the full error message / stack trace if available.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Provide details about your setup. Run `docker compose version` and `python --version` if applicable.
+      placeholder: |
+        - OS: macOS 14 / Ubuntu 22.04 / Windows 11
+        - Python version: 3.11.x
+        - Docker version: 27.x
+        - Run mode: Docker Compose / local uvicorn / Gunicorn
+        - Relevant `.env` flags: USE_REDIS=false, USE_SQL=true, USE_RABBITMQ=false
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or logs
+      description: If applicable, paste relevant log output or attach screenshots to help explain the problem.
+      placeholder: Paste log lines here or drag-and-drop a screenshot.
+
+  - type: textarea
+    id: additional-comments
+    attributes:
+      label: Additional context
+      description: Any other background or context that might help us investigate.
+      placeholder: e.g. "This only happens when running behind an Nginx reverse proxy with `BASE_PATH` set."
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this bug has not been reported before.
+          required: true
+        - label: I am using the latest version of this project.
+          required: true
