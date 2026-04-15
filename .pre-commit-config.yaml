@@ -27,9 +27,12 @@ repos:
 
   - repo: local
     hooks:
+      # language: python + additional_dependencies: hooks run in pre-commit's own venvs so
+      # bare ruff/mypy/pytest resolve without a local .venv (e.g. Docker-only workflows).
       - id: ruff-working-dir-cache
         name: ruff (WORKING_DIR cache)
-        language: system
+        language: python
+        additional_dependencies: [ruff==0.8.4]
         pass_filenames: false
         entry: >
           bash -c '
@@ -39,27 +42,17 @@ repos:
           '
         files: ^app/
 
-      - id: mypy-working-dir-cache
-        name: mypy (WORKING_DIR cache)
-        language: system
+      - id: pre-push-mypy-pytest
+        name: pre-push (mypy + pytest)
+        language: python
+        additional_dependencies: ["setuptools>=68", wheel]
         pass_filenames: false
         entry: >
           bash -c '
           if [ -f .env ]; then set -a; source .env; set +a; fi;
+          python -m pip install -q -e ".[dev]";
           CACHE_ROOT="${WORKING_DIR:-./temp}/cache";
-          mypy --cache-dir "${CACHE_ROOT}/mypy" app/ --ignore-missing-imports
-          '
-        files: ^app/
-        stages: [pre-push]
-
-      - id: pytest-working-dir-cache
-        name: pytest (WORKING_DIR cache)
-        language: system
-        pass_filenames: false
-        entry: >
-          bash -c '
-          if [ -f .env ]; then set -a; source .env; set +a; fi;
-          CACHE_ROOT="${WORKING_DIR:-./temp}/cache";
+          mypy --cache-dir "${CACHE_ROOT}/mypy" app/ --ignore-missing-imports;
           pytest -o cache_dir="${CACHE_ROOT}/pytest" -q app/tests
           '
         files: ^app/

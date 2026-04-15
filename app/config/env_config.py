@@ -11,19 +11,22 @@ class Settings:
     def __init__(self) -> None:
         """Initialize settings from environment variables."""
         # 1. Project information
-        self.ENV: str = os.getenv("ENV")
-        self.PROJECT_NAME: str = os.getenv("PROJECT_NAME")
-        self.PROJECT_VERSION: str = os.getenv("PROJECT_VERSION")
-        self.PROJECT_DESCRIPTION: str = os.getenv("PROJECT_DESCRIPTION")
+        self.ENV: str = os.getenv("ENV", "dev")
+        self.PROJECT_NAME: str = os.getenv("PROJECT_NAME", "agentic_web_starter")
+        self.PROJECT_VERSION: str = os.getenv("PROJECT_VERSION", "0.1.0")
+        self.PROJECT_DESCRIPTION: str = os.getenv(
+            "PROJECT_DESCRIPTION",
+            "An agentic retrieval-augmented generation application.",
+        )
 
         # 2. API configuration
         self.ALLOWED_ORIGINS: list[str] = os.getenv("ALLOWED_ORIGINS", "").split(",")
         self.BASE_PATH: str = os.getenv("BASE_PATH", "")
-        self.OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
-        self.GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY")
+        self.OPENAI_API_KEY: str | None = os.getenv("OPENAI_API_KEY", None)
+        self.GEMINI_API_KEY: str | None = os.getenv("GEMINI_API_KEY", None)
 
         # 3. Authentication configuration
-        self.JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "change-me")
+        self.JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "dummy-key")
         self.JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
         self.JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
             os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30")

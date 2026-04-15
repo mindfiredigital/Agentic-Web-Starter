@@ -25,7 +25,7 @@ class FileProcessor:
         Returns:
             Basename of the uploaded file.
         """
-        return os.path.basename(self.file.filename)
+        return os.path.basename(self.file.filename or "temp_file")
 
     def get_file_extension(self) -> str:
         """Return the uploaded file extension.

@@ -3,7 +3,7 @@ from typing import List, Optional
 from langchain_qdrant import QdrantVectorStore
 
 from app.config.log_config import logger
-from app.repository.vector_repository import qdrant_repository
+from app.repository.vector_repository.qdrant_repository import qdrant_repository
 
 
 class Indexer:

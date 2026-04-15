@@ -1,6 +1,7 @@
 import sqlite3
+from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import Generator, Optional
+from typing import Generator, Iterator, Optional
 
 from app.config.env_config import settings
 from app.config.log_config import logger
@@ -8,10 +9,10 @@ from app.exceptions import InternalError
 
 
 def utc_now_iso() -> str:
-    """Get the current timestamp in ISO format.
+    """Return the current UTC time as an ISO 8601 string.
 
     Returns:
-        Current UTC datetime as ISO 8601 string.
+        str: Timestamp in ISO format (e.g. ``2024-01-15T12:00:00+00:00``).
     """
     return datetime.now(timezone.utc).isoformat()
 
@@ -29,21 +30,27 @@ class SQLiteDatabase:
         self._connection: Optional[sqlite3.Connection] = None
 
     def connect(self) -> sqlite3.Connection:
-        """Create and return a new database connection.
+        """Create and return a new SQLite connection.
 
         Returns:
-            SQLite database connection with Row factory.
+            sqlite3.Connection: Connection with ``row_factory`` set to ``sqlite3.Row``
+            and foreign keys enabled.
         """
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys=ON;")
         return conn
 
-    def get_connection(self) -> Generator[sqlite3.Connection, None, None]:
-        """Context manager for database connections.
+    @contextmanager
+    def get_connection(self) -> Iterator[sqlite3.Connection]:
+        """Provide a database connection that closes when the context ends.
+
+        Intended for ``with self.get_connection() as db:``; HTTP handlers typically
+        depend on ``get_db`` instead.
 
         Yields:
-            SQLite database connection that auto-closes.
+            sqlite3.Connection: Open connection; closed in ``finally`` after the
+                block completes or raises.
         """
         db = self.connect()
         try:
@@ -52,10 +59,10 @@ class SQLiteDatabase:
             db.close()
 
     def initialize_schema(self) -> None:
-        """Initialize the database schema with all required tables.
+        """Create the application schema if tables are missing.
 
         Raises:
-            InternalError: If database initialization fails.
+            InternalError: If connecting or creating tables fails.
         """
         try:
             db = self.connect()
@@ -178,16 +185,19 @@ class SQLiteDatabase:
         fetch_one: bool = False,
         fetch_all: bool = False,
     ):
-        """Execute a query with automatic connection management.
+        """Run SQL on a short-lived connection (commit for writes).
 
         Args:
-            query: SQL query to execute.
-            params: Query parameters.
-            fetch_one: Whether to fetch a single row.
-            fetch_all: Whether to fetch all rows.
+            query: SQL statement.
+            params: Optional tuple of parameters bound to the query.
+            fetch_one: If True, return one row (or None).
+            fetch_all: If True, return all rows.
 
         Returns:
-            Query result based on fetch parameters.
+            sqlite3.Cursor: If neither ``fetch_one`` nor ``fetch_all`` is True,
+                the cursor after ``commit()`` (for statements that do not fetch).
+            sqlite3.Row or None: If ``fetch_one`` is True.
+            list: If ``fetch_all`` is True.
         """
         with self.get_connection() as db:
             cursor = db.execute(query, params)
@@ -203,17 +213,20 @@ sqlite_db = SQLiteDatabase()
 
 
 def get_db() -> Generator[sqlite3.Connection, None, None]:
-    """Get a database connection (backward compatibility).
+    """FastAPI dependency that yields one SQLite connection per HTTP request.
+
+    The connection is closed after the response is sent.
 
     Yields:
-        SQLite database connection (context-managed).
+        sqlite3.Connection: Request-scoped connection from ``sqlite_db``.
     """
-    yield from sqlite_db.get_connection()
+    with sqlite_db.get_connection() as db:
+        yield db
 
 
 def init_db() -> None:
-    """Initialize the database schema (backward compatibility).
+    """Ensure all application tables exist (compatibility wrapper).
 
-    Creates all required tables if they do not exist.
+    Delegates to ``SQLiteDatabase.initialize_schema``.
     """
     sqlite_db.initialize_schema()

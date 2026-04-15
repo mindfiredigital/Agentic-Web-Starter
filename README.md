@@ -108,9 +108,16 @@ foundation.
 
    ```bash
    make setup          # creates .venv, installs deps, and registers all git hooks
+   source .venv/bin/activate   # put the venv on PATH for this shell (uvicorn, local pytest, etc.)
    docker compose up -d qdrant redis rabbitmq   # start dependencies only
    uvicorn app.main:app --reload
    ```
+
+   `make setup` does not activate the virtualenv for you. Activate it in each new terminal session
+   (or use explicit paths like `.venv/bin/uvicorn`) when running the API or tests locally without
+   Docker. Pre-push hooks (`mypy`, `pytest`) use pre-commit’s own Python environment and install the
+   project there, so you do **not** need a local `.venv` on `PATH` to push—only a normal Python
+   install for `pre-commit` itself (as installed by `make setup`).
 
 ---
 
@@ -159,7 +166,7 @@ curl -X POST http://localhost:8000/api/v1/auth/login \
 # In Docker (recommended — no local deps required)
 docker compose run tests
 
-# Locally (with Qdrant + Redis running)
+# Locally (with Qdrant + Redis running; activate .venv first or use .venv/bin/pytest)
 pytest -q app/tests
 ```
 
