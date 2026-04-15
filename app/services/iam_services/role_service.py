@@ -1,11 +1,14 @@
+import sqlite3
 from typing import List, Optional
 
-import sqlite3
-
 from app.config.log_config import logger
-from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
-from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository
 from app.constants.app_constants import ROUTE_CONSTANTS
+from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
+from app.repository.sql_repository import (
+    ACLRepository,
+    ComponentRepository,
+    RoleRepository,
+)
 
 ROLE_COMPONENT_URI = ROUTE_CONSTANTS.ROLE_COMPONENT_URI.value
 
@@ -207,4 +210,3 @@ class RoleService:
         except sqlite3.Error as e:
             logger.exception("Database error deleting role: %s", e)
             raise InternalError("Delete role failed") from e
-

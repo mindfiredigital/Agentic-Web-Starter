@@ -16,7 +16,9 @@ class TokenPayload(BaseModel):
     role_ids: List[str]
 
 
-def get_current_user_payload(credentials: HTTPAuthorizationCredentials = Depends(security)) -> TokenPayload:
+def get_current_user_payload(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> TokenPayload:
     """Extract and validate JWT from Authorization header.
 
     Args:

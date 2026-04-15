@@ -5,6 +5,7 @@ from app.config.log_config import logger
 
 router = APIRouter()
 
+
 class HealthResponse(BaseModel):
     """Response model for health check endpoint."""
 

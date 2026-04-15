@@ -5,7 +5,6 @@ import importlib
 import pytest
 from fastapi.testclient import TestClient
 
-
 ENV_VARS = [
     "ENV",
     "PROJECT_NAME",

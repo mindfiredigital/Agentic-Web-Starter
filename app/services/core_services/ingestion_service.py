@@ -84,4 +84,3 @@ class IngestionService:
 
 # Singleton instance for use when USE_QDRANT (or other env) enables ingestion.
 ingestion_service = IngestionService()
-

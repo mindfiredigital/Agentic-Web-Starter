@@ -12,7 +12,9 @@ class ComponentRepository(BaseRepository[Component]):
         """Initialize with database connection and components table."""
         super().__init__(db, "components", Component)
 
-    def create_component(self, name: str, component_uri: str, created_by: Optional[str] = None) -> Component:
+    def create_component(
+        self, name: str, component_uri: str, created_by: Optional[str] = None
+    ) -> Component:
         """Create a new component.
 
         Args:
@@ -23,7 +25,9 @@ class ComponentRepository(BaseRepository[Component]):
         Returns:
             Created Component instance.
         """
-        return self.create(created_by=created_by, name=name, component_uri=component_uri)
+        return self.create(
+            created_by=created_by, name=name, component_uri=component_uri
+        )
 
     def get_component_by_id(self, component_id: str) -> Optional[Component]:
         """Get a component by ID.

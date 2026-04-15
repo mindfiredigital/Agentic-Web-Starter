@@ -1,17 +1,23 @@
-from typing import List, Optional
+from typing import Optional, Sequence
 
+from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.tools import BaseTool
 
 from app.llms.llm_factory import get_default_chat_client
 from app.utils.core_utils.history_factory_utils import message_history_factory
 
+
 class BaseAgent:
     """Base class for tool-calling agents with memory."""
 
-    def __init__(self, llm=None, tools: Optional[List[BaseTool]] = None, system_prompt: str = ""):
+    def __init__(
+        self,
+        llm=None,
+        tools: Optional[Sequence[BaseTool]] = None,
+        system_prompt: str = "",
+    ):
         """Initialize the base agent.
 
         Args:
@@ -41,7 +47,7 @@ class BaseAgent:
                 MessagesPlaceholder(variable_name="agent_scratchpad"),
             ]
         )
-    
+
     def get_agent(self):
         """Create the tool-calling agent.
 
@@ -53,7 +59,7 @@ class BaseAgent:
             tools=self.tools,
             prompt=self.prompt,
         )
-    
+
     def get_agent_executor(self):
         """Create the agent executor.
 
@@ -65,7 +71,7 @@ class BaseAgent:
             tools=self.tools,
             return_intermediate_steps=True,
         )
-    
+
     def get_agent_with_memory(self):
         """Create the agent runnable with Redis-backed memory.
 

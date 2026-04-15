@@ -11,7 +11,9 @@ class RedisHistory:
         self.redis_config = redis_config
         self.redis_url = self.redis_config.get_redis_url()
 
-    def get_redis_history(self, session_id: str, key_prefix: str = "agent_chat:") -> RedisChatMessageHistory:
+    def get_redis_history(
+        self, session_id: str, key_prefix: str = "agent_chat:"
+    ) -> RedisChatMessageHistory:
         """Create a chat history store for a session.
 
         Args:

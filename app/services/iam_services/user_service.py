@@ -1,12 +1,16 @@
+import sqlite3
 from typing import List, Optional
 
-import sqlite3
-
 from app.config.log_config import logger
-from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
-from app.repository.sql_repository import ACLRepository, ComponentRepository, RoleRepository, UserRepository
-from app.utils.iam_utils import auth_utils
 from app.constants.app_constants import ROUTE_CONSTANTS
+from app.exceptions import ConflictError, ForbiddenError, InternalError, NotFoundError
+from app.repository.sql_repository import (
+    ACLRepository,
+    ComponentRepository,
+    RoleRepository,
+    UserRepository,
+)
+from app.utils.iam_utils import auth_utils
 
 USER_COMPONENT_URI = ROUTE_CONSTANTS.USER_COMPONENT_URI.value
 
@@ -226,4 +230,3 @@ class UserService:
         except sqlite3.Error as e:
             logger.exception("Database error deleting user: %s", e)
             raise InternalError("Delete user failed") from e
-

@@ -38,7 +38,9 @@ def test_valid_token_returns_payload(clear_env, set_env_vars):
     importlib.reload(jwt_utils)
     importlib.reload(auth_deps)
 
-    token = jwt_utils.JWT_utils.create_access_token("user-1", ["role-1"], expires_minutes=5)
+    token = jwt_utils.JWT_utils.create_access_token(
+        "user-1", ["role-1"], expires_minutes=5
+    )
     credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
     payload = auth_deps.get_current_user_payload(credentials=credentials)
 

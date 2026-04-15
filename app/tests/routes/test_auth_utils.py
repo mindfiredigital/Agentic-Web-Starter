@@ -1,5 +1,6 @@
 from app.utils.iam_utils import auth_utils
 
+
 def test_hash_and_verify_password():
     """Verify hash_password produces verifiable hash and wrong password fails."""
     password = "s3cret-pass"

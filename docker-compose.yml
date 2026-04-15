@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: agentic_rag_app
+    container_name: agentic_web_app
     ports:
       - "8000:8000"
     env_file:
@@ -22,10 +22,12 @@ services:
       - rabbitmq
 
   tests:
-    build: .
-    container_name: agentic_rag_tests
+    build:
+      context: .
+      target: builder
+    container_name: agentic_web_tests
     command: >
-      sh -c "pytest -q app/tests"
+      sh -c "pip install --no-cache-dir '.[dev]' -q && pytest -q app/tests"
     env_file:
       - .env
     environment:
@@ -40,7 +42,7 @@ services:
 
   worker:
     build: .
-    container_name: agentic_rag_worker
+    container_name: agentic_web_worker
     command: >
       sh -c "python -m app.workers.ingestion_worker"
     env_file:
@@ -59,21 +61,30 @@ services:
     image: qdrant/qdrant:latest
     container_name: qdrant
     environment:
-      - PYTHONWARNINGS=ignore
+      - QDRANT__LOG_LEVEL=WARN
     ports:
       - "6333:6333"
       - "6334:6334"
     volumes:
       # Keep qdrant storage under the same host WORKING_DIR.
       - ${WORKING_DIR:-./temp}/qdrant_storage:/qdrant/storage
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   redis:
     image: redis:7-alpine
     container_name: redis
-    environment:
-      - PYTHONWARNINGS=ignore
+    command: redis-server --loglevel warning
     ports:
       - "6379:6379"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -85,7 +96,8 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
       - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-/}
-      - PYTHONWARNINGS=ignore
+      - RABBITMQ_LOGS=-
+      - RABBITMQ_LOG_LEVEL=warning
     volumes:
       - ${WORKING_DIR:-./temp}/rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -93,3 +105,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

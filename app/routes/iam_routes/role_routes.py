@@ -3,16 +3,19 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status
 
-from app.utils.core_utils import get_db
-from app.utils.iam_utils import get_current_user_payload, TokenPayload
-from app.services.iam_services.role_service import RoleService
 from app.schemas.iam_schemas.role_schema import RoleCreate, RoleResponse, RoleUpdate
+from app.services.iam_services.role_service import RoleService
+from app.utils.core_utils import get_db
+from app.utils.iam_utils import TokenPayload, get_current_user_payload
 
 router = APIRouter(prefix="/roles", tags=["roles"])
 
 
 @router.get("/list_roles", response_model=List[RoleResponse])
-def list_roles(payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> List[RoleResponse]:
+def list_roles(
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> List[RoleResponse]:
     """List roles (requires component access).
 
     Args:
@@ -29,7 +32,11 @@ def list_roles(payload: TokenPayload = Depends(get_current_user_payload), db: sq
 
 
 @router.get("/get_role/{role_id}", response_model=RoleResponse)
-def get_role(role_id: str, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> RoleResponse:
+def get_role(
+    role_id: str,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> RoleResponse:
     """Get role by id.
 
     Args:
@@ -46,8 +53,14 @@ def get_role(role_id: str, payload: TokenPayload = Depends(get_current_user_payl
     return service.get_role(role_id=role_id, role_ids=payload.role_ids)
 
 
-@router.post("/create_role", response_model=RoleResponse, status_code=status.HTTP_201_CREATED)
-def create_role(request: RoleCreate, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> RoleResponse:
+@router.post(
+    "/create_role", response_model=RoleResponse, status_code=status.HTTP_201_CREATED
+)
+def create_role(
+    request: RoleCreate,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> RoleResponse:
     """Create role.
 
     Args:
@@ -70,7 +83,12 @@ def create_role(request: RoleCreate, payload: TokenPayload = Depends(get_current
 
 
 @router.put("/update_role/{role_id}", response_model=RoleResponse)
-def update_role(role_id: str, request: RoleUpdate, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> RoleResponse:
+def update_role(
+    role_id: str,
+    request: RoleUpdate,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> RoleResponse:
     """Update role.
 
     Args:
@@ -95,7 +113,11 @@ def update_role(role_id: str, request: RoleUpdate, payload: TokenPayload = Depen
 
 
 @router.delete("/delete_role/{role_id}", status_code=status.HTTP_200_OK)
-def delete_role(role_id: str, payload: TokenPayload = Depends(get_current_user_payload), db: sqlite3.Connection = Depends(get_db)) -> dict:
+def delete_role(
+    role_id: str,
+    payload: TokenPayload = Depends(get_current_user_payload),
+    db: sqlite3.Connection = Depends(get_db),
+) -> dict:
     """Delete role.
 
     Args:
@@ -111,4 +133,3 @@ def delete_role(role_id: str, payload: TokenPayload = Depends(get_current_user_p
     service = RoleService(db)
     service.delete_role(role_id=role_id, role_ids=payload.role_ids)
     return {"detail": "Role deleted"}
-

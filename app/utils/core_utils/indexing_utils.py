@@ -3,7 +3,7 @@ from typing import List, Optional
 from langchain_qdrant import QdrantVectorStore
 
 from app.config.log_config import logger
-from app.repository.vector_repository import qdrant_repository
+from app.repository.vector_repository.qdrant_repository import qdrant_repository
 
 
 class Indexer:
@@ -21,7 +21,9 @@ class Indexer:
         Returns:
             Initialized QdrantVectorStore instance.
         """
-        self.vectordb = self.qdrant_repo.build_vectordb(collection_name=self.collection_name)
+        self.vectordb = self.qdrant_repo.build_vectordb(
+            collection_name=self.collection_name
+        )
         return self.vectordb
 
     def index_documents(self, chunks: List):
@@ -43,13 +45,17 @@ class Indexer:
         if self.vectordb is None:
             self.initialize_vectordb()
 
+        store = self.initialize_vectordb() if self.vectordb is None else self.vectordb
+
         try:
-            self.vectordb.add_documents(chunks)
+            store.add_documents(chunks)
             logger.info("Documents added to qdrant vectordb successfully")
             return {"success": True, "collection_name": self.collection_name}
         except Exception as e:
             logger.error("Error adding documents to qdrant vectordb: %s", e)
-            raise ValueError(f"Error adding documents to qdrant vectordb: {str(e)}") from e
+            raise ValueError(
+                f"Error adding documents to qdrant vectordb: {str(e)}"
+            ) from e
 
     def delete_database(self):
         """Delete the vector database.
@@ -61,7 +67,9 @@ class Indexer:
             ValueError: If deletion fails.
         """
         if not self.qdrant_repo.collection_exists(self.collection_name):
-            logger.warning("Collection %s not found; skipping deletion", self.collection_name)
+            logger.warning(
+                "Collection %s not found; skipping deletion", self.collection_name
+            )
             return
 
         try:

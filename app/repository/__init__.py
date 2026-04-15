@@ -7,15 +7,15 @@ This module provides organized access to:
 
 # SQL repositories
 from app.repository.sql_repository import (
-    BaseRepository,
-    UserRepository,
-    RoleRepository,
-    ComponentRepository,
     ACLRepository,
+    BaseRepository,
+    ComponentRepository,
+    RoleRepository,
+    UserRepository,
 )
 
 # Vector repositories
-from app.repository.vector_repository import QdrantRepository, qdrant_repository
+from app.repository.vector_repository import qdrant_repository
 
 __all__ = [
     # SQL
@@ -25,6 +25,5 @@ __all__ = [
     "ComponentRepository",
     "ACLRepository",
     # Vector
-    "QdrantRepository",
     "qdrant_repository",
 ]
