@@ -1,7 +1,7 @@
 from typing import Type
 
 from langchain.tools import BaseTool
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 
 from app.agents.base_agent import BaseAgent
 from app.config.env_config import settings

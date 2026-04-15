@@ -45,8 +45,10 @@ class Indexer:
         if self.vectordb is None:
             self.initialize_vectordb()
 
+        store = self.initialize_vectordb() if self.vectordb is None else self.vectordb
+
         try:
-            self.vectordb.add_documents(chunks)
+            store.add_documents(chunks)
             logger.info("Documents added to qdrant vectordb successfully")
             return {"success": True, "collection_name": self.collection_name}
         except Exception as e:

@@ -1,7 +1,7 @@
 from typing import Type
 
 from langchain_core.tools import BaseTool
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 
 from app.config.env_config import settings
 from app.services.core_services.retrieval_service import vector_retriever

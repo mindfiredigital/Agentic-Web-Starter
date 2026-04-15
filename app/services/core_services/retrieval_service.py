@@ -5,7 +5,7 @@ from langchain_qdrant import QdrantVectorStore
 from app.config.log_config import logger
 from app.constants.app_constants import VECTOR_DB
 from app.exceptions import InternalError
-from app.repository.vector_repository import qdrant_repository
+from app.repository.vector_repository.qdrant_repository import qdrant_repository
 
 
 class VectorRetriever:
@@ -52,8 +52,10 @@ class VectorRetriever:
         if self.vectordb is None:
             self.initialize_vectordb()
 
+        store = self.initialize_vectordb() if self.vectordb is None else self.vectordb
+
         try:
-            return self.vectordb.similarity_search(query, k=self.top_k)
+            return store.similarity_search(query, k=self.top_k)
         except Exception as e:
             logger.exception("Error querying qdrant vectordb: %s", e)
             raise InternalError("Retrieval failed") from e

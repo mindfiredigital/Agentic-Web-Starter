@@ -34,7 +34,12 @@ class UserRepository(BaseRepository[User]):
         Returns:
             List of Role instances.
         """
-        return [self._row_to_role(row) for row in rows if row is not None]
+        out: List[Role] = []
+        for row in rows:
+            r = self._row_to_role(row)
+            if r is not None:
+                out.append(r)
+        return out
 
     def create_user(
         self,

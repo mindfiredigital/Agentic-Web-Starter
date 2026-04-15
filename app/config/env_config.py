@@ -26,7 +26,9 @@ class Settings:
         self.GEMINI_API_KEY: str | None = os.getenv("GEMINI_API_KEY", None)
 
         # 3. Authentication configuration
-        self.JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "dummy-key")
+        self.JWT_SECRET_KEY: str = os.getenv(
+            "JWT_SECRET_KEY", "agentic-web-starter-jwt"
+        )
         self.JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
         self.JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = int(
             os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30")

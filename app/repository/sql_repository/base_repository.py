@@ -48,7 +48,12 @@ class BaseRepository(Generic[T]):
         Returns:
             List of model instances
         """
-        return [self._row_to_model(row) for row in rows if row is not None]
+        out: List[T] = []
+        for row in rows:
+            m = self._row_to_model(row)
+            if m is not None:
+                out.append(m)
+        return out
 
     def get_by_id(self, id: str) -> Optional[T]:
         """Get a record by ID.
@@ -179,4 +184,7 @@ class BaseRepository(Generic[T]):
 
         self.db.execute(query, field_values)
         self.db.commit()
-        return self.get_by_id(record_id)
+        created = self.get_by_id(record_id)
+        if created is None:
+            raise RuntimeError(f"Record {record_id} not found after insert")
+        return created

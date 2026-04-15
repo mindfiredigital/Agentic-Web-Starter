@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional, Sequence
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -13,7 +13,10 @@ class BaseAgent:
     """Base class for tool-calling agents with memory."""
 
     def __init__(
-        self, llm=None, tools: Optional[List[BaseTool]] = None, system_prompt: str = ""
+        self,
+        llm=None,
+        tools: Optional[Sequence[BaseTool]] = None,
+        system_prompt: str = "",
     ):
         """Initialize the base agent.
 

@@ -42,7 +42,7 @@ def test_defaults_when_missing(clear_env, monkeypatch, tmp_path):
     importlib.reload(env_config)
     settings = env_config.Settings()
 
-    assert settings.JWT_SECRET_KEY == "change-me"
+    assert settings.JWT_SECRET_KEY == "agentic-web-starter-jwt"
     assert settings.JWT_ALGORITHM == "HS256"
     expected_expiry = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
     assert settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES == expected_expiry
