@@ -60,3 +60,8 @@ app/static/*
 temp/
 docker-compose.yml
 .pre-commit-config.yaml
+
+# Docs and website (not needed in image)
+docs/
+website/
+Makefile

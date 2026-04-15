@@ -42,6 +42,13 @@ dev = [
 [tool.isort]
 profile = "black"
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
+# Allowed types for Conventional Commits
+# feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
+
 [tool.setuptools.packages.find]
 include = ["app*"]
 exclude = ["temp*"]

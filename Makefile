@@ -11,7 +11,7 @@ install-dev:
 	@"$(VENV_DIR)/bin/python" -m pip install --upgrade pip && "$(VENV_DIR)/bin/python" -m pip install -e ".[dev]"
 
 install-hooks:
-	@"$(VENV_DIR)/bin/pre-commit" install && "$(VENV_DIR)/bin/pre-commit" install --hook-type pre-push
+	@"$(VENV_DIR)/bin/pre-commit" install && "$(VENV_DIR)/bin/pre-commit" install --hook-type pre-push && "$(VENV_DIR)/bin/pre-commit" install --hook-type commit-msg
 
 docs:
 	@cd website && (test -d node_modules || npm install) && npm start

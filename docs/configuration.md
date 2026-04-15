@@ -6,50 +6,126 @@ description: Environment variables and feature flags loaded by app.config.env_co
 
 # Configuration
 
-Settings are loaded in **`app/config/env_config.py`** via the **`settings`** singleton. Copy **`env.example`** to **`.env`** and adjust values. Never commit `.env`.
+All settings are loaded at startup from the `Settings` class in `app/config/env_config.py`.
+The singleton is available throughout the app as `settings`.
+
+To configure the project:
+
+```bash
+cp env.example .env
+# Edit .env with your values
+```
+
+**Never commit `.env`.** Use `env.example` for placeholder defaults — it is safe to commit.
+
+---
 
 ## Feature flags
 
-| Flag | When `false` |
-|------|----------------|
-| `USE_QDRANT` | RAG/upload path is disabled or limited; see runtime behavior for `/api/v1/upload`. |
-| `USE_REDIS` | Chat history uses in-memory storage instead of Redis. |
-| `USE_SQL` | SQLite init and IAM routes (`/auth`, `/users`, `/roles`) are not registered. |
-| `USE_RABBITMQ` | Ingestion is not queued via RabbitMQ (behavior depends on ingestion implementation). |
+These four flags control which subsystems are active.  Each defaults to a sensible value so the
+app runs without every dependency being present.
 
-## API and project
+| Flag | Default | When set to `false` |
+|------|---------|---------------------|
+| `USE_QDRANT` | `true` | The upload/ingestion path is disabled; `/api/v1/upload` returns a configuration alert |
+| `USE_REDIS` | `true` | Chat history falls back to in-memory storage (not persisted across restarts) |
+| `USE_SQL` | `false` | SQLite is not initialised; `/auth`, `/users`, and `/roles` routes are not registered |
+| `USE_RABBITMQ` | `false` | Ingestion happens inline (synchronous); the separate worker process is not needed |
 
-| Variable | Role |
-|----------|------|
-| `PROJECT_NAME`, `PROJECT_VERSION`, `PROJECT_DESCRIPTION` | FastAPI metadata and paths under `WORKING_DIR`. |
-| `BASE_PATH` | Root path when behind a reverse proxy (also affects OpenAPI URL). |
-| `ALLOWED_ORIGINS` | CORS origins (comma-separated). |
-| `WORKING_DIR` | Base for logs, uploads, SQLite path segment, HF cache default. |
+You can run the service with all flags set to `false` for a minimal, dependency-free setup — useful for demos or quick local testing without Docker.
+
+---
+
+## API and project identity
+
+These variables control the FastAPI app metadata and URL structure.
+
+| Variable | Description |
+|----------|-------------|
+| `PROJECT_NAME` | Used in FastAPI metadata and as a sub-path under `WORKING_DIR` for uploads and logs |
+| `PROJECT_VERSION` | Appears in the OpenAPI schema |
+| `PROJECT_DESCRIPTION` | Appears in the OpenAPI schema |
+| `BASE_PATH` | Root path when running behind a reverse proxy (e.g. `/agentic_web_starter`). Also shifts the OpenAPI URL. |
+| `ALLOWED_ORIGINS` | Comma-separated list of CORS origins (e.g. `http://localhost:3000,https://myapp.com`) |
+| `WORKING_DIR` | Base directory for uploads, logs, SQLite data, and HF cache (default: `./temp`) |
+
+---
 
 ## LLM keys
 
-At least one of **`OPENAI_API_KEY`** or **`GEMINI_API_KEY`** is required for chat features, depending on your LLM configuration.
+At least one of the following is required for the chat endpoint to work.
 
-## JWT (when `USE_SQL` is true)
+| Variable | Provider |
+|----------|---------|
+| `OPENAI_API_KEY` | OpenAI (GPT-3.5, GPT-4, etc.) |
+| `GEMINI_API_KEY` | Google Gemini |
 
-| Variable | Role |
-|----------|------|
-| `JWT_SECRET_KEY` | Signing secret for tokens. |
-| `JWT_ALGORITHM` | Default `HS256`. |
-| `JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | Access token lifetime. |
+If neither is set the API will start but chat requests will fail at the LLM call.
 
-Optional **`ADMIN_USERNAME`**, **`ADMIN_EMAIL`**, **`ADMIN_PASSWORD`** bootstrap a first admin user when the database has no users.
+---
+
+## Authentication — JWT
+
+These variables are only relevant when `USE_SQL=true`.
+
+| Variable | Description |
+|----------|-------------|
+| `JWT_SECRET_KEY` | Secret used to sign and verify tokens — **use a long random string in production** |
+| `JWT_ALGORITHM` | Signing algorithm (default: `HS256`) |
+| `JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | How long an access token remains valid |
+
+### Admin bootstrap
+
+If you set all three variables below, the app will create an admin user on first startup when no
+users exist in the database.
+
+| Variable | Description |
+|----------|-------------|
+| `ADMIN_USERNAME` | Login username for the bootstrapped admin |
+| `ADMIN_EMAIL` | Email address for the bootstrapped admin |
+| `ADMIN_PASSWORD` | Password — hashed with Argon2 before storage |
+
+---
 
 ## Qdrant
 
-`QDRANT_HOST`, `QDRANT_PORT`, `QDRANT_PROTOCOL`, and **`COLLECTION_NAME`** (default collection name in code: `agentic_web_starter` unless overridden).
+| Variable | Description |
+|----------|-------------|
+| `QDRANT_HOST` | Hostname or IP (default: `qdrant` in Docker, `localhost` locally) |
+| `QDRANT_PORT` | Port (default: `6333`) |
+| `QDRANT_PROTOCOL` | `http` or `https` |
+| `COLLECTION_NAME` | Name of the Qdrant collection used for document embeddings |
+
+---
 
 ## Redis
 
-`REDIS_HOST`, `REDIS_PORT`, `REDIS_PROTOCOL`, `REDIS_DB`.
+| Variable | Description |
+|----------|-------------|
+| `REDIS_HOST` | Hostname or IP (default: `redis` in Docker, `localhost` locally) |
+| `REDIS_PORT` | Port (default: `6379`) |
+| `REDIS_PROTOCOL` | `redis` or `rediss` (TLS) |
+| `REDIS_DB` | Database index (default: `0`) |
+
+---
 
 ## RabbitMQ
 
-`RABBITMQ_*` variables and **`RABBITMQ_INGEST_QUEUE`** for the ingestion worker queue name.
+| Variable | Description |
+|----------|-------------|
+| `RABBITMQ_HOST` | Hostname or IP |
+| `RABBITMQ_PORT` | AMQP port (default: `5672`) |
+| `RABBITMQ_USERNAME` | Username (default: `guest`) |
+| `RABBITMQ_PASSWORD` | Password (default: `guest`) |
+| `RABBITMQ_VHOST` | Virtual host (default: `/`) |
+| `RABBITMQ_AMQP_URL` | Full AMQP URL — overrides individual host/port/user fields if set |
+| `RABBITMQ_INGEST_QUEUE` | Name of the queue the ingestion worker consumes |
 
-For the full list and defaults, see **`env.example`** and **`app/config/env_config.py`**.
+---
+
+## Full reference
+
+For the complete list of variables with defaults, see:
+
+- **`env.example`** in the repository root — human-readable defaults and comments
+- **`app/config/env_config.py`** — typed `Settings` fields with validation

@@ -6,77 +6,153 @@ description: Environment setup, Docker, and running the API locally.
 
 # Getting started
 
+This page walks you from a fresh clone to a running API in three steps.  
+If you run into trouble, check the [Configuration](./configuration) page for a full
+variable reference or open an issue.
+
+---
+
 ## Prerequisites
 
-- **Python 3.11** (see `pyproject.toml` for the supported range)
-- **Docker** and **Docker Compose** for the recommended stack
-- API keys: at least one of **OpenAI** or **Gemini** for chat (see `env.example`)
+Before you begin, make sure you have the following installed:
 
-## 1. Configure environment
+| Requirement | Notes |
+|-------------|-------|
+| **Python 3.11** | See `pyproject.toml` for the supported range |
+| **Docker & Docker Compose** | Required for the recommended setup |
+| **OpenAI or Gemini API key** | At least one is needed for the chat endpoint |
+
+---
+
+## Step 1 — Configure your environment
+
+Copy the example file and fill in your values:
 
 ```bash
 cp env.example .env
 ```
 
-Edit `.env` for your environment. Important variables are summarized in [Configuration](./configuration).
+Open `.env` in your editor.  The most important variables to set right away are:
 
-## 2. Run with Docker (recommended)
+| Variable | Why it matters |
+|----------|----------------|
+| `OPENAI_API_KEY` or `GEMINI_API_KEY` | Powers the chat endpoint |
+| `JWT_SECRET_KEY` | Signs tokens — required when `USE_SQL=true` |
+| `ADMIN_USERNAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Creates a first admin user on startup |
 
-From the repository root:
+See [Configuration](./configuration) for the full list.
+
+**Never commit `.env` to version control.** It is already in `.gitignore`, but double-check before pushing.
+
+---
+
+## Step 2 — Start the service
+
+### Option A — Docker Compose (recommended)
+
+This starts the API, ingestion worker, Qdrant, Redis, and RabbitMQ in one command:
 
 ```bash
 docker compose up --build
 ```
 
-The API is served at **http://localhost:8000** (Gunicorn + Uvicorn workers). Use `docker compose up -d --build` to run detached.
+The API is available at **http://localhost:8000**.  
+Open **http://localhost:8000/docs** for interactive Swagger UI.
 
-Included services typically include the API, ingestion worker (when RabbitMQ is used), Qdrant, Redis, and RabbitMQ. See `docker-compose.yml` for service names.
-
-**Run tests in Docker:**
+Other useful commands:
 
 ```bash
-docker compose run tests
+docker compose up -d --build   # run in the background (detached)
+docker compose down            # stop all services
+docker compose run tests       # run the full test suite inside Docker
 ```
 
-## 3. Run the API locally (dependencies in Docker)
+### Option B — Local Python with Docker dependencies
 
-Start backing services only:
+Use this if you want faster reload cycles during development.
+
+**1. Start only the backing services:**
 
 ```bash
 docker compose up -d qdrant redis rabbitmq
 ```
 
-Point `.env` at localhost (`QDRANT_HOST`, `REDIS_HOST`, `RABBITMQ_HOST`, etc.).
+Then update your `.env` so the local API can reach the containers:
 
-Bootstrap Python (once):
+```
+QDRANT_HOST=localhost
+REDIS_HOST=localhost
+RABBITMQ_HOST=localhost
+```
+
+**2. Bootstrap your Python environment (run once per clone):**
 
 ```bash
 make setup
 ```
 
-Or manually: create `.venv`, `pip install -e ".[dev]"`, and install pre-commit hooks as in the root `README.md`.
+This creates `.venv`, installs all dev dependencies, and registers the pre-commit, pre-push, and
+commit-msg hooks automatically.
 
-Start the app:
+**Manual setup (without Make):**
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+pre-commit install
+pre-commit install --hook-type pre-push
+pre-commit install --hook-type commit-msg
+```
+
+**3. Start the API:**
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-If `USE_RABBITMQ=true`, run the ingestion worker in another terminal:
+Or production-style with Gunicorn:
+
+```bash
+gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+```
+
+**4. Start the ingestion worker (only when `USE_RABBITMQ=true`):**
+
+Open a second terminal and run:
 
 ```bash
 python -m app.workers.ingestion_worker
 ```
 
-## 4. Documentation site (this handbook)
+---
+
+## Step 3 — Verify everything is working
 
 ```bash
-make docs
+curl http://localhost:8000/health
+# Expected: {"status":"ok"}
 ```
 
-Or: `cd website && npm install && npm start` — usually **http://localhost:3000**.
+Then open **http://localhost:8000/docs** to explore the full API interactively.
+
+---
+
+## Running tests
+
+```bash
+# Recommended — full stack inside Docker, no local deps required
+docker compose run tests
+
+# Locally — requires Qdrant and Redis to be running
+pytest -q app/tests
+```
+
+---
 
 ## Next steps
 
-- [Configuration](./configuration) — flags and env vars
-- [API reference](./api-reference) — OpenAPI URL
+- [Configuration](./configuration) — understand every env variable and feature flag
+- [Architecture](./architecture) — learn how the layers fit together
+- [API reference](./api-reference) — endpoint list with request/response examples

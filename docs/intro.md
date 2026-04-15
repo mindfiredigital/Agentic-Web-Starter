@@ -7,23 +7,56 @@ description: What Agentic Web Starter is and how this documentation is organized
 
 # Introduction
 
-**Agentic Web Starter** is a FastAPI backend for agentic RAG: document ingestion, retrieval-augmented chat, optional **JWT authentication**, and **user/role** management with component-based ACLs. It integrates **Qdrant** for vectors, **Redis** (or in-memory) for chat history, **SQLite** for IAM when enabled, and optional **RabbitMQ** for async ingestion.
+**Agentic Web Starter** is a production-ready FastAPI template for building AI-powered web services.
+It gives you a complete foundation — document ingestion, retrieval-augmented chat, authentication,
+and role management — so you can focus on your domain logic rather than boilerplate.
 
-## Documentation map
+## What's included
 
-| Doc | Contents |
-|-----|----------|
-| [Getting started](./getting-started) | Clone, env file, Docker and local runs |
-| [Configuration](./configuration) | Environment variables and feature flags |
-| [Architecture](./architecture) | Layers, main packages, request flow |
-| [Authentication & IAM](./authentication-and-iam) | JWT, routes, ACL model |
-| [API reference](./api-reference) | Where to find interactive OpenAPI docs |
-| [Contributing](./contributing) | Workflow and links to full PR rules |
-| [Pull request guidelines](./pull-request-guidelines) | Complete PR template and team standards |
+| Capability | Details |
+|-----------|---------|
+| **RAG pipeline** | Upload documents → embed → store in Qdrant → retrieve at chat time |
+| **Chat endpoint** | Retrieval-augmented responses via OpenAI or Gemini |
+| **Chat history** | Redis-backed (persistent) or in-memory (ephemeral), switchable via a flag |
+| **Authentication** | JWT login, token validation, and Argon2 password hashing |
+| **User & role management** | Full CRUD for users, roles, and component-level ACLs, stored in SQLite |
+| **Async ingestion** | Optional RabbitMQ worker for non-blocking document processing |
+| **Observability** | Health endpoint, structured JSON logging, and a CI pipeline |
+| **Documentation site** | This Docusaurus handbook, built from the `docs/` folder |
+
+Everything optional (Qdrant, Redis, SQL, RabbitMQ) can be toggled off with a single environment
+flag, so the service runs even in a minimal setup.
+
+---
+
+## How to navigate this handbook
+
+| Page | What you will find |
+|------|--------------------|
+| [Getting started](./getting-started) | Clone the repo, configure `.env`, and run with Docker or locally |
+| [Configuration](./configuration) | Every environment variable and feature flag explained |
+| [Architecture](./architecture) | How the layers fit together and where each piece of logic lives |
+| [Authentication & IAM](./authentication-and-iam) | JWT flow, protected routes, and the ACL model |
+| [API reference](./api-reference) | Endpoint list, request/response shapes, and error codes |
+| [Contributing](./contributing) | How to open issues and pull requests |
+| [Pull request guidelines](./pull-request-guidelines) | Branch naming, commit standards, code rules, and the PR checklist |
+
+---
 
 ## Source of truth
 
-- **Behavior and contracts** — Python code under `app/` and `env.example`.
-- **Interactive HTTP docs** — Swagger UI at `/docs` on a running server (see [API reference](./api-reference)).
+**The code is always authoritative.** The docs explain intent; the Swagger UI at `/docs` reflects the live schema.
 
-This site is built with [Docusaurus](https://docusaurus.io/) from the `docs/` folder (`make docs` or `cd website && npm start`).
+- **Behavior and contracts** — Python source under `app/` and `env.example`
+- **Interactive HTTP docs** — Swagger UI served at `/docs` on a running instance (see [API reference](./api-reference))
+
+---
+
+## Building this site
+
+```bash
+make docs        # starts Docusaurus dev server at http://localhost:3000
+make docs-build  # production build → website/build/
+```
+
+Or manually: `cd website && npm install && npm start`.
