@@ -29,7 +29,7 @@ class OPENAI_CHAT_MODEL(Enum):
 class GEMINI_CHAT_MODEL(Enum):
     """Gemini chat model configuration."""
 
-    MODEL_NAME = "gemini-3-flash-preview"
+    MODEL_NAME = "gemini-2.5-flash-lite"
     TEMPERATURE = 0.0
 
 
