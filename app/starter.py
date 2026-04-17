@@ -32,7 +32,6 @@ def start_application():
         version=settings.PROJECT_VERSION,
         description=settings.PROJECT_DESCRIPTION,
         root_path=settings.BASE_PATH,
-        # contact = {"name":"Mindfire Solutions", "url":"https://www.mindfire.com", "email":"support@mindfire.com"},
     )
 
     # PATH HANDLING

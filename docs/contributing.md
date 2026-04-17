@@ -68,7 +68,7 @@ pre-commit run --all-files
 
 ### 5 — Open a pull request
 
-Use the [PR template](.github/pull_request_template.md) — fill in every section.  PRs with empty
+Use the [PR template](https://github.com/<your-org>/agentic_web_starter/blob/main/.github/pull_request_template.md) — fill in every section.  PRs with empty
 descriptions are returned without review.
 
 All commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/).

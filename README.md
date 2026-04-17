@@ -16,6 +16,10 @@ authentication, and user/role management.
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Usage](#usage)
+    - [Interactive API docs](#interactive-api-docs)
+    - [Quick examples](#quick-examples)
+    - [Run tests](#run-tests)
+    - [Documentation site](#documentation-site)
   - [Contributing](#contributing)
   - [License](#license)
   - [Acknowledgments](#acknowledgments)
@@ -52,7 +56,7 @@ foundation.
 - **Global exception handling** — Consistent error responses (401, 403, 404, 422, 500)
 - **Health check** — `/health` endpoint for liveness probes
 - **Comprehensive tests** — Pytest suite runnable locally or via Docker Compose
-- **CI pipeline** — GitHub Actions: Black, isort, Ruff, mypy, and Pytest on every push
+- **CI pipeline** — GitHub Actions: Black, isort, Ruff, and Pytest on every push
 - **Documentation site** — Docusaurus handbook with setup, architecture, API, and contribution guides
 
 ---
@@ -198,7 +202,7 @@ pull request or issue.  The key points:
 
 ## License
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
+This project is licensed under the **MIT License** — see [LICENSE.md](LICENSE.md) for details.
 
 ---
 
