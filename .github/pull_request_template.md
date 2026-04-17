@@ -1,18 +1,18 @@
 ## Summary
 
-<!-- What does this PR change and why? -->
+_What does this PR change and why?_
 
-**Related issue:** Closes #<!-- replace with issue number, or delete if none -->
+**Related issue:** Closes #
 
-<!-- If your team uses Jira, add the ticket ID: **Jira:** PROJ-123 -->
+**Jira:** _(optional — e.g. PROJ-123)_
 
 ### Changes
 
-- <!-- List the main changes -->
+- _List the main changes_
 
 ### Screenshots (if UI or behavior is visible)
 
-<!-- Add screenshots or delete this section -->
+_Add screenshots or remove this section._
 
 ### Checklist
 
@@ -24,8 +24,8 @@
 
 ### How tested
 
-<!-- e.g. `docker compose run tests`, `pytest -q app/tests`, manual API calls to /health, /api/v1/chat, ... -->
+_e.g. `docker compose run tests`, `pytest -q app/tests`, manual API calls to /health, /api/v1/chat, ..._
 
 ### Extra notes
 
-<!-- Deployment notes, follow-ups, or delete -->
+_Deployment notes, follow-ups, or remove this section._
